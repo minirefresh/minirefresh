@@ -25,6 +25,7 @@
                 enable: false,
             },
             // 是否开启applet的dot css动画，这是本皮肤的拓展
+            // 如果过于影响性能，可以关闭掉
             appletAnimation: true
         }
     };
@@ -50,7 +51,7 @@
             var downWrap = document.createElement("div");
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
-            downWrap.innerHTML = '<div class="downwrap-content ball-beat"><div></div><div></div><div></div></div>';
+            downWrap.innerHTML = '<div class="downwrap-content ball-beat"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
             container.insertBefore(downWrap, scrollWrap);
             
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
