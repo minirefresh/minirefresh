@@ -9,7 +9,7 @@
  * _scrollHook(scrollTop)                       滚动过程中持续回调
  * _downLoaingHook()                            下拉触发的那一刻回调
  * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
- * _downLoaingEndHook()                         下拉刷新动画结束后的回调
+ * _downLoaingEndHook(isSuccess)                         下拉刷新动画结束后的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
  * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
@@ -27,7 +27,7 @@
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
             dampRate: 0.2,
             // 回弹动画时间
-            bounceTime: 500,
+            bounceTime: 300,
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
                 enable: false,
@@ -128,7 +128,7 @@
                     // 成功动画结束后就可以重置位置了
                     self.scroller.endDownLoading();
                     // 触发结束hook
-                    this._downLoaingEndHook && this._downLoaingEndHook();
+                    self._downLoaingEndHook && self._downLoaingEndHook(isSuccess);
                     
                 }, successAnimTime);
             }

@@ -641,7 +641,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * _scrollHook(scrollTop)                       滚动过程中持续回调
  * _downLoaingHook()                            下拉触发的那一刻回调
  * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
- * _downLoaingEndHook()                         下拉刷新动画结束后的回调
+ * _downLoaingEndHook(isSuccess)                         下拉刷新动画结束后的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
  * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
@@ -659,7 +659,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
             dampRate: 0.2,
             // 回弹动画时间
-            bounceTime: 500,
+            bounceTime: 300,
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
                 enable: false,
@@ -760,7 +760,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                     // 成功动画结束后就可以重置位置了
                     self.scroller.endDownLoading();
                     // 触发结束hook
-                    this._downLoaingEndHook && this._downLoaingEndHook();
+                    self._downLoaingEndHook && self._downLoaingEndHook(isSuccess);
                     
                 }, successAnimTime);
             }
@@ -843,12 +843,29 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     MiniRefreshTools.core = MiniRefreshCore;
 })(MiniRefreshTools);
 /**
- * minirefresh的默认皮肤
- * 默认皮肤会打包到核心代码中
- * 皮肤类继承自基类，所以可以调用基类的属性（但是不建议滥用）
- * 为了统一调用，其它皮肤的配置参数请尽量按照default来
+ * 微信小程序皮肤
  */
 (function(innerUtil) {
+    
+    /**
+     * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
+     * skin字段会根据不同的皮肤有不同值
+     */
+    var CLASS_SKIN = 'minirefresh-skin-default';
+    var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
+    var CLASS_UP_WRAP = 'minirefresh-upwrap';
+    var CLASS_FADE_IN = 'minirefresh-fade-in';
+    var CLASS_FADE_OUT = 'minirefresh-fade-out';
+    var CLASS_TO_TOP = 'minirefresh-totop';
+    var CLASS_ROTATE = 'minirefresh-rotate';
+    var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
+    var CLASS_HIDDEN = 'minirefresh-hidden';
+    
+    /**
+     * 本皮肤的特色样式
+     */
+    var CLASS_DOWN_SUCCESS = 'downwrap-success';
+    var CLASS_DOWN_ERROR = 'downwrap-error';
 
     var defaultSetting = {
         down: {
@@ -856,7 +873,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
                 enable: true,
                 duration: 300
-            }
+            },
+            // 可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
+            contentdown: '下拉刷新', 
+            // 可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+            contentover: '释放刷新', 
+            // 可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+            contentrefresh: '加载中...', 
+            // 可选，刷新成功的提示，当开启successAnim时才有效
+            contentsuccess: '刷新成功', 
+            // 可选，刷新失败的提示，错误回调用到，当开启successAnim时才有效
+            contenterror: '刷新失败', 
         },
         up: {
             toTop: {
@@ -866,10 +893,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 // 滚动多少距离才显示toTop
                 offset: 800
             },
-            empty: {
-                enable: true,
-                click: innerUtil.noop
-            }
+            contentdown: '上拉显示更多',
+            contentrefresh: '加载中...',
+            contentnomore: '没有更多数据了',
         }
     };
 
@@ -881,31 +907,43 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         },
         _initHook: function(isLockDown, isLockUp) {
             var container = this.container,
-                scrollWrap = this.scrollWrap;
+                scrollWrap = this.scrollWrap,
+                options = this.options;
 
-            container.classList.add('minirefresh-skin-default');
+            container.classList.add(CLASS_SKIN);
+            // 加上硬件加速让动画更流畅
+            scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
+            
             // 下拉的区域
-            var downwarp = document.createElement("div");
-            downwarp.className = 'minirefresh-downwarp';
-            downwarp.innerHTML = '<div class="downwarp-content"><p class="downwarp-progress"></p><p class="downwarp-tip">下拉刷新 </p></div>';
-            container.insertBefore(downwarp, scrollWrap);
-            this.downwarp = downwarp;
+            var downWrap = document.createElement("div");
+            
+            downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
+            downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">'+options.down.contentdown+' </p></div>';
+            container.insertBefore(downWrap, scrollWrap);
+            
+            this.downWrap = downWrap;
+            this.downWrapProgress = this.downWrap.querySelector('.downwrap-progress');
+            this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
             // 是否能下拉的变量，控制pull时的状态转变
             this.isCanPullDown = false;
 
             // 上拉区域
-            var upwarp = document.createElement("div");
-            upwarp.className = 'minirefresh-upwarp';
-            upwarp.innerHTML = '<p class="upwarp-tip">加载中..</p>';
-            upwarp.style.visibility = 'hidden';
-            scrollWrap.appendChild(upwarp);
-            this.upwarp = upwarp;
-
+            var upWrap = document.createElement("div");
+            
+            upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
+            upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">'+options.up.contentdown+'</p>';
+            upWrap.style.visibility = 'hidden';
+            scrollWrap.appendChild(upWrap);
+            
+            this.upWrap = upWrap;
+            this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
+            this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
+            
             this._initToTop();
-            this._initEmpty();
         },
         /**
          * 自定义实现一个toTop，由于这个是属于额外的事件所以没有添加的核心中，而是由各自的皮肤决定是否实现或者实现成什么样子
+         * 不过框架中仍然提供了一个默认的minirefresh-totop样式，可以方便使用
          */
         _initToTop: function() {
             var self = this,
@@ -916,56 +954,38 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             if (toTop) {
                 var toTopBtn = document.createElement("div");
 
-                toTopBtn.className = 'minirefresh-totop minirefresh-skin-default';
+                toTopBtn.className = CLASS_TO_TOP + ' '+ CLASS_SKIN;
 
                 toTopBtn.onclick = function() {
                     self.scroller.scrollTo(0, duration);
                 }
-                toTopBtn.classList.add('minirefresh-fade-out');
+                toTopBtn.classList.add(CLASS_HIDDEN);
                 this.toTopBtn = toTopBtn;
                 this.isShowToTopBtn = false;
                 // 默认添加到body中防止冲突
                 document.body.appendChild(toTopBtn);
             }
         },
-        /**
-         * 初始化空布局
-         */
-        _initEmpty: function() {
-            var self = this,
-                options = this.options,
-                empty = options.up.empty.enable,
-                emptyClick = options.up.empty.click;
-
-            if (empty) {
-                var emptyContent = document.createElement("div");
-
-                emptyContent.className = 'minirefresh-empty';
-
-                emptyContent.innerHTML = '<div class="empty-icon"></div><p class="empty-tip">暂无相关数据~</p><p class="empty-btn">去逛逛&gt;</p>';
-
-                var emptyBtn = emptyContent.querySelector('.empty-btn');
-                
-                emptyBtn.onclick = function(e) {
-                    emptyClick && emptyClick();
-
-                }
-                this.emptyContent = emptyContent;
-                this.isEmptyShow = false;
-            }
-        },
         _pullHook: function(downHight, downOffset) {
+            var options = this.options;
+            
             if (downHight < downOffset) {
-                if (this.isCanPullDown) {
-                    this.downwarp.querySelector('.downwarp-tip').innerText = '下拉刷新';
+                if (this.isCanPullDown) {                    
+                    this.downWrapTips.innerText = options.down.contentdown;
                     this.isCanPullDown = false;
                 }
             } else {
                 if (!this.isCanPullDown) {
-                    this.downwarp.querySelector('.downwarp-tip').innerText = '释放可以刷新';
+                    this.downWrapTips.innerText = options.down.contentover;
                     this.isCanPullDown = true;
                 }
             }
+            
+            var rate = downHight / downOffset,
+                progress = 360 * rate;
+                
+            this.downWrapProgress.style.webkitTransform = "rotate(" + progress + "deg)";
+            this.downWrapProgress.style.transform = "rotate(" + progress + "deg)";
         },
         _scrollHook: function(scrollTop) {
             // 用来判断toTop
@@ -976,76 +996,63 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             if (toTop && toTopBtn) {
                 if (scrollTop >= options.up.toTop.offset) {
                     if (!this.isShowToTopBtn) {
-                        toTopBtn.classList.remove('minirefresh-fade-out');
-                        toTopBtn.classList.add('minirefresh-fade-in');
+                        toTopBtn.classList.remove(CLASS_FADE_OUT);
+                        toTopBtn.classList.remove(CLASS_HIDDEN);
+                        toTopBtn.classList.add(CLASS_FADE_IN);
                         this.isShowToTopBtn = true;
                     }
                 } else {
                     if (this.isShowToTopBtn) {
-                        toTopBtn.classList.add('minirefresh-fade-out');
-                        toTopBtn.classList.remove('minirefresh-fade-in');
+                        toTopBtn.classList.add(CLASS_FADE_OUT);
+                        toTopBtn.classList.remove(CLASS_FADE_IN);
                         this.isShowToTopBtn = false;
                     }
                 }
             }
         },
         _downLoaingHook: function() {
-            this.downwarp.querySelector('.downwarp-tip').innerText = '刷新中...';
+            this.downWrapTips.innerText = this.options.down.contentrefresh;
+            this.downWrapProgress.classList.add(CLASS_ROTATE);           
         },
         _downLoaingSuccessHook: function(isSuccess) {
-            this.downwarp.querySelector('.downwarp-tip').innerText = '刷新成功';
+            this.downWrapTips.innerText = isSuccess ? this.options.down.contentsuccess : this.options.down.contenterror;
+            this.downWrapProgress.classList.remove(CLASS_ROTATE);
+            this.downWrapProgress.classList.add(CLASS_FADE_OUT);
+            this.downWrapProgress.classList.add(isSuccess ? CLASS_DOWN_SUCCESS : CLASS_DOWN_ERROR);
         },
-        _downLoaingEndHook: function() {
-            this.downwarp.querySelector('.downwarp-tip').innerText = '下拉刷新';
+        _downLoaingEndHook: function(isSuccess) {
+            this.downWrapTips.innerText = this.options.down.contentdown;
+            this.downWrapProgress.classList.remove(CLASS_ROTATE);
+            this.downWrapProgress.classList.remove(CLASS_FADE_OUT);
+            this.downWrapProgress.classList.remove(isSuccess ? CLASS_DOWN_SUCCESS : CLASS_DOWN_ERROR);
+            // 默认为不可见
             // 需要重置回来
             this.isCanPullDown = false;
+            
         },
         _upLoaingHook: function() {
-            this.upwarp.querySelector('.upwarp-tip').innerText = '加载中...';
-            this.upwarp.style.visibility = 'visible';
+            this.upWrapTips.innerText = this.options.up.contentrefresh;
+            this.upWrapProgress.classList.add(CLASS_ROTATE);
+            this.upWrapProgress.classList.remove(CLASS_HIDDEN);
+            this.upWrap.style.visibility = 'visible';
         },
         _upLoaingEndHook: function(isFinishUp) {
             if (!isFinishUp) {
-                this.upwarp.style.visibility = 'hidden';
+                // 接下来还可以加载更多
+                this.upWrap.style.visibility = 'hidden';
+                this.upWrapTips.innerText = this.options.up.contentdown;
             } else {
-                // 正常的加载更多
-                this.upwarp.querySelector('.upwarp-tip').innerText = '没有更多数据了';
+                // 已经没有更多数据了
+                this.upWrapTips.innerText = this.options.up.contentnomore;
             }
-
+            this.upWrapProgress.classList.remove(CLASS_ROTATE);
+            this.upWrapProgress.classList.add(CLASS_HIDDEN);
         },
         _lockUpLoadingHook: function(isLock) {
 
         },
         _lockDownLoadingHook: function(isLock) {
 
-        },
-        /**
-         * 对外的API，显示空布局
-         */
-        showEmpty: function() {
-            var options = this.options,
-                empty = options.up.empty.enable,
-                emptyContent = this.emptyContent;
-
-            if (empty && emptyContent && !this.isEmptyShow) {
-                this.scrollWrap.appendChild(emptyContent);
-            }
-        },
-        /**
-         * 对外的API，隐藏空布局
-         */
-        hideEmpty: function() {
-            var options = this.options,
-                empty = options.up.empty.enable,
-                emptyContent = this.emptyContent;
-
-            if (empty && emptyContent && this.isEmptyShow) {
-                var parentDom = emptyContent.parentNode;
-                if (parentDom) {
-                    parentDom.removeChild(emptyContent);
-                    this.isEmptyShow = false;
-                }
-            }
         },
     });
 
