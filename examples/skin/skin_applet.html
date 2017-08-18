@@ -80,6 +80,7 @@
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
+                    appletAnimation: true,
                     callback: function() {
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);

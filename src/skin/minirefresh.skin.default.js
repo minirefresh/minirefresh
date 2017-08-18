@@ -1,5 +1,13 @@
 /**
- * 微信小程序皮肤
+ * minirefresh的默认皮肤
+ * 默认皮肤会打包到核心代码中
+ * 皮肤类继承自基类，所以可以调用基类的属性（但是不建议滥用）
+ * 拓展其它皮肤有两种方案：
+ * 1. 直接继承自default，会默认拥有default的属性，只需要覆盖自定义功能即可（注意必须覆盖，否则会调用dwfault的默认操作）
+ * 2. 和default一样，继承自 innerUtil.core，这样会与default无关，所以的一切UI都必须自己实现（可以参考default去实现）
+ * 
+ * 一般，在进行一些小修改时，建议继承自default（这样toTop，上拉加载大部分代码都可复用）
+ * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写皮肤
  */
 (function(innerUtil) {
     
@@ -65,11 +73,20 @@
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-
+            
             container.classList.add(CLASS_SKIN);
             // 加上硬件加速让动画更流畅
             scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
             
+            this._initDownWrap();
+            this._initUpWrap();   
+            this._initToTop();
+        },
+        _initDownWrap: function() {
+            var container = this.container,
+                scrollWrap = this.scrollWrap,
+                options = this.options;
+                
             // 下拉的区域
             var downWrap = document.createElement("div");
             
@@ -82,7 +99,12 @@
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
             // 是否能下拉的变量，控制pull时的状态转变
             this.isCanPullDown = false;
-
+        },
+        _initUpWrap: function() {
+            var container = this.container,
+                scrollWrap = this.scrollWrap,
+                options = this.options;
+                
             // 上拉区域
             var upWrap = document.createElement("div");
             
@@ -94,8 +116,6 @@
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
             this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
-            
-            this._initToTop();
         },
         /**
          * 自定义实现一个toTop，由于这个是属于额外的事件所以没有添加的核心中，而是由各自的皮肤决定是否实现或者实现成什么样子
@@ -205,15 +225,15 @@
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
         },
         _lockUpLoadingHook: function(isLock) {
-
+            // 可以实现自己的逻辑
         },
         _lockDownLoadingHook: function(isLock) {
-
+            // 可以实现自己的逻辑
         },
     });
 
-    // 挂载皮肤，这样多个皮肤可以并存
-    innerUtil.namespace('skin.default', MiniRefreshSkin);
+    // 挂载皮肤，这样多个皮肤可以并存，default是关键字，所以使用了defaults
+    innerUtil.namespace('skin.defaults', MiniRefreshSkin);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
     window.MiniRefresh = MiniRefreshSkin;

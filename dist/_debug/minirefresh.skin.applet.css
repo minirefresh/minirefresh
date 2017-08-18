@@ -39,19 +39,19 @@
     display: inline-block;
 }
 
-.loading .ball-beat div {
+.loading-applet .ball-beat div {
     -webkit-animation-fill-mode: both;
     animation-fill-mode: both;
     -webkit-animation: ball-beat 1s 0s infinite linear;
     animation: ball-beat 1s 0s infinite linear;
 }
 
-.loading .ball-beat > div:nth-child(2) {
+.loading-applet .ball-beat > div:nth-child(2) {
     -webkit-animation-delay: 0.3s !important;
     animation-delay: 0.3s !important;
 }
 
-.loading .ball-beat > div:nth-child(3) {
+.loading-applet .ball-beat > div:nth-child(3) {
     -webkit-animation-delay: 0.6s !important;
     animation-delay: 0.6s !important;
 }
@@ -68,29 +68,4 @@
     width: 100%;
     margin-top: 20px;
     text-align: center;
-}
-
-.minirefresh-skin-applet .minirefresh-upwrap {
-    min-height: 30px;
-    padding: 15px 0;
-    text-align: center;
-}
-
-.minirefresh-skin-applet .minirefresh-upwrap .upwrap-progress {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    border: 1px solid gray;
-    margin-right: 8px;
-    border-bottom-color: transparent;
-    vertical-align: middle;
-}
-
-
-.minirefresh-skin-applet .minirefresh-upwrap .upwrap-tips {
-    display: inline-block;
-    font-size: 12px;
-    color: gray;
-    vertical-align: middle;
 }
