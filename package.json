@@ -1,0 +1,19 @@
+{
+  "name": "minirefresh",
+  "version": "1.0.0",
+  "description": "一款极简的H5下拉刷新",
+  "author": "dailc",
+  "homepage": "https://github.com/dailc/minirefresh",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^2.0.10",
+    "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.1"
+  },
+  "dependencies": {
+    "gulp-header": "^1.8.8",
+    "gulp-sequence": "^0.4.6"
+  }
+}

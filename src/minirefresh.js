@@ -1,0 +1,226 @@
+/**
+ * 构建 MiniRefresh
+ * MiniRefreshTools 是内部使用的
+ * 外部皮肤会用 MiniRefresh变量
+ */
+window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
+    /**
+     * 模拟Class的基类,以便模拟Class进行继承等
+     */
+    (function() {
+        // 同时声明多个变量,用,分开要好那么一点点
+        var initializing = false,
+            // 通过正则检查是否是函数
+            fnTest = /xyz/.test(function() {
+                xyz;
+            }) ? /\b_super\b/ : /.*/;
+        var Clazz = function() {};
+        // 很灵活的一种写法,直接重写Class的extend,模拟继承
+        Clazz.extend = function(prop) {
+            var _super = this.prototype;
+            initializing = true;
+            // 可以这样理解:这个prototype将this中的方法和属性全部都复制了一遍
+            var prototype = new this();
+            initializing = false;
+            for (var name in prop) {
+                /**
+                 * 这一些列操作逻辑并不简单，得清楚运算符优先级
+                 * 逻辑与的优先级是高于三元条件运算符的,得注意下
+                 * 只有继承的函数存在_super时才会触发(哪怕注释也一样进入)
+                 * 所以梳理后其实一系列的操作就是判断是否父对象也有相同对象
+                 * 如果有,则对应函数存在_super这个东西
+                 */
+                prototype[name] = typeof prop[name] == "function" &&
+                    typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+                    (function(name, fn) {
+                        return function() {
+                            var tmp = this._super;
+                            this._super = _super[name];
+                            var ret = fn.apply(this, arguments);
+                            this._super = tmp;
+                            return ret;
+                        };
+                    })(name, prop[name]) :
+                    prop[name];
+            }
+            /**
+             * Clss的构造,默认会执行init方法
+             */
+            function Clazz() {
+                if (!initializing && this.init) {
+                    this.init.apply(this, arguments);
+                }
+            }
+            Clazz.prototype = prototype;
+            Clazz.prototype.constructor = Clazz;
+            //Clazz.extend = this.extend;
+
+            // 一些修改，让静态属性也继承
+            for (var prop in this) {
+                Clazz[prop] = this[prop];
+            }
+            return Clazz;
+        };
+        exports.Clazz = Clazz;
+    })();
+    
+    /**
+     * 空函数
+     */
+    exports.noop = function() {};
+
+    exports.isFunction = function(obj) {
+        return typeof(obj) === "function";
+    };
+    
+    exports.isObject = function(obj) {
+        return typeof(obj) === "object";
+    };
+
+    exports.isArray = Array.isArray ||
+        function(object) {
+            return object instanceof Array;
+        };
+
+    /**
+     * 参数拓展
+     * @param {type} deep
+     * @param {type} target
+     * @param {type} source
+     */
+    exports.extend = function() {
+        var args = [].slice.call(arguments);
+
+        // 目标
+        var target = args[0] || {},
+            // 默认source从1开始
+            index = 1,
+            len = args.length,
+            // 默认非深复制
+            deep = false;
+
+        if (typeof target === "boolean") {
+            // 如果开启了深复制
+            deep = target;
+            target = args[index] || {};
+            index++;
+        }
+
+        if (!exports.isObject(target)) {
+            // 确保拓展的一定是object
+            target = {};
+        }
+
+        if (index === len) {
+            // 如果调用的extend本来就是可以拓展的，第0个就变为source了
+            target = this;
+            index--;
+        }
+
+        for (; index < len; index++) {
+            // source的拓展
+            var source = args[index];
+
+            if (source && exports.isObject(source)) {
+                for (var name in source) {
+                    var src = target[name];
+                    var copy = source[name];
+                    var clone,
+                        copyIsArray;
+
+                    if (target === copy) {
+                        // 防止环形引用
+                        continue;
+                    }
+
+                    if (deep && copy && (exports.isObject(copy) || (copyIsArray = exports.isArray(copy)))) {
+                        if (copyIsArray) {
+                            copyIsArray = false;
+                            clone = src && exports.isArray(src) ? src : [];
+                        } else {
+                            clone = src && exports.isObject(src) ? src : {};
+                        }
+
+                        target[name] = exports.extend(deep, clone, copy);
+                    } else if (copy !== undefined) {
+                        target[name] = copy;
+                    }
+                }
+            }
+        }
+
+        return target;
+    };
+
+    /**
+     * 选择这段代码用到的太多了，因此抽取封装出来
+     * @param {Object} element dom元素或者selector
+     */
+    exports.selector = function(element) {
+        if (typeof element === 'string') {
+            element = document.querySelector(element);
+        }
+
+        return element;
+    };
+
+    /**
+     * 将string字符串转为html对象,默认创一个div填充
+     * 因为很常用，所以单独提取出来了
+     * @param {String} strHtml 目标字符串
+     * @return {HTMLElement} 返回处理好后的html对象,如果字符串非法,返回null
+     */
+    exports.parseHtml = function(strHtml) {
+        if (strHtml == null || typeof(strHtml) != "string") {
+            return null;
+        }
+        // 创一个灵活的div
+        var i, a = document.createElement("div");
+        var b = document.createDocumentFragment();
+        a.innerHTML = strHtml;
+        while (i = a.firstChild) b.appendChild(i);
+        return b;
+    };
+
+    /**
+     * 设置一个Util对象下的命名空间
+     * @param {String} namespace
+     * @param {Object} obj 需要赋值的目标对象
+     */
+    exports.namespace = function(namespace, obj) {
+        var parent = window.MiniRefreshTools;
+
+        if (!namespace) {
+            return parent;
+        }
+
+        var namespaceArr = namespace.split('.'),
+            len = namespaceArr.length;
+
+        for (var i = 0; i < len - 1; i++) {
+            var tmp = namespaceArr[i];
+            // 不存在的话要重新创建对象
+            parent[tmp] = parent[tmp] || {};
+            // parent要向下一级
+            parent = parent[tmp];
+
+        }
+        parent[namespaceArr[len - 1]] = obj;
+
+        return parent[namespaceArr[len - 1]];
+    };
+    
+    
+    /**
+     * 兼容require，但是require出去的是MiniRefreshTools，所以仍然建议通过全局变量MiniRefresh调用
+     */
+    if (typeof module != 'undefined' && module.exports) {
+        module.exports = exports;
+    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+        define(function() {
+            return exports;
+        });
+    }
+
+    return exports;
+})({});

@@ -1,0 +1,285 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-14
+        描述：  默认的皮肤
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>MiniFresh skin default</title>
+        <link rel="stylesheet" href="../../test/js/mui/mui.css" />
+        <style>
+            * {
+                -webkit-user-select: none;
+            }
+            
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 44px;
+            }
+            
+            .minirefresh-wrap {
+                position: absolute;
+                top: 44px;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                /*
+                 * 去除wrap层的滚动条，确保只有scrol层有滚动条
+                 */
+                overflow-y: hidden;
+            }
+            
+            .minirefresh-scroll {
+                position: absolute;
+                top: 0;
+                /*
+                 * 标明了top和bottom  滑动的就是minirefresh-scroll而不再是document.body
+                 */
+                bottom: 0;
+                width: 100%;
+                -webkit-overflow-scrolling: touch;
+                overflow-y: auto;
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+            
+            .minirefresh-downwarp {
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            /*滚动条轨道背景(默认在PC端设置)*/
+            
+            .mescroll-bar::-webkit-scrollbar-track {
+                background-color: transparent;
+            }
+            /*滚动条轨道宽度 (默认在PC端设置)*/
+            
+            .minirefresh-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+            /*滚动条游标 (默认在PC端设置)*/
+            
+            .minirefresh-scroll::-webkit-scrollbar-thumb {
+                border-radius: 6px;
+                background-color: #ccc;
+            }
+            /*滚动条游标鼠标经过的颜色变化 (默认在PC端设置)*/
+            
+            .minirefresh-scroll::-webkit-scrollbar-thumb:hover {
+                background-color: #aaa;
+            }
+        </style>
+
+    </head>
+
+    <body >
+        <p class="header">
+            <a class="btn-left" >main</a> 满屏加载与锁定滑动</p>
+            
+            <div id="slider" class="mui-content mui-slider mui-fullscreen">
+                <div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+                    <div class="mui-scroll">
+                        <a class="mui-control-item mui-active" href="#item1mobile">
+                            推荐
+                        </a>
+                        <a class="mui-control-item" href="#item2mobile">
+                            热点
+                        </a>
+                        <a class="mui-control-item" href="#item3mobile">
+                            北京
+                        </a>
+                        <a class="mui-control-item" href="#item4mobile">
+                            社会
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mui-slider-group">
+                    <div id="item1mobile" class="mui-slider-item mui-control-content mui-active">
+        <div id="pullrefresh" class="minirefresh-wrap">
+
+            <div class="minirefresh-scroll">
+
+                <ul class="data-list" id="listdata">
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+<div id="slider2" class="mui-slider" >
+            <div class="mui-slider-group mui-slider-loop">
+                <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="../images/yuantiao.jpg">
+                    </a>
+                </div>
+                <!-- 第一张 -->
+                <div class="mui-slider-item">
+                    <a href="#">
+                        <img src="../images/shuijiao.jpg">
+                    </a>
+                </div>
+                <!-- 第二张 -->
+                <div class="mui-slider-item">
+                    <a href="#">
+                        <img src="../images/muwu.jpg">
+                    </a>
+                </div>
+                <!-- 第三张 -->
+                <div class="mui-slider-item">
+                    <a href="#">
+                        <img src="../images/cbd.jpg">
+                    </a>
+                </div>
+                <!-- 第四张 -->
+                <div class="mui-slider-item">
+                    <a href="#">
+                        <img src="../images/yuantiao.jpg">
+                    </a>
+                </div>
+                <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                <div class="mui-slider-item mui-slider-item-duplicate">
+                    <a href="#">
+                        <img src="../images/shuijiao.jpg">
+                    </a>
+                </div>
+            </div>
+            <div class="mui-slider-indicator">
+                <div class="mui-indicator mui-active"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+                <div class="mui-indicator"></div>
+            </div>
+        </div>                    
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                </ul>
+            </div>
+        </div>                        
+                      </div>
+                      
+                      <div id="item2mobile" class="mui-slider-item mui-control-content mui-active">
+                          <div id="pullrefresh2" class="minirefresh-wrap">
+
+                            <div class="minirefresh-scroll">
+<ul id="listdata2">
+    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>  
+</ul>                                
+                            </div>
+                          </div>           
+                      </div>
+                      
+                      <div id="item3mobile" class="mui-slider-item mui-control-content mui-active">
+                          <div id="pullrefresh3" class="minirefresh-wrap">
+
+                            <div class="minirefresh-scroll">
+<ul id="listdata3">
+	<li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>  
+</ul>                              
+                            </div>
+                          </div>           
+                      </div>
+                      
+                      <div id="item4mobile" class="mui-slider-item mui-control-content mui-active">
+                          <div id="pullrefresh4" class="minirefresh-wrap">
+
+                            <div class="minirefresh-scroll">
+<ul id="listdata4">
+    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+                    <li>111111111111111111111111111v</li>  
+</ul>                               
+                            </div>
+                          </div>           
+                      </div>
+                      
+                      
+                </div>
+                
+           </div>
+
+
+        <script src="../../test/js/mui/mui.js"></script>
+        <script type="text/javascript" src="../../dist/_debug/minirefresh.js"></script>
+        <script>
+            var slider = mui("#slider2");
+            slider.slider({
+                        interval: 0
+                    });
+            new MiniRefresh.core();
+            new MiniRefresh.core({
+                container: '#pullrefresh2',
+                listdata: '#listdata2'
+            });
+            new MiniRefresh.core({
+                container: '#pullrefresh3',
+                listdata: '#listdata3'
+            });
+            new MiniRefresh.core({
+                container: '#pullrefresh4',
+                listdata: '#listdata4'
+            });
+        </script>
+    </body>
+
+</html>

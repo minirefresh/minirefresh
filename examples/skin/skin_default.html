@@ -1,0 +1,114 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-14
+        描述：  默认的皮肤
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>MiniFresh skin default</title>
+        <link rel="stylesheet" href="../../dist/_debug/minirefresh.css" />
+        <style>
+            * {
+                -webkit-user-select: none;
+            }
+            
+            .header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 44px;
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <p class="header">
+            <a class="btn-left" href="../index.html">main</a> 满屏加载与锁定滑动</p>
+        <!--下拉刷新容器
+					pullrefresh 和 listdata是下拉刷新组件默认的id
+					简单的调用没有必要修改,如果有自定义修改需求的,请参考详细调用
+				-->
+        <div id="minirefresh" class="minirefresh-wrap">
+
+            <div class="minirefresh-scroll">
+
+                <ul class="data-list" id="listdata">
+                    <li>111111111111111111111111111v</li>
+                    <li>222222222222222222222222222</li>
+
+                </ul>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/_debug/minirefresh.js"></script>
+        <script>
+            /**
+             * 将string字符串转为html对象,默认创一个div填充
+             * 因为很常用，所以单独提取出来了
+             * @param {String} strHtml 目标字符串
+             * @return {HTMLElement} 返回处理好后的html对象,如果字符串非法,返回null
+             */
+            function parseHtml(strHtml) {
+                if (strHtml == null || typeof(strHtml) != "string") {
+                    return null;
+                }
+                // 创一个灵活的div
+                var i, a = document.createElement("div");
+                var b = document.createDocumentFragment();
+                a.innerHTML = strHtml;
+                while (i = a.firstChild) b.appendChild(i);
+                return b;
+            }
+
+            for　 (var i = 0; i < 20; i++) {
+                var child = parseHtml('<li>1111111111111111111111</li><li>22222222222222222222222</li><li>1333333333333333333333333333</li><li>544444444444444444444444444</li>');
+                document.querySelector('#listdata').appendChild(child);
+            }
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                listdata: '#listdata',
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            miniRefresh.endDownLoading(true);
+                        }, 1000);
+                    }
+                },
+                up: {
+                    auto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            // TODO:暂时的测试代码
+                            var child = parseHtml('<li>333333333333333333333333333333</li><li>544444444444444444444444444</li><li>333333333333333333333333333333</li><li>544444444444444444444444444</li><li>333333333333333333333333333333</li><li>544444444444444444444444444</li>');
+                            document.querySelector('#listdata').appendChild(child);
+                            miniRefresh.endUpLoading(true, true);
+
+                            //document.querySelector('#listdata').innerHTML = '';
+                            
+                            //miniRefresh.showEmpty();
+                        }, 1000);
+                    },
+                    loadFull: {
+                        // 开启配置后，只要没满屏幕，就会自动加载
+                        enable: true,
+                        delay: 300
+                    },
+                    empty: {
+                        enable: true,
+                        click: function() {
+                            console.log("点击empty");
+                        }
+                    }
+                }
+            });
+        </script>
+    </body>
+
+</html>
