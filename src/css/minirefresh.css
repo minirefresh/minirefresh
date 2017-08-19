@@ -172,17 +172,6 @@
     animation: minirefresh-fade-out .5s linear forwards;
 }
 
-/**
- * 默认的下拉区域样式
- */
-
-.minirefresh-downwrap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
 
 /**
  * 重写部分toTop样式，可以这样重新（没有空格）
@@ -209,6 +198,9 @@
  */
 
 .minirefresh-skin-default .minirefresh-downwrap {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 50px;
 }
@@ -221,8 +213,6 @@
 
 .minirefresh-skin-default .downwrap-content {
     position: absolute;
-    top: 0;
-    bottom: 0;
     width: 100%;
     padding: 10px 0;
     text-align: center;

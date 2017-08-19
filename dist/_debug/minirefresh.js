@@ -210,18 +210,6 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         return parent[namespaceArr[len - 1]];
     };
     
-    
-    /**
-     * 兼容require，但是require出去的是MiniRefreshTools，所以仍然建议通过全局变量MiniRefresh调用
-     */
-    if (typeof module != 'undefined' && module.exports) {
-        module.exports = exports;
-    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
-        define(function() {
-            return exports;
-        });
-    }
-
     return exports;
 })({});
 /**
@@ -246,6 +234,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         this.options = minirefresh.options;
         // 默认没有事件，需要主动绑定
         this.events = {};
+        // 默认没有hook
+        this.hooks = {};
 
         // 是否使用了scrollto功能，使用这个功能时会禁止操作
         this.isScrollTo = false;
@@ -270,10 +260,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         var self = this;
         // 在初始化完毕后，下一个循环的开始再执行
         setTimeout(function() {
-            if (self.options.down && self.options.down.auto) {
+            if (self.options.down && self.options.down.auto && !self.isLockDown) {
                 // 如果设置了auto，则自动下拉一次
                 self.triggerDownLoading();
-            } else if (self.options.up && self.options.up.auto) {
+            } else if (self.options.up && self.options.up.auto && !self.isLockUp) {                
                 // 如果设置了auto，则自动上拉一次
                 self.triggerUpLoading();
             }
@@ -465,12 +455,15 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         var self = this,
             options = this.options,
             bounceTime = options.down.bounceTime;
-            
-        self.downLoading = true;
-        self.downHight = options.down.offset;
-        self._translate(self.downHight, bounceTime);
         
-        self.events['downLoading'] && self.events['downLoading']();
+        if (!this.hooks['beforeDownLoading'] || this.hooks['beforeDownLoading'](self.downHight, options.down.offset)) {
+            // 没有hook或者hook返回true都通过，主要是为了方便类似于秘密花园等的自定义下拉刷新动画实现
+            self.downLoading = true;
+            self.downHight = options.down.offset;
+            self._translate(self.downHight, bounceTime);
+        
+            self.events['downLoading'] && self.events['downLoading']();
+        }     
     };
 
     /**
@@ -493,7 +486,6 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
     MiniScroll.prototype.triggerUpLoading = function() {
         this.upLoading = true;       
-
         this.events['upLoading'] && this.events['upLoading']();
     };
 
@@ -575,7 +567,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
      * @param {Boolean} isLock
      */
     MiniScroll.prototype.lockDown = function(isLock) {
-        this.options.down && isLock && (this.isLockDown = false);
+        this.options.down && (this.isLockDown = isLock);
     };
 
     /**
@@ -583,7 +575,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
      * @param {Boolean} isLock
      */
     MiniScroll.prototype.lockUp = function(isLock) {
-        this.options.up && isLock && (this.isLockUp = false);
+        this.options.up && (this.isLockUp = isLock);
     };
 
     MiniScroll.prototype.resetUpLoading = function(isShowUpLoading) {
@@ -621,11 +613,15 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     };
 
     /**
-     * 事件取消注册
-     * @param {Object} event
+     * 注册钩子函数，主要是一些自定义刷新动画时用到，如进入秘密花园
+     * @param {String} hook 名称，范围如下
+     * beforeDownLoading 是否准备downLoading，如果返回false，则不会loading，完全进入自定义动画
      */
-    MiniScroll.prototype.off = function(event) {
-        this.events[event] = undefined;
+    MiniScroll.prototype.hook = function(hook, callback) {
+        if (!hook || !innerUtil.isFunction(callback)) {
+            return;
+        }
+        this.hooks[hook] = callback;
     };
 
     innerUtil.scroll = MiniScroll;
@@ -641,17 +637,21 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * _scrollHook(scrollTop)                       滚动过程中持续回调
  * _downLoaingHook()                            下拉触发的那一刻回调
  * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
- * _downLoaingEndHook(isSuccess)                         下拉刷新动画结束后的回调
+ * _downLoaingEndHook(isSuccess)                下拉刷新动画结束后的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
  * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
  * _lockDownLoadingHook(isLock)                 锁定下拉时的回调
+ * 
+ * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
  */
 (function(innerUtil) {
 
     var defaultSetting = {
         // 下拉有关
         down: {
+            // 默认没有锁定，可以通过API动态设置
+            isLock: false,
             // 是否自动下拉刷新
             auto: false,
             // 下拉要大于多少长度后再下拉刷新
@@ -669,6 +669,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         },
         // 上拉有关
         up: {
+            // 默认没有锁定，可以通过API动态设置
+            isLock: false,
             // 是否自动上拉加载-初始化是是否自动
             auto: true,
             // 距离底部高度(到达该高度即触发)
@@ -678,6 +680,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 enable: true,
                 delay: 300
             },
+            // 是否默认显示上拉进度条，可以通过API改变
+            isShowUpLoading: true,
             callback: innerUtil.noop
 
         }, 
@@ -702,6 +706,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 生成一个Scroll对象 ，对象内部处理滑动监听
             this.scroller = new innerUtil.scroll(this);
             
+            this.resetUpLoading(options.up.isShowUpLoading);
+            this.lockUpLoading(options.up.isLock);
+            this.lockDownLoading(options.down.isLock);
             this._initEvent();
             
             // 初始化的hook
@@ -716,8 +723,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 options.down.callback && options.down.callback();
             });
             
-            this.scroller.on('upLoading', function() {
-                self._upLoaingHook && self._upLoaingHook();
+            this.scroller.on('upLoading', function() { 
+                self._upLoaingHook && self._upLoaingHook(self.scroller.isShowUpLoading);
                 options.up.callback && options.up.callback();
             });
             
@@ -729,6 +736,11 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this.scroller.on('scroll', function(scrollTop) {
                 self._scrollHook && self._scrollHook(scrollTop);
                 options.up.scroll && options.up.scroll();
+            });
+            
+            // 检查是否允许普通的加载中，如果返回false，就代表自定义下拉刷新，通常自己处理
+            this.scroller.hook('beforeDownLoading', function(downHight, downOffset) {
+                return !self._beforeDownLoadingHook || self._beforeDownLoadingHook(downHight, downOffset);
             });
         },
         /**
@@ -794,7 +806,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this._endUpLoading(isFinishUp);
         },
         /**
-         * 重新刷新上拉加载，刷新后会变为可以上拉加载
+         * 重新刷新上拉加载，刷新后会变为可以上拉加载，这里面也可以主动更新一些其它状态
          * @param {Boolean} isShowUpLoading 是否显示上拉加载动画，必须是布尔值才设置有效
          */
         resetUpLoading: function(isShowUpLoading) {
@@ -854,7 +866,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写皮肤
  */
 (function(innerUtil) {
-    
+
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
      * skin字段会根据不同的皮肤有不同值
@@ -868,7 +880,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     var CLASS_ROTATE = 'minirefresh-rotate';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
     var CLASS_HIDDEN = 'minirefresh-hidden';
-    
+
     /**
      * 本皮肤的特色样式
      */
@@ -883,15 +895,15 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 duration: 300
             },
             // 可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-            contentdown: '下拉刷新', 
+            contentdown: '下拉刷新',
             // 可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-            contentover: '释放刷新', 
+            contentover: '释放刷新',
             // 可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-            contentrefresh: '加载中...', 
+            contentrefresh: '加载中...',
             // 可选，刷新成功的提示，当开启successAnim时才有效
-            contentsuccess: '刷新成功', 
+            contentsuccess: '刷新成功',
             // 可选，刷新失败的提示，错误回调用到，当开启successAnim时才有效
-            contenterror: '刷新失败', 
+            contenterror: '刷新失败',
         },
         up: {
             toTop: {
@@ -917,27 +929,27 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-            
+
             container.classList.add(CLASS_SKIN);
             // 加上硬件加速让动画更流畅
             scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
-            
+
             this._initDownWrap();
-            this._initUpWrap();   
+            this._initUpWrap();
             this._initToTop();
         },
         _initDownWrap: function() {
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-                
+
             // 下拉的区域
             var downWrap = document.createElement("div");
-            
+
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
-            downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">'+options.down.contentdown+' </p></div>';
+            downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
             container.insertBefore(downWrap, scrollWrap);
-            
+
             this.downWrap = downWrap;
             this.downWrapProgress = this.downWrap.querySelector('.downwrap-progress');
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
@@ -948,15 +960,15 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-                
+            
             // 上拉区域
             var upWrap = document.createElement("div");
-            
+
             upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
-            upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">'+options.up.contentdown+'</p>';
+            upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
             upWrap.style.visibility = 'hidden';
             scrollWrap.appendChild(upWrap);
-            
+
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
             this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
@@ -974,7 +986,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             if (toTop) {
                 var toTopBtn = document.createElement("div");
 
-                toTopBtn.className = CLASS_TO_TOP + ' '+ CLASS_SKIN;
+                toTopBtn.className = CLASS_TO_TOP + ' ' + CLASS_SKIN;
 
                 toTopBtn.onclick = function() {
                     self.scroller.scrollTo(0, duration);
@@ -988,9 +1000,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         },
         _pullHook: function(downHight, downOffset) {
             var options = this.options;
-            
+
             if (downHight < downOffset) {
-                if (this.isCanPullDown) {                    
+                if (this.isCanPullDown) {
                     this.downWrapTips.innerText = options.down.contentdown;
                     this.isCanPullDown = false;
                 }
@@ -1000,10 +1012,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                     this.isCanPullDown = true;
                 }
             }
-            
+
             var rate = downHight / downOffset,
                 progress = 360 * rate;
-                
+
             this.downWrapProgress.style.webkitTransform = "rotate(" + progress + "deg)";
             this.downWrapProgress.style.transform = "rotate(" + progress + "deg)";
         },
@@ -1032,7 +1044,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         },
         _downLoaingHook: function() {
             this.downWrapTips.innerText = this.options.down.contentrefresh;
-            this.downWrapProgress.classList.add(CLASS_ROTATE);           
+            this.downWrapProgress.classList.add(CLASS_ROTATE);
         },
         _downLoaingSuccessHook: function(isSuccess) {
             this.downWrapTips.innerText = isSuccess ? this.options.down.contentsuccess : this.options.down.contenterror;
@@ -1048,13 +1060,18 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 默认为不可见
             // 需要重置回来
             this.isCanPullDown = false;
-            
+
         },
-        _upLoaingHook: function() {
-            this.upWrapTips.innerText = this.options.up.contentrefresh;
-            this.upWrapProgress.classList.add(CLASS_ROTATE);
-            this.upWrapProgress.classList.remove(CLASS_HIDDEN);
-            this.upWrap.style.visibility = 'visible';
+        _upLoaingHook: function(isShowUpLoading) {
+            if (isShowUpLoading) {
+                this.upWrapTips.innerText = this.options.up.contentrefresh;
+                this.upWrapProgress.classList.add(CLASS_ROTATE);
+                this.upWrapProgress.classList.remove(CLASS_HIDDEN);
+                this.upWrap.style.visibility = 'visible';
+            } else {
+                this.upWrap.style.visibility = 'hidden';
+            }
+
         },
         _upLoaingEndHook: function(isFinishUp) {
             if (!isFinishUp) {
@@ -1063,6 +1080,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 this.upWrapTips.innerText = this.options.up.contentdown;
             } else {
                 // 已经没有更多数据了
+                this.upWrap.style.visibility = 'visible';
                 this.upWrapTips.innerText = this.options.up.contentnomore;
             }
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
@@ -1081,5 +1099,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
     window.MiniRefresh = MiniRefreshSkin;
+
+    /**
+     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
+     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     */
+    if (typeof module != 'undefined' && module.exports) {
+        module.exports = MiniRefresh;
+    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+        define(function() {
+            return MiniRefresh;
+        });
+    }
 
 })(MiniRefreshTools);

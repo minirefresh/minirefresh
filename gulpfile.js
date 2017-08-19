@@ -17,12 +17,13 @@ var banner = ['/**',
     ''
 ].join('\n');
 
+// 暂且将debug和release放在一起
 var debugPath = './dist/_debug/';
 var releasePath = './dist/';
 
 // MiniRefresh核心文件合并，默认打包核心文件已经default皮肤
 gulp.task('core_concat', function() {
-    return gulp.src(['./src/minirefresh.js', './src/minirefresh.innerutil.js', './src/minirefresh.scroll.js', './src/minirefresh.core.js', './src/skin/minirefresh.skin.default.js'])
+    return gulp.src(['./src/minirefresh.js', './src/minirefresh.innerutil.js', './src/minirefresh.scroll.js', './src/minirefresh.core.js', './src/minirefresh.skin.default.js'])
         .pipe(concat('minirefresh.js'))
         .pipe(gulp.dest(debugPath));
 });
@@ -30,7 +31,7 @@ gulp.task('core_concat', function() {
 // 打包skin系列（除了default，因为default已经默认打包）
 gulp.task('pack_skin', function() {
     return gulp.src(['./src/skin/*.js', '!./src/skin/minirefresh.skin.default.js'])
-        .pipe(gulp.dest(debugPath));
+        .pipe(gulp.dest(debugPath+'skin/'));
 });
 
 // 打包 css以及静态资源

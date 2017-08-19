@@ -23,10 +23,7 @@
             successAnim: {
                 // 微信小程序皮肤没有successAnim 也没有文字提示
                 enable: false,
-            },
-            // 是否开启applet的dot css动画，这是本皮肤的拓展
-            // 如果过于影响性能，可以关闭掉
-            appletAnimation: true
+            }
         }
     };
 
@@ -53,18 +50,23 @@
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content ball-beat"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
             container.insertBefore(downWrap, scrollWrap);
-            
+
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
             container.classList.add(CLASS_SKIN);
 
             this.downWrap = downWrap;
-            this._resetDownWrap();
+            // 留一个默认值，以免样式被覆盖，无法获取
+            this.downWrapHeight = this.downWrap.offsetHeight || 50;
+            this._transformDownWrap(-1 * this.downWrapHeight);
         },
-        _resetDownWrap: function() {
-            if (this.options.down.appletAnimation) {
-                this.downWrap.style.webkitTransform = 'translateY(-50px)';
-                this.downWrap.style.transform = 'translateY(-50px)';
-            }
+        _transformDownWrap: function(offset, duration) {
+            offset = offset || 0;
+            duration = duration || 0;
+            // 记得动画时 translateZ 否则硬件加速会被覆盖
+            this.downWrap.style.webkitTransitionDuration = duration + 'ms';
+            this.downWrap.style.transitionDuration = duration + 'ms';
+            this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
+            this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
         },
         /**
          * 重写下拉过程动画
@@ -74,17 +76,13 @@
         _pullHook: function(downHight, downOffset) {
             var options = this.options;
 
-            if (this.options.down.appletAnimation) {
-                if (downHight < downOffset) {
-                    var rate = downHight / downOffset,
-                        offset = (-50 + rate * 50);
-
-                    this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)';
-                    this.downWrap.style.transform = 'translateY(' + offset + 'px)';
-                } else {
-                    this.downWrap.style.webkitTransform = 'translateY(0)';
-                    this.downWrap.style.transform = 'translateY(0)';
-                }
+            if (downHight < downOffset) {
+                var rate = downHight / downOffset,
+                    offset = this.downWrapHeight * (-1 + rate);
+                
+                this._transformDownWrap(offset);
+            } else {
+                this._transformDownWrap(0);
             }
         },
         /**
@@ -102,7 +100,7 @@
          */
         _downLoaingEndHook: function(isSuccess) {
             this.downWrap.classList.remove(CLASS_DOWN_LOADING);
-            this._resetDownWrap();
+            this._transformDownWrap(-1 * this.downWrapHeight);
         }
     });
 
@@ -111,7 +109,7 @@
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
     window.MiniRefresh = MiniRefreshSkin;
-    
+
     /**
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持

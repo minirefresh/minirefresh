@@ -9,17 +9,21 @@
  * _scrollHook(scrollTop)                       滚动过程中持续回调
  * _downLoaingHook()                            下拉触发的那一刻回调
  * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
- * _downLoaingEndHook(isSuccess)                         下拉刷新动画结束后的回调
+ * _downLoaingEndHook(isSuccess)                下拉刷新动画结束后的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
  * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
  * _lockDownLoadingHook(isLock)                 锁定下拉时的回调
+ * 
+ * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
  */
 (function(innerUtil) {
 
     var defaultSetting = {
         // 下拉有关
         down: {
+            // 默认没有锁定，可以通过API动态设置
+            isLock: false,
             // 是否自动下拉刷新
             auto: false,
             // 下拉要大于多少长度后再下拉刷新
@@ -37,6 +41,8 @@
         },
         // 上拉有关
         up: {
+            // 默认没有锁定，可以通过API动态设置
+            isLock: false,
             // 是否自动上拉加载-初始化是是否自动
             auto: true,
             // 距离底部高度(到达该高度即触发)
@@ -46,6 +52,8 @@
                 enable: true,
                 delay: 300
             },
+            // 是否默认显示上拉进度条，可以通过API改变
+            isShowUpLoading: true,
             callback: innerUtil.noop
 
         }, 
@@ -70,6 +78,9 @@
             // 生成一个Scroll对象 ，对象内部处理滑动监听
             this.scroller = new innerUtil.scroll(this);
             
+            this.resetUpLoading(options.up.isShowUpLoading);
+            this.lockUpLoading(options.up.isLock);
+            this.lockDownLoading(options.down.isLock);
             this._initEvent();
             
             // 初始化的hook
@@ -84,8 +95,8 @@
                 options.down.callback && options.down.callback();
             });
             
-            this.scroller.on('upLoading', function() {
-                self._upLoaingHook && self._upLoaingHook();
+            this.scroller.on('upLoading', function() { 
+                self._upLoaingHook && self._upLoaingHook(self.scroller.isShowUpLoading);
                 options.up.callback && options.up.callback();
             });
             
@@ -97,6 +108,11 @@
             this.scroller.on('scroll', function(scrollTop) {
                 self._scrollHook && self._scrollHook(scrollTop);
                 options.up.scroll && options.up.scroll();
+            });
+            
+            // 检查是否允许普通的加载中，如果返回false，就代表自定义下拉刷新，通常自己处理
+            this.scroller.hook('beforeDownLoading', function(downHight, downOffset) {
+                return !self._beforeDownLoadingHook || self._beforeDownLoadingHook(downHight, downOffset);
             });
         },
         /**
@@ -162,7 +178,7 @@
             this._endUpLoading(isFinishUp);
         },
         /**
-         * 重新刷新上拉加载，刷新后会变为可以上拉加载
+         * 重新刷新上拉加载，刷新后会变为可以上拉加载，这里面也可以主动更新一些其它状态
          * @param {Boolean} isShowUpLoading 是否显示上拉加载动画，必须是布尔值才设置有效
          */
         resetUpLoading: function(isShowUpLoading) {

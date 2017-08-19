@@ -1,7 +1,7 @@
 <!-- 
         作者：dailc
-        时间：2017-08-14
-        描述：  默认的皮肤
+        时间：2017-08-19
+        描述：  淘宝的皮肤
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,8 +10,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>MiniFresh skin default</title>
+        <title>MiniFresh skin taobao</title>
         <link rel="stylesheet" href="../../dist/_debug/minirefresh.css" />
+        <link rel="stylesheet" href="../../dist/_debug/skin/minirefresh.skin.taobao.css" />
         <style>
             * {
                 -webkit-user-select: none;
@@ -32,6 +33,17 @@
     </head>
 
     <body>
+        <div class="minirefresh-secret-garden minirefresh-hidden">
+        	<h1>秘密花园</h1>
+        	<img src="../images/cbd.jpg" />
+        	<img src="../images/muwu.jpg" />
+        	<img src="../images/shuijiao.jpg" />
+        	<img src="../images/muwu.jpg" />
+        	<img src="../images/yuantiao.jpg" />
+        	<p>
+        	    秘密花园的最后
+        	</p>
+        </div>
         <p class="header">
             <a class="btn-left" >main</a> 满屏加载与锁定滑动</p>
         <!--下拉刷新容器
@@ -51,6 +63,7 @@
         </div>
 
         <script type="text/javascript" src="../../dist/_debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../../dist/_debug/skin/minirefresh.skin.taobao.js" ></script>
         <script>
             /**
              * 将string字符串转为html对象,默认创一个div填充
@@ -78,7 +91,7 @@
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
-                    isLock: false,
+                    appletAnimation: true,
                     callback: function() {
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);
@@ -89,7 +102,6 @@
                     }
                 },
                 up: {
-                    isLock: false,
                     auto: true,
                     callback: function() {
                         setTimeout(function() {
@@ -103,11 +115,9 @@
                         // 开启配置后，只要没满屏幕，就会自动加载
                         enable: true,
                         delay: 300
-                    },
-                    isShowUpLoading: true
+                    }
                 }
             });
-            
         </script>
     </body>
 

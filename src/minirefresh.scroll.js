@@ -20,6 +20,8 @@
         this.options = minirefresh.options;
         // 默认没有事件，需要主动绑定
         this.events = {};
+        // 默认没有hook
+        this.hooks = {};
 
         // 是否使用了scrollto功能，使用这个功能时会禁止操作
         this.isScrollTo = false;
@@ -44,10 +46,10 @@
         var self = this;
         // 在初始化完毕后，下一个循环的开始再执行
         setTimeout(function() {
-            if (self.options.down && self.options.down.auto) {
+            if (self.options.down && self.options.down.auto && !self.isLockDown) {
                 // 如果设置了auto，则自动下拉一次
                 self.triggerDownLoading();
-            } else if (self.options.up && self.options.up.auto) {
+            } else if (self.options.up && self.options.up.auto && !self.isLockUp) {                
                 // 如果设置了auto，则自动上拉一次
                 self.triggerUpLoading();
             }
@@ -239,12 +241,15 @@
         var self = this,
             options = this.options,
             bounceTime = options.down.bounceTime;
-            
-        self.downLoading = true;
-        self.downHight = options.down.offset;
-        self._translate(self.downHight, bounceTime);
         
-        self.events['downLoading'] && self.events['downLoading']();
+        if (!this.hooks['beforeDownLoading'] || this.hooks['beforeDownLoading'](self.downHight, options.down.offset)) {
+            // 没有hook或者hook返回true都通过，主要是为了方便类似于秘密花园等的自定义下拉刷新动画实现
+            self.downLoading = true;
+            self.downHight = options.down.offset;
+            self._translate(self.downHight, bounceTime);
+        
+            self.events['downLoading'] && self.events['downLoading']();
+        }     
     };
 
     /**
@@ -267,7 +272,6 @@
 
     MiniScroll.prototype.triggerUpLoading = function() {
         this.upLoading = true;       
-
         this.events['upLoading'] && this.events['upLoading']();
     };
 
@@ -349,7 +353,7 @@
      * @param {Boolean} isLock
      */
     MiniScroll.prototype.lockDown = function(isLock) {
-        this.options.down && isLock && (this.isLockDown = false);
+        this.options.down && (this.isLockDown = isLock);
     };
 
     /**
@@ -357,7 +361,7 @@
      * @param {Boolean} isLock
      */
     MiniScroll.prototype.lockUp = function(isLock) {
-        this.options.up && isLock && (this.isLockUp = false);
+        this.options.up && (this.isLockUp = isLock);
     };
 
     MiniScroll.prototype.resetUpLoading = function(isShowUpLoading) {
@@ -395,11 +399,15 @@
     };
 
     /**
-     * 事件取消注册
-     * @param {Object} event
+     * 注册钩子函数，主要是一些自定义刷新动画时用到，如进入秘密花园
+     * @param {String} hook 名称，范围如下
+     * beforeDownLoading 是否准备downLoading，如果返回false，则不会loading，完全进入自定义动画
      */
-    MiniScroll.prototype.off = function(event) {
-        this.events[event] = undefined;
+    MiniScroll.prototype.hook = function(hook, callback) {
+        if (!hook || !innerUtil.isFunction(callback)) {
+            return;
+        }
+        this.hooks[hook] = callback;
     };
 
     innerUtil.scroll = MiniScroll;

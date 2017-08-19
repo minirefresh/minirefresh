@@ -104,7 +104,7 @@
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-
+            
             // 上拉区域
             var upWrap = document.createElement("div");
 
@@ -206,11 +206,16 @@
             this.isCanPullDown = false;
 
         },
-        _upLoaingHook: function() {
-            this.upWrapTips.innerText = this.options.up.contentrefresh;
-            this.upWrapProgress.classList.add(CLASS_ROTATE);
-            this.upWrapProgress.classList.remove(CLASS_HIDDEN);
-            this.upWrap.style.visibility = 'visible';
+        _upLoaingHook: function(isShowUpLoading) {
+            if (isShowUpLoading) {
+                this.upWrapTips.innerText = this.options.up.contentrefresh;
+                this.upWrapProgress.classList.add(CLASS_ROTATE);
+                this.upWrapProgress.classList.remove(CLASS_HIDDEN);
+                this.upWrap.style.visibility = 'visible';
+            } else {
+                this.upWrap.style.visibility = 'hidden';
+            }
+
         },
         _upLoaingEndHook: function(isFinishUp) {
             if (!isFinishUp) {
@@ -219,6 +224,7 @@
                 this.upWrapTips.innerText = this.options.up.contentdown;
             } else {
                 // 已经没有更多数据了
+                this.upWrap.style.visibility = 'visible';
                 this.upWrapTips.innerText = this.options.up.contentnomore;
             }
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
