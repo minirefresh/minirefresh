@@ -111,5 +111,17 @@
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
     window.MiniRefresh = MiniRefreshSkin;
+    
+    /**
+     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
+     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     */
+    if (typeof module != 'undefined' && module.exports) {
+        module.exports = MiniRefresh;
+    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+        define(function() {
+            return MiniRefresh;
+        });
+    }
 
 })(MiniRefreshTools);

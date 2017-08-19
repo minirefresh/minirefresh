@@ -210,17 +210,5 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         return parent[namespaceArr[len - 1]];
     };
     
-    
-    /**
-     * 兼容require，但是require出去的是MiniRefreshTools，所以仍然建议通过全局变量MiniRefresh调用
-     */
-    if (typeof module != 'undefined' && module.exports) {
-        module.exports = exports;
-    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
-        define(function() {
-            return exports;
-        });
-    }
-
     return exports;
 })({});

@@ -1,9 +1,26 @@
 {
   "name": "minirefresh",
-  "version": "1.0.0",
-  "description": "一款极简的H5下拉刷新",
-  "author": "dailc",
-  "homepage": "https://github.com/dailc/minirefresh",
+  "title": "minirefresh",
+  "version": "0.0.2",
+  "description": "一款极简的H5下拉刷新，内测版本",
+  "homepage": "https://github.com/minirefresh/minirefresh",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/minirefresh/minirefresh.git"
+  },
+  "main": "index.js",
+  "bugs": {
+    "url": "https://github.com/minirefresh/minirefresh/issues"
+  },
+  "keywords": [
+    "minirefresh",
+    "pulltorefresh",
+    "pulldownrefresh",
+    "pulluprefresh",
+    "pull-refresh",
+    "refresh"
+  ],
+  "author": "dailc(dailichun@aliyun.com)",
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",

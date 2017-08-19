@@ -10,7 +10,7 @@
  * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写皮肤
  */
 (function(innerUtil) {
-    
+
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
      * skin字段会根据不同的皮肤有不同值
@@ -24,7 +24,7 @@
     var CLASS_ROTATE = 'minirefresh-rotate';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
     var CLASS_HIDDEN = 'minirefresh-hidden';
-    
+
     /**
      * 本皮肤的特色样式
      */
@@ -39,15 +39,15 @@
                 duration: 300
             },
             // 可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
-            contentdown: '下拉刷新', 
+            contentdown: '下拉刷新',
             // 可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
-            contentover: '释放刷新', 
+            contentover: '释放刷新',
             // 可选，正在刷新状态时，下拉刷新控件上显示的标题内容
-            contentrefresh: '加载中...', 
+            contentrefresh: '加载中...',
             // 可选，刷新成功的提示，当开启successAnim时才有效
-            contentsuccess: '刷新成功', 
+            contentsuccess: '刷新成功',
             // 可选，刷新失败的提示，错误回调用到，当开启successAnim时才有效
-            contenterror: '刷新失败', 
+            contenterror: '刷新失败',
         },
         up: {
             toTop: {
@@ -73,27 +73,27 @@
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-            
+
             container.classList.add(CLASS_SKIN);
             // 加上硬件加速让动画更流畅
             scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
-            
+
             this._initDownWrap();
-            this._initUpWrap();   
+            this._initUpWrap();
             this._initToTop();
         },
         _initDownWrap: function() {
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-                
+
             // 下拉的区域
             var downWrap = document.createElement("div");
-            
+
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
-            downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">'+options.down.contentdown+' </p></div>';
+            downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
             container.insertBefore(downWrap, scrollWrap);
-            
+
             this.downWrap = downWrap;
             this.downWrapProgress = this.downWrap.querySelector('.downwrap-progress');
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
@@ -104,15 +104,15 @@
             var container = this.container,
                 scrollWrap = this.scrollWrap,
                 options = this.options;
-                
+
             // 上拉区域
             var upWrap = document.createElement("div");
-            
+
             upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
-            upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">'+options.up.contentdown+'</p>';
+            upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
             upWrap.style.visibility = 'hidden';
             scrollWrap.appendChild(upWrap);
-            
+
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
             this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
@@ -130,7 +130,7 @@
             if (toTop) {
                 var toTopBtn = document.createElement("div");
 
-                toTopBtn.className = CLASS_TO_TOP + ' '+ CLASS_SKIN;
+                toTopBtn.className = CLASS_TO_TOP + ' ' + CLASS_SKIN;
 
                 toTopBtn.onclick = function() {
                     self.scroller.scrollTo(0, duration);
@@ -144,9 +144,9 @@
         },
         _pullHook: function(downHight, downOffset) {
             var options = this.options;
-            
+
             if (downHight < downOffset) {
-                if (this.isCanPullDown) {                    
+                if (this.isCanPullDown) {
                     this.downWrapTips.innerText = options.down.contentdown;
                     this.isCanPullDown = false;
                 }
@@ -156,10 +156,10 @@
                     this.isCanPullDown = true;
                 }
             }
-            
+
             var rate = downHight / downOffset,
                 progress = 360 * rate;
-                
+
             this.downWrapProgress.style.webkitTransform = "rotate(" + progress + "deg)";
             this.downWrapProgress.style.transform = "rotate(" + progress + "deg)";
         },
@@ -188,7 +188,7 @@
         },
         _downLoaingHook: function() {
             this.downWrapTips.innerText = this.options.down.contentrefresh;
-            this.downWrapProgress.classList.add(CLASS_ROTATE);           
+            this.downWrapProgress.classList.add(CLASS_ROTATE);
         },
         _downLoaingSuccessHook: function(isSuccess) {
             this.downWrapTips.innerText = isSuccess ? this.options.down.contentsuccess : this.options.down.contenterror;
@@ -204,7 +204,7 @@
             // 默认为不可见
             // 需要重置回来
             this.isCanPullDown = false;
-            
+
         },
         _upLoaingHook: function() {
             this.upWrapTips.innerText = this.options.up.contentrefresh;
@@ -237,5 +237,17 @@
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
     window.MiniRefresh = MiniRefreshSkin;
+
+    /**
+     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
+     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     */
+    if (typeof module != 'undefined' && module.exports) {
+        module.exports = MiniRefresh;
+    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+        define(function() {
+            return MiniRefresh;
+        });
+    }
 
 })(MiniRefreshTools);
