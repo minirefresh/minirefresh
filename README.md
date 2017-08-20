@@ -52,3 +52,5 @@ http://www.minirefresh.com
 ## 贡献指南
 
 - [代码规范](coderule.md)
+
+- [贡献者](contributor.md)
