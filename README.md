@@ -4,6 +4,7 @@
 [![](https://img.shields.io/npm/v/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/npm/l/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 
+__内测中...__
 
 极简主义的下拉刷新，H5环境使用
 
