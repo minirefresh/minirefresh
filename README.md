@@ -48,3 +48,6 @@ http://www.minirefresh.com
 
 - 简单，易用。完善的文档，简洁的API，轻松写出优雅的代码。
 
+## 贡献指南
+
+- [代码规范](coderule.md)
