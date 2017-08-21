@@ -1,3 +1,9 @@
+import {expect} from "chai";
+// 引入核心工具类，帮助全局变量上
+import "../src/minirefresh.js";
+
+let MiniRefresh = MiniRefreshTools;
+
 describe('extend', function() {
     var obj1,
         obj2,
