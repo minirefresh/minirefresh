@@ -10,6 +10,6 @@ describe("测试", () => {
   it('isNum() should work fine.', () => {
     expect(isNum(1)).to.be.equal(true);
     expect(isNum('1')).to.be.equal(false);
-    expect(isNum2('2')).to.be.equal(true);
+    expect(isNum2('2')).to.be.equal(false);
   });
 });
