@@ -23,8 +23,7 @@
   "author": "dailc(dailichun@aliyun.com)",
   "license": "MIT",
   "scripts": {
-    "test": "node_modules/.bin/karma start",
-    "report-coverage": "node_modules/.bin/codecov"
+    "test": "node_modules/.bin/karma start"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
