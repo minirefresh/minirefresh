@@ -70,9 +70,25 @@ module.exports = function(config) {
         // how many browser should be started simultaneous
         concurrency: Infinity,
 
+        //      coverageReporter: {
+        //          type: 'html',
+        //          dir: '_coverage/'
+        //      },
         coverageReporter: {
-            type: 'html',
-            dir: '_coverage/'
+            reporters: [
+                // generates ./coverage/lcov.info
+                {
+                    type: 'lcovonly',
+                    subdir: '.',
+                    dir: '_coverage/'
+                },
+                // generates ./coverage/coverage-final.json
+                {
+                    type: 'html',
+                    subdir: '.',
+                    dir: '_coverage/'
+                },
+            ]
         },
 
         webpack: {
