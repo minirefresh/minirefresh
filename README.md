@@ -5,7 +5,7 @@
 [![](https://img.shields.io/npm/l/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/minirefreshjs/minirefresh)
 
-__内测中...__
+__内测中，正式发布版本从1.0.0开始...__
 
 __喜欢，你就给一个star!__
 
@@ -116,6 +116,6 @@ miniRefresh.endUpLoading(true);
 
 ## 讨论
 
-` [gitter/minirefreshjs/minirefresh](https://gitter.im/minirefreshjs/minirefresh)
+- [gitter](https://gitter.im/minirefreshjs/minirefresh)
 
 - QQ群（`601988892`）
