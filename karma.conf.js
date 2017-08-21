@@ -82,6 +82,11 @@ module.exports = function(config) {
                     subdir: '.',
                     dir: '_coverage/'
                 },
+                {
+                    type: 'json',
+                    subdir: '.',
+                    dir: '_coverage/'
+                },
                 // generates ./coverage/coverage-final.json
                 {
                     type: 'html',
