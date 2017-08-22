@@ -58,3 +58,5 @@ typings/
 # dotenv environment variables file
 .env
 
+account_record.md
+sauce.json

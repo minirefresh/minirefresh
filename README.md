@@ -7,10 +7,11 @@
 [![](https://img.shields.io/npm/l/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/minirefreshjs/minirefresh)
 
+[![](https://saucelabs.com/browser-matrix/minirefreshs.svg)](https://saucelabs.com/beta/builds/62749d602ec849809265f00ba5259eae)
 
 
 
-__内测中，正式发布版本从1.0.0开始...__
+__内测中，正式发布版本会从1.0.0开始...__
 
 __喜欢，你就给一个star!__
 

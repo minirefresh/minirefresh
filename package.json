@@ -23,8 +23,10 @@
   "author": "dailc(dailichun@aliyun.com)",
   "license": "MIT",
   "scripts": {
-    "test": "node_modules/.bin/karma start",
-    "report-coverage": "codecov -t f95e9c2c-ea52-4fd1-a50d-7fe5eb25c397"
+    "test": "node_modules/.bin/karma start test/unit/karma.dev.config.js",
+    "test:sauce": "node_modules/.bin/karma start test/unit/karma.sauce.config.js",
+    "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
+    "test:unit": "node_modules/.bin/karma start test/unit/karma.unit.config.js"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -46,9 +48,12 @@
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.1",
+    "karma-firefox-launcher": "^1.0.1",
     "karma-htmlfile-reporter": "^0.3.5",
     "karma-mocha": "^1.3.0",
     "karma-phantomjs-launcher": "^1.0.4",
+    "karma-safari-launcher": "^1.0.0",
+    "karma-sauce-launcher": "^1.1.0",
     "karma-webpack": "^2.0.4",
     "mocha": "^3.5.0",
     "webpack": "^2.2.1"

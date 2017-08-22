@@ -1,6 +1,0 @@
-env:  
-  global:
-    - CODECOV_TOKEN: f95e9c2c-ea52-4fd1-a50d-7fe5eb25c397
-script:  
- - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
- - codecov
