@@ -18,7 +18,7 @@ var banner = ['/**',
 ].join('\n');
 
 // 暂且将debug和release放在一起
-var debugPath = './dist/_debug/';
+var debugPath = './dist/debug/';
 var releasePath = './dist/';
 
 // MiniRefresh核心文件合并，默认打包核心文件已经default皮肤
