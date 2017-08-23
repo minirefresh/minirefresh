@@ -26,7 +26,10 @@
     "test": "node_modules/.bin/karma start test/unit/karma.dev.config.js",
     "test:sauce": "node_modules/.bin/karma start test/unit/karma.sauce.config.js",
     "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
-    "test:unit": "node_modules/.bin/karma start test/unit/karma.unit.config.js"
+    "test:unit": "node_modules/.bin/karma start test/unit/karma.unit.config.js",
+    "test:eslint": "npm run eslint:report",
+    "eslint": "node_modules/.bin/eslint ./src",
+    "eslint:report": "node_modules/.bin/eslint ./src -f html -o ./_report/eslint.html"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
@@ -42,6 +45,7 @@
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.1.1",
     "codecov": "^2.3.0",
+    "eslint": "^4.5.0",
     "gulp-header": "^1.8.8",
     "gulp-sequence": "^0.4.6",
     "karma": "^1.7.0",

@@ -18,34 +18,40 @@
      */
     var CLASS_DOWN_LOADING = 'loading-applet';
 
+    /**
+     * 一些常量
+     */
+    var DEFAULT_DOWN_HEIGHT = 50;
+
     var defaultSetting = {
         down: {
             successAnim: {
                 // 微信小程序皮肤没有successAnim 也没有文字提示
-                enable: false,
+                enable: false
             }
         }
     };
 
     var MiniRefreshSkin = innerUtil.skin.defaults.extend({
+
         /**
          * 拓展自定义的配置
-         * @param {Object} options
+         * @param {Object} options 配置参数
          */
         init: function(options) {
             options = innerUtil.extend(true, {}, defaultSetting, options);
             this._super(options);
         },
+
         /**
          * 重写下拉刷新初始化，变为小程序自己的动画
          */
         _initDownWrap: function() {
             var container = this.container,
-                scrollWrap = this.scrollWrap,
-                options = this.options;
+                scrollWrap = this.scrollWrap;
 
             // 下拉的区域
-            var downWrap = document.createElement("div");
+            var downWrap = document.createElement('div');
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content ball-beat"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
@@ -56,7 +62,7 @@
 
             this.downWrap = downWrap;
             // 留一个默认值，以免样式被覆盖，无法获取
-            this.downWrapHeight = this.downWrap.offsetHeight || 50;
+            this.downWrapHeight = this.downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
             this._transformDownWrap(-1 * this.downWrapHeight);
         },
         _transformDownWrap: function(offset, duration) {
@@ -68,35 +74,39 @@
             this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
             this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
         },
+
         /**
          * 重写下拉过程动画
-         * @param {Number} downHight
-         * @param {Number} downOffset
+         * @param {Number} downHight 当前下拉的高度
+         * @param {Number} downOffset 下拉的阈值
          */
         _pullHook: function(downHight, downOffset) {
-            var options = this.options;
 
             if (downHight < downOffset) {
                 var rate = downHight / downOffset,
                     offset = this.downWrapHeight * (-1 + rate);
-                
+
                 this._transformDownWrap(offset);
             } else {
                 this._transformDownWrap(0);
             }
         },
+
         /**
          * 重写下拉动画
          */
         _downLoaingHook: function() {
             this.downWrap.classList.add(CLASS_DOWN_LOADING);
         },
+
         /**
          * 重写success 但是什么都不做
          */
         _downLoaingSuccessHook: function() {},
+
         /**
          * 重写下拉end
+         * @param {Boolean} isSuccess 是否成功
          */
         _downLoaingEndHook: function(isSuccess) {
             this.downWrap.classList.remove(CLASS_DOWN_LOADING);
@@ -114,11 +124,11 @@
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
-    if (typeof module != 'undefined' && module.exports) {
-        module.exports = MiniRefresh;
-    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = MiniRefreshSkin;
+    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefresh;
+            return MiniRefreshSkin;
         });
     }
 

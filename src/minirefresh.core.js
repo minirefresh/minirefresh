@@ -56,15 +56,16 @@
             isShowUpLoading: true,
             callback: innerUtil.noop
 
-        }, 
+        },
         // 容器
         container: '#minirefresh'
     };
 
     var MiniRefreshCore = innerUtil.Clazz.extend({
+
         /**
          * 初始化
-         * @param {Object} options
+         * @param {Object} options 配置信息
          */
         init: function(options) {
             options = innerUtil.extend(true, {}, defaultSetting, options);
@@ -73,57 +74,57 @@
             // scroll的dom-wrapper下的第一个节点
             this.scrollWrap = this.container.children[0];
             this.options = options;
-            
 
             // 生成一个Scroll对象 ，对象内部处理滑动监听
-            this.scroller = new innerUtil.scroll(this);
-            
+            this.scroller = new innerUtil.Scroll(this);
+
             this.resetUpLoading(options.up.isShowUpLoading);
             this.lockUpLoading(options.up.isLock);
             this.lockDownLoading(options.down.isLock);
             this._initEvent();
-            
+
             // 初始化的hook
             this._initHook && this._initHook(this.scroller.isLockDown, this.scroller.isLockUp);
         },
         _initEvent: function() {
             var self = this,
-                options = this.options;
-            
+                options = self.options;
+
             this.scroller.on('downLoading', function() {
                 self._downLoaingHook && self._downLoaingHook();
                 options.down.callback && options.down.callback();
             });
-            
-            this.scroller.on('upLoading', function() { 
+
+            this.scroller.on('upLoading', function() {
                 self._upLoaingHook && self._upLoaingHook(self.scroller.isShowUpLoading);
                 options.up.callback && options.up.callback();
             });
-            
+
             this.scroller.on('pull', function(downHight, downOffset) {
                 self._pullHook && self._pullHook(downHight, downOffset);
                 options.down.pull && options.down.pull();
             });
-            
+
             this.scroller.on('scroll', function(scrollTop) {
                 self._scrollHook && self._scrollHook(scrollTop);
                 options.up.scroll && options.up.scroll();
             });
-            
+
             // 检查是否允许普通的加载中，如果返回false，就代表自定义下拉刷新，通常自己处理
             this.scroller.hook('beforeDownLoading', function(downHight, downOffset) {
                 return !self._beforeDownLoadingHook || self._beforeDownLoadingHook(downHight, downOffset);
             });
         },
+        
         /**
          * 内部执行，结束下拉刷新
-         * @param {Boolean} isSuccess
+         * @param {Boolean} isSuccess 是否下拉请求成功
          */
         _endDownLoading: function(isSuccess) {
             var self = this;
 
             if (!this.options.down) {
-                //　防止没传down导致错误
+                // 防止没传down导致错误
                 return;
             }
 
@@ -145,13 +146,14 @@
                     self.scroller.endDownLoading();
                     // 触发结束hook
                     self._downLoaingEndHook && self._downLoaingEndHook(isSuccess);
-                    
+
                 }, successAnimTime);
             }
         },
+        
         /**
          * 内部执行，结束上拉加载
-         * @param {Boolean} isFinishUp
+         * @param {Boolean} isFinishUp 是否结束了上拉加载
          */
         _endUpLoading: function(isFinishUp) {
             if (this.scroller.upLoading) {
@@ -159,6 +161,7 @@
                 this._upLoaingEndHook && this._upLoaingEndHook(isFinishUp);
             }
         },
+        
         /**
          * 结束下拉刷新
          * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应皮肤
@@ -169,6 +172,7 @@
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
             this.resetUpLoading();
         },
+        
         /**
          * 结束上拉加载
          * @param {Boolean} isFinishUp 是否结束上拉加载，如果结束，就相当于变为了没有更多数据，无法再出发上拉加载了
@@ -177,6 +181,7 @@
         endUpLoading: function(isFinishUp) {
             this._endUpLoading(isFinishUp);
         },
+        
         /**
          * 重新刷新上拉加载，刷新后会变为可以上拉加载，这里面也可以主动更新一些其它状态
          * @param {Boolean} isShowUpLoading 是否显示上拉加载动画，必须是布尔值才设置有效
@@ -184,6 +189,7 @@
         resetUpLoading: function(isShowUpLoading) {
             this.scroller.resetUpLoading(isShowUpLoading);
         },
+        
         /**
          * 锁定上拉加载
          * 将开启和禁止合并成一个锁定API
@@ -193,6 +199,7 @@
             this.scroller.lockUp(isLock);
             this._lockUpLoadingHook && this._lockUpLoadingHook(isLock);
         },
+        
         /**
          * 锁定下拉刷新
          * @param {Boolean} isLock 是否锁定
@@ -201,12 +208,14 @@
             this.scroller.lockDown(isLock);
             this._lockDownLoadingHook && this._lockDownLoadingHook(isLock);
         },
+        
         /**
          * 触发上拉加载
          */
         triggerUpLoading: function() {
             this.scroller.triggerUpLoading();
         },
+        
         /**
          * 触发下拉刷新
          */
@@ -214,15 +223,16 @@
             this.scroller.scrollTo(0);
             this.scroller.triggerDownLoading();
         },
+        
         /**
          * 滚动到指定的y位置
-         * @param {Number} y
+         * @param {Number} y 需要滑动到的top值
          * @param {Number} duration 单位毫秒
          */
         scrollTo: function(y, duration) {
             this.scroller.scrollTo(y, duration);
-        },
+        }
     });
 
-    MiniRefreshTools.core = MiniRefreshCore;
+    innerUtil.core = MiniRefreshCore;
 })(MiniRefreshTools);

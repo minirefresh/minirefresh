@@ -47,7 +47,7 @@
             // 可选，刷新成功的提示，当开启successAnim时才有效
             contentsuccess: '刷新成功',
             // 可选，刷新失败的提示，错误回调用到，当开启successAnim时才有效
-            contenterror: '刷新失败',
+            contenterror: '刷新失败'
         },
         up: {
             toTop: {
@@ -59,7 +59,7 @@
             },
             contentdown: '上拉显示更多',
             contentrefresh: '加载中...',
-            contentnomore: '没有更多数据了',
+            contentnomore: '没有更多数据了'
         }
     };
 
@@ -71,8 +71,7 @@
         },
         _initHook: function(isLockDown, isLockUp) {
             var container = this.container,
-                scrollWrap = this.scrollWrap,
-                options = this.options;
+                scrollWrap = this.scrollWrap;
 
             container.classList.add(CLASS_SKIN);
             // 加上硬件加速让动画更流畅
@@ -88,7 +87,7 @@
                 options = this.options;
 
             // 下拉的区域
-            var downWrap = document.createElement("div");
+            var downWrap = document.createElement('div');
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
@@ -101,12 +100,11 @@
             this.isCanPullDown = false;
         },
         _initUpWrap: function() {
-            var container = this.container,
-                scrollWrap = this.scrollWrap,
+            var scrollWrap = this.scrollWrap,
                 options = this.options;
             
             // 上拉区域
-            var upWrap = document.createElement("div");
+            var upWrap = document.createElement('div');
 
             upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
@@ -117,6 +115,7 @@
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
             this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
         },
+        
         /**
          * 自定义实现一个toTop，由于这个是属于额外的事件所以没有添加的核心中，而是由各自的皮肤决定是否实现或者实现成什么样子
          * 不过框架中仍然提供了一个默认的minirefresh-totop样式，可以方便使用
@@ -128,13 +127,13 @@
                 duration = options.up.toTop.duration;
 
             if (toTop) {
-                var toTopBtn = document.createElement("div");
+                var toTopBtn = document.createElement('div');
 
                 toTopBtn.className = CLASS_TO_TOP + ' ' + CLASS_SKIN;
 
                 toTopBtn.onclick = function() {
                     self.scroller.scrollTo(0, duration);
-                }
+                };
                 toTopBtn.classList.add(CLASS_HIDDEN);
                 this.toTopBtn = toTopBtn;
                 this.isShowToTopBtn = false;
@@ -143,7 +142,8 @@
             }
         },
         _pullHook: function(downHight, downOffset) {
-            var options = this.options;
+            var options = this.options,
+                FULL_DEGREE = 360;
 
             if (downHight < downOffset) {
                 if (this.isCanPullDown) {
@@ -158,10 +158,10 @@
             }
 
             var rate = downHight / downOffset,
-                progress = 360 * rate;
+                progress = FULL_DEGREE * rate;
 
-            this.downWrapProgress.style.webkitTransform = "rotate(" + progress + "deg)";
-            this.downWrapProgress.style.transform = "rotate(" + progress + "deg)";
+            this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
+            this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
         },
         _scrollHook: function(scrollTop) {
             // 用来判断toTop
@@ -235,7 +235,7 @@
         },
         _lockDownLoadingHook: function(isLock) {
             // 可以实现自己的逻辑
-        },
+        }
     });
 
     // 挂载皮肤，这样多个皮肤可以并存，default是关键字，所以使用了defaults
@@ -248,11 +248,11 @@
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
-    if (typeof module != 'undefined' && module.exports) {
-        module.exports = MiniRefresh;
-    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = MiniRefreshSkin;
+    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefresh;
+            return MiniRefreshSkin;
         });
     }
 

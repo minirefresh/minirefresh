@@ -4,7 +4,7 @@
  */
 (function(innerUtil) {
     // TODO: 秘密花园的后续待参考了淘宝后再决定，目前雏形已经有了
-    
+
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
      * skin字段会根据不同的皮肤有不同值
@@ -16,6 +16,7 @@
     var CLASS_FADE_IN = 'minirefresh-fade-in';
     var CLASS_FADE_OUT = 'minirefresh-fade-out';
     var CLASS_HIDDEN = 'minirefresh-hidden';
+
     /**
      * 定义几个状态
      * 下拉刷新默认状态
@@ -25,11 +26,16 @@
     var STATE_PULL_DEFAULT = 0;
     var STATE_PULL_READY_REFRESH = 1;
     var STATE_PULL_READY_SECRETGARDEN = 2;
-    
+
     /**
      * 秘密花园的样式
      */
     var CLASS_SECRET_GARDEN = 'minirefresh-secret-garden';
+
+    /**
+     * 一些常量
+     */
+    var DEFAULT_DOWN_HEIGHT = 200;
 
     var defaultSetting = {
         down: {
@@ -37,8 +43,8 @@
             offset: 100,
             successAnim: {
                 // successAnim
-                enable: false,
-            }, 
+                enable: false
+            },
             // 本皮肤独有的效果
             secretGarden: {
                 // 是否开启秘密花园（即类似淘宝二楼效果）
@@ -52,14 +58,16 @@
     };
 
     var MiniRefreshSkin = innerUtil.skin.defaults.extend({
+
         /**
          * 拓展自定义的配置
-         * @param {Object} options
+         * @param {Object} options 配置参数
          */
         init: function(options) {
             options = innerUtil.extend(true, {}, defaultSetting, options);
             this._super(options);
         },
+
         /**
          * 重写下拉刷新初始化，变为小程序自己的动画
          */
@@ -69,7 +77,7 @@
                 options = this.options;
 
             // 下拉的区域
-            var downWrap = document.createElement("div");
+            var downWrap = document.createElement('div');
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
@@ -83,8 +91,8 @@
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
             // 初始化为默认状态
             this.pullState = STATE_PULL_DEFAULT;
-            this.downWrapHeight = this.downWrap.offsetHeight || 200;
-            
+            this.downWrapHeight = this.downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
+
             this._transformDownWrap(-1 * this.downWrapHeight);
         },
         _transformDownWrap: function(offset, duration) {
@@ -96,31 +104,32 @@
             this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
             this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
         },
+
         /**
          * 重写下拉过程动画
-         * @param {Number} downHight
-         * @param {Number} downOffset
+         * @param {Number} downHight 当前下拉高度
+         * @param {Number} downOffset 下拉阈值
          */
         _pullHook: function(downHight, downOffset) {
             var options = this.options,
                 down = options.down,
                 secretGarden = down.secretGarden.enable,
-                secretGardenOffset = down.secretGarden.offset;
-                
+                secretGardenOffset = down.secretGarden.offset,
+                FULL_DEGREE = 360;
+
             var rate = downHight / downOffset,
-                offset = this.downWrapHeight * (-1 + rate),
-                progress = 360 * rate;
+                progress = FULL_DEGREE * rate;
 
             this._transformDownWrap(-this.downWrapHeight + downHight);
-            this.downWrapProgress.style.webkitTransform = "rotate(" + progress + "deg)";
-            this.downWrapProgress.style.transform = "rotate(" + progress + "deg)";
-            
+            this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
+            this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
+
             if (downHight < downOffset) {
                 if (this.pullState !== STATE_PULL_DEFAULT) {
                     this.downWrapTips.innerText = down.contentdown;
                     this.pullState = STATE_PULL_DEFAULT;
                 }
-            } else if (downHight >= downOffset && (!secretGarden || downHight < secretGardenOffset)){               
+            } else if (downHight >= downOffset && (!secretGarden || downHight < secretGardenOffset)) {
                 if (this.pullState !== STATE_PULL_READY_REFRESH) {
                     this.downWrapTips.innerText = down.contentover;
                     this.pullState = STATE_PULL_READY_REFRESH;
@@ -132,20 +141,24 @@
                 }
             }
         },
+
         /**
          * 因为有自定义秘密花园的动画，所以需要实现这个hook，在特定条件下去除默认行为
-         * @param {Number} downHight
-         * @param {Number} downOffset
+         * @param {Number} downHight 当前已经下拉的高度
+         * @param {Number} downOffset 下拉阈值
+         * @return {Boolean} 返回false就不再进入下拉loading，默认为true
          */
-        _beforeDownLoadingHook: function(downHight, downOffset) {            
+        _beforeDownLoadingHook: function(downHight, downOffset) {
             // 只要没有进入秘密花园，就仍然是以前的动作，否则downLoading都无法进入了，需要自定义实现
             if (this.pullState === STATE_PULL_READY_SECRETGARDEN) {
                 this._inSecretGarden();
+
                 return false;
             } else {
                 return true;
             }
         },
+
         /**
          * 重写下拉动画
          * 秘密花园状态下无法进入
@@ -154,16 +167,19 @@
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
             // 默认和scrollwrap的同步
-            this._transformDownWrap(-this.downWrapHeight+this.options.down.offset, this.options.down.bounceTime);
+            this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
         },
+
         /**
          * 重写success 但是什么都不做
          * 秘密花园状态下无法进入
          */
         _downLoaingSuccessHook: function() {},
+
         /**
          * 重写下拉end
          * 秘密花园状态下无法进入
+         * @param {Boolean} isSuccess 是否下拉请求成功
          */
         _downLoaingEndHook: function(isSuccess) {
             this.downWrapTips.innerText = this.options.down.contentdown;
@@ -173,16 +189,17 @@
             // 需要重置回来
             this.pullState = STATE_PULL_DEFAULT;
         },
+
         /**
          * 进入秘密花园
          * 在秘密花园状态下走入的是这个实现
          */
         _inSecretGarden: function() {
-            this.secretGarden = document.querySelector('.'+CLASS_SECRET_GARDEN);
+            this.secretGarden = document.querySelector('.' + CLASS_SECRET_GARDEN);
             this.container.classList.add(CLASS_FADE_OUT);
             this.secretGarden.classList.remove(CLASS_HIDDEN);
             this.secretGarden.classList.add(CLASS_FADE_IN);
-        },
+        }
     });
 
     // 挂载皮肤，这样多个皮肤可以并存
@@ -195,11 +212,11 @@
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
-    if (typeof module != 'undefined' && module.exports) {
-        module.exports = MiniRefresh;
-    } else if (typeof define == 'function' && (define.amd || define.cmd)) {
+    if (typeof module !== 'undefined' && module.exports) {
+        module.exports = MiniRefreshSkin;
+    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefresh;
+            return MiniRefreshSkin;
         });
     }
 

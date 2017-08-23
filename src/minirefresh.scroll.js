@@ -3,6 +3,24 @@
  * 依赖于一个 MiniRefresh对象
  */
 (function(innerUtil) {
+    
+    
+    /**
+     * 每秒多少帧
+     */
+    var SECOND_MILLIONS = 1000,
+        NUMBER_FRAMES = 60,
+        PER_SECOND = SECOND_MILLIONS / NUMBER_FRAMES;
+    
+    /**
+     * 定义一些常量
+     */
+    var EVENT_SCROLL = 'scroll',
+        EVENT_PULL = 'pull',
+        EVENT_UP_LOADING = 'upLoading',
+        EVENT_DOWN_LOADING = 'downLoading',
+        HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
+    
     var rAF = window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
@@ -10,7 +28,7 @@
         window.msRequestAnimationFrame ||
         // 默认每秒60帧
         function(callback) {
-            window.setTimeout(callback, 1000 / 60);
+            window.setTimeout(callback, PER_SECOND);
         };
 
     var MiniScroll = function(minirefresh) {
@@ -44,12 +62,13 @@
         this._initPullUp();
 
         var self = this;
+        
         // 在初始化完毕后，下一个循环的开始再执行
         setTimeout(function() {
             if (self.options.down && self.options.down.auto && !self.isLockDown) {
                 // 如果设置了auto，则自动下拉一次
                 self.triggerDownLoading();
-            } else if (self.options.up && self.options.up.auto && !self.isLockUp) {                
+            } else if (self.options.up && self.options.up.auto && !self.isLockUp) {
                 // 如果设置了auto，则自动上拉一次
                 self.triggerUpLoading();
             }
@@ -58,8 +77,8 @@
 
     /**
      * wrap的translate动画，用于下拉刷新时进行transform动画
-     * @param {Number} y
-     * @param {Number} duration
+     * @param {Number} y 移动的高度
+     * @param {Number} duration 过渡时间
      */
     MiniScroll.prototype._translate = function(y, duration) {
         y = y || 0;
@@ -69,16 +88,16 @@
 
         wrap.style.webkitTransitionDuration = duration + 'ms';
         wrap.style.transitionDuration = duration + 'ms';
-        wrap.style.webkitTransform = 'translate(0px, ' + y + 'px) translateZ(0px)'
-        wrap.style.transform = 'translate(0px, ' + y + 'px) translateZ(0px)'
+        wrap.style.webkitTransform = 'translate(0px, ' + y + 'px) translateZ(0px)';
+        wrap.style.transform = 'translate(0px, ' + y + 'px) translateZ(0px)';
     };
 
     MiniScroll.prototype._initPullDown = function() {
-        var self = this,  
+        var self = this,
             scrollWrap = this.scrollWrap,
             options = this.options,
             bounceTime = options.down.bounceTime,
-            downOffset = options.down.offset;   
+            downOffset = options.down.offset;
 
         scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
         scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
@@ -88,7 +107,7 @@
                 // 如果执行滑动事件,则阻止touch事件,优先执行scrollTo方法
                 e.preventDefault();
             }
-            // 记录startTop　并且　只有startTop存在值时才允许move
+            // 记录startTop, 并且只有startTop存在值时才允许move
             self.startTop = scrollWrap.scrollTop;
 
             // startY用来计算距离
@@ -98,8 +117,8 @@
         };
 
         // 兼容手指滑动与鼠标
-        scrollWrap.addEventListener("touchstart", touchstartEvent);
-        scrollWrap.addEventListener("mousedown", touchstartEvent);
+        scrollWrap.addEventListener('touchstart', touchstartEvent);
+        scrollWrap.addEventListener('mousedown', touchstartEvent);
 
         var touchmoveEvent = function(e) {
             if (self.startTop !== undefined && self.startTop <= 0 &&
@@ -127,6 +146,7 @@
                 if (Math.abs(moveX) > Math.abs(moveY)) {
                     // 如果是横向滑动更多，阻止默认事件
                     e.preventDefault();
+                    
                     return;
                 }
 
@@ -144,8 +164,8 @@
                     
                     if (self.downHight < downOffset) {
                         // 下拉距离  < 指定距离
-                        self.downHight += diff;                     
-                    } else {                        
+                        self.downHight += diff;
+                    } else {
                         // 超出了指定距离，随时可以刷新
                         if (diff > 0) {
                             // 需要加上阻尼系数
@@ -155,7 +175,7 @@
                             self.downHight += diff;
                         }
                     }
-                    self.events['pull'] && self.events['pull'](self.downHight, downOffset);
+                    self.events[EVENT_PULL] && self.events[EVENT_PULL](self.downHight, downOffset);
                     // 执行动画
                     self._translate(self.downHight);
                 } else {
@@ -169,8 +189,8 @@
 
         };
 
-        scrollWrap.addEventListener("touchmove", touchmoveEvent);
-        scrollWrap.addEventListener("mousemove", touchmoveEvent);
+        scrollWrap.addEventListener('touchmove', touchmoveEvent);
+        scrollWrap.addEventListener('mousemove', touchmoveEvent);
 
         var touchendEvent = function(e) {
             // 需要重置状态
@@ -194,9 +214,9 @@
             self.startTop = undefined;
         };
 
-        scrollWrap.addEventListener("touchend", touchendEvent);
-        scrollWrap.addEventListener("mouseup", touchendEvent);
-        scrollWrap.addEventListener("mouseleave", touchendEvent);
+        scrollWrap.addEventListener('touchend', touchendEvent);
+        scrollWrap.addEventListener('mouseup', touchendEvent);
+        scrollWrap.addEventListener('mouseleave', touchendEvent);
 
     };
 
@@ -206,16 +226,17 @@
             options = this.options;
 
         
-        scrollWrap.addEventListener("scroll", function() {
+        scrollWrap.addEventListener('scroll', function() {
             var scrollTop = scrollWrap.scrollTop,
                 scrollHeight = scrollWrap.scrollHeight,
                 clientHeight = scrollWrap.clientHeight;
                 
-            self.events['scroll'] && self.events['scroll'](scrollTop);    
+            self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
             
             if (!self.upLoading) {
                 if (!self.isLockUp && !self.isFinishUp) {
                     var toBottom = scrollHeight - clientHeight - scrollTop;
+                    
                     if (toBottom <= options.up.offset) {
                         // 满足上拉加载
                         self.triggerUpLoading();
@@ -229,6 +250,7 @@
         var self = this,
             scrollWrap = this.scrollWrap,
             options = this.options;
+            
         setTimeout(function() {
             // 在下一个循环中运行
             if (!self.isLockUp && options.up.loadFull.enable && scrollWrap.scrollHeight <= scrollWrap.clientHeight) {
@@ -242,14 +264,14 @@
             options = this.options,
             bounceTime = options.down.bounceTime;
         
-        if (!this.hooks['beforeDownLoading'] || this.hooks['beforeDownLoading'](self.downHight, options.down.offset)) {
+        if (!this.hooks[HOOK_BEFORE_DOWN_LOADING] || this.hooks[HOOK_BEFORE_DOWN_LOADING](self.downHight, options.down.offset)) {
             // 没有hook或者hook返回true都通过，主要是为了方便类似于秘密花园等的自定义下拉刷新动画实现
             self.downLoading = true;
             self.downHight = options.down.offset;
             self._translate(self.downHight, bounceTime);
         
-            self.events['downLoading'] && self.events['downLoading']();
-        }     
+            self.events[EVENT_DOWN_LOADING] && self.events[EVENT_DOWN_LOADING]();
+        }
     };
 
     /**
@@ -271,16 +293,15 @@
     };
 
     MiniScroll.prototype.triggerUpLoading = function() {
-        this.upLoading = true;       
-        this.events['upLoading'] && this.events['upLoading']();
+        this.upLoading = true;
+        this.events[EVENT_UP_LOADING] && this.events[EVENT_UP_LOADING]();
     };
 
     /**
      * 结束上拉加载动画
+     * @param {Boolean} isFinishUp 是否结束上拉加载
      */
     MiniScroll.prototype.endUpLoading = function(isFinishUp) {
-        var options = this.options;
-
         if (this.upLoading) {
             
             this.upLoading = false;
@@ -295,7 +316,7 @@
 
     /**
      * 滚动到指定的y位置
-     * @param {Number} y
+     * @param {Number} y top坐标
      * @param {Number} duration 单位毫秒
      */
     MiniScroll.prototype.scrollTo = function(y, duration) {
@@ -319,11 +340,12 @@
         }
         if (duration === 0) {
             scrollWrap.scrollTop = y;
+            
             return;
         }
 
         // 每秒60帧，计算一共多少帧，然后每帧的步长
-        var count = 60 * duration / 1000;
+        var count = duration / PER_SECOND;
         var step = diff / (count),
             i = 0;
 
@@ -332,7 +354,7 @@
 
         var execute = function() {
             if (i < count) {
-                if (i == count - 1) {
+                if (i === count - 1) {
                     // 最后一次直接设置y,避免计算误差
                     scrollWrap.scrollTop = y;
                 } else {
@@ -350,7 +372,7 @@
 
     /**
      * 只有 down存在时才允许解锁
-     * @param {Boolean} isLock
+     * @param {Boolean} isLock 是否锁定
      */
     MiniScroll.prototype.lockDown = function(isLock) {
         this.options.down && (this.isLockDown = isLock);
@@ -358,7 +380,7 @@
 
     /**
      * 只有 up存在时才允许解锁
-     * @param {Boolean} isLock
+     * @param {Boolean} isLock 是否锁定
      */
     MiniScroll.prototype.lockUp = function(isLock) {
         this.options.up && (this.isLockUp = isLock);
@@ -375,7 +397,7 @@
         }
         
         // 触发一次HTML的scroll事件，以便检查当前位置是否需要加载更多
-        var evt = document.createEvent("HTMLEvents");
+        var evt = document.createEvent('HTMLEvents');
         
         // 这个事件没有必要冒泡
         evt.initEvent('scroll', false);
@@ -389,7 +411,7 @@
      * pull 下拉滑动过程的回调，持续回调
      * upLoading 上拉加载那一刻触发
      * downLoading 下拉刷新那一刻触发
-     * @param {Function} callback
+     * @param {Function} callback 回调函数
      */
     MiniScroll.prototype.on = function(event, callback) {
         if (!event || !innerUtil.isFunction(callback)) {
@@ -402,6 +424,7 @@
      * 注册钩子函数，主要是一些自定义刷新动画时用到，如进入秘密花园
      * @param {String} hook 名称，范围如下
      * beforeDownLoading 是否准备downLoading，如果返回false，则不会loading，完全进入自定义动画
+     * @param {Function} callback 回调函数
      */
     MiniScroll.prototype.hook = function(hook, callback) {
         if (!hook || !innerUtil.isFunction(callback)) {
@@ -410,5 +433,5 @@
         this.hooks[hook] = callback;
     };
 
-    innerUtil.scroll = MiniScroll;
+    innerUtil.Scroll = MiniScroll;
 })(MiniRefreshTools);
