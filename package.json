@@ -23,7 +23,7 @@
   "author": "dailc(dailichun@aliyun.com)",
   "license": "MIT",
   "scripts": {
-    "test": "node_modules/.bin/karma start test/unit/karma.dev.config.js",
+    "test": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "test:sauce": "node_modules/.bin/karma start test/unit/karma.sauce.config.js",
     "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "test:unit": "node_modules/.bin/karma start test/unit/karma.unit.config.js",
