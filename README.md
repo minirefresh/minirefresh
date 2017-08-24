@@ -5,6 +5,7 @@
 [![](https://img.shields.io/npm/dm/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/npm/v/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/npm/l/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
+[![](https://img.shields.io/badge/codestyle-eslint-brightgreen.svg)](https://eslint.org/)
 [![](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/minirefreshjs/minirefresh)
 
 [![](https://saucelabs.com/browser-matrix/minirefreshs.svg)](https://saucelabs.com/beta/builds/62749d602ec849809265f00ba5259eae)
@@ -52,6 +53,12 @@ var MiniRefresh = require('minirefresh');
 ```js
 // 直接通过路径引入
 var MiniRefresh = require('xxx/minirefresh.js');
+```
+
+### `import`引入
+
+```js
+import { MiniRefresh } from 'xxx/minirefresh.js';
 ```
 
 ## 页面布局

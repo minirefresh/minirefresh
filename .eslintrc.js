@@ -19,7 +19,8 @@ module.exports = {
     "parserOptions": {
         // ECMAScript 版本
         "ecmaVersion": 6,
-        "sourceType": "script", //module
+        // module script, es6的模块需要module类型
+        "sourceType": "module", 
         // 想使用的额外的语言特性:
         "ecmaFeatures": {
             // 允许在全局作用域下使用 return 语句
@@ -174,8 +175,8 @@ module.exports = {
         "max-lines": [1, 500],
         // 要求方法链中每个调用都有一个换行符
         "newline-per-chained-call": 1,
-        // 强制在花括号中使用一致的空格
-        "object-curly-spacing": 1,
+        // 强制在花括号中使用一致的空格， 关闭这个功能
+        "object-curly-spacing": 0,
         // 强制将对象的属性放在不同的行上
         "object-property-newline": 1,
         // 强制在块之前使用一致的空格
@@ -205,11 +206,12 @@ module.exports = {
         // 禁止可以在有更简单的可替代的表达式时使用三元操作符
         "no-unneeded-ternary": 2,
         // 强制在注释中 // 或 /* 使用一致的空格
+        // 所以注释都必须是 // sss  格式
         "spaced-comment": [2, "always", {
             "markers": ["global", "globals", "eslint", "eslint-disable", "*package", "!"]
         }],
-        // 双峰驼命名格式
-        "camelcase": 2,
+        // 双峰驼命名格式，目前为警告级别
+        "camelcase": 1,
         // 控制逗号前后的空格
         "comma-spacing": [2, {
             "before": false,

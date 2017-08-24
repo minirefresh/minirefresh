@@ -41,8 +41,8 @@ module.exports = function(config) {
                     type: 'html',
                     subdir: '.',
                     dir: '_coverage/'
-                },
+                }
             ]
-        },
-    }))
-}
+        }
+    }));
+};

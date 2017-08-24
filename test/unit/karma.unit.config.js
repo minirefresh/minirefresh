@@ -7,7 +7,7 @@ module.exports = function(config) {
 
         browsers: ['Chrome', 'Firefox', 'Safari'],
 
-        singleRun: true,
+        singleRun: true
 
-    }))
-}
+    }));
+};

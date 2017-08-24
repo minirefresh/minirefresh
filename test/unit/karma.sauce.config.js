@@ -1,20 +1,20 @@
 // 引进 userName 和 key
-var sauce = require('./sauce.json'); 
-var base = require('./karma.base.config.js'); 
+var sauce = require('./sauce.json');
+var base = require('./karma.base.config.js');
 
 var batches = [
     // the cool kids
     {
-        sl_chrome: {
+        slChrome: {
             base: 'SauceLabs',
             browserName: 'chrome',
             platform: 'Windows 7'
         },
-        sl_firefox: {
+        slFirefox: {
             base: 'SauceLabs',
             browserName: 'firefox'
         },
-        sl_mac_safari: {
+        slMacSafari: {
             base: 'SauceLabs',
             browserName: 'safari',
             platform: 'OS X 10.10'
@@ -22,7 +22,7 @@ var batches = [
     },
     // ie family
     {
-        sl_edge: {
+        slEdge: {
             base: 'SauceLabs',
             browserName: 'MicrosoftEdge',
             platform: 'Windows 10'
@@ -30,23 +30,23 @@ var batches = [
     },
     // mobile
     {
-        sl_ios_safari_9: {
+        slIosSafari9: {
             base: 'SauceLabs',
             browserName: 'iphone',
             // 目前最低为8.1
             version: '8.1'
         },
-        sl_ios_safari_10: {
+        slIosSafari10: {
             base: 'SauceLabs',
             browserName: 'iphone',
             version: '10.3'
         },
-        sl_android_4_4: {
+        slAndroid44: {
             base: 'SauceLabs',
             browserName: 'android',
             version: '4.4'
         },
-        sl_android_6_0: {
+        slAndroid60: {
             base: 'SauceLabs',
             browserName: 'android',
             version: '6.0'
@@ -77,7 +77,8 @@ module.exports = function(config) {
             testName: 'minirefresh tests',
             recordScreenshots: false,
             connectOptions: {
-                'no-ssl-bump-domains': 'all' // Ignore SSL error on Android emulator
+                // Ignore SSL error on Android emulator
+                'no-ssl-bump-domains': 'all'
             },
             build: 'build-' + Date.now()
         },
@@ -87,6 +88,6 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: Object.keys(batch),
-        customLaunchers: batch,
-    }))
-}
+        customLaunchers: batch
+    }));
+};

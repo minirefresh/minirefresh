@@ -28,8 +28,9 @@
     "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "test:unit": "node_modules/.bin/karma start test/unit/karma.unit.config.js",
     "test:eslint": "npm run eslint:report",
-    "eslint": "node_modules/.bin/eslint ./src",
-    "eslint:report": "node_modules/.bin/eslint ./src -f html -o ./_report/eslint.html"
+    "eslint": "node_modules/.bin/eslint ./src ./test",
+    "eslint:fix": "node_modules/.bin/eslint ./src ./test --fix",
+    "eslint:report": "node_modules/.bin/eslint ./src ./test -f html -o ./_report/eslint.html"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

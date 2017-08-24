@@ -1,41 +1,42 @@
-import {expect} from "chai";
+import {expect} from 'chai';
 // 引入核心工具类，帮助全局变量上
-import "../src/minirefresh.js";
+import '../src/minirefresh.js';
 
 let MiniRefresh = MiniRefreshTools;
 
 describe('extend', function() {
-    var obj1,
+    let obj1,
         obj2,
         obj3;
+        
     before(function() {
         // 在本区块的所有测试用例之前执行
         obj1 = {
-            company: "epoint",
+            company: 'epoint',
             product: {
-                ejs: "ejs混合开发方案"
+                ejs: 'ejs混合开发方案'
             }
         };
 
         obj2 = {
             company: 'epoint2',
-            city: "suzhou",
+            city: 'suzhou',
             product: {
-                m7: "m7移动框架"
+                m7: 'm7移动框架'
             }
         };
 
         obj3 = {
-            name: "zhangsan",
+            name: 'zhangsan',
             product: {
-                group: "mobile",
-                m7: "m7移动框架2"
+                group: 'mobile',
+                m7: 'm7移动框架2'
             }
         };
     });
 
     it('拓展单个（浅层拓展）', function() {
-        var result = MiniRefresh.extend({}, obj1, obj2);
+        let result = MiniRefresh.extend({}, obj1, obj2);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.property('product', obj2.product);
@@ -43,7 +44,7 @@ describe('extend', function() {
     });
 
     it('拓展多个（浅层拓展）', function() {
-        var result = MiniRefresh.extend({}, obj1, obj2, obj3);
+        let result = MiniRefresh.extend({}, obj1, obj2, obj3);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.property('product', obj3.product);
@@ -51,11 +52,11 @@ describe('extend', function() {
     });
 
     it('拓展多个（递归拓展）', function() {
-        var result = MiniRefresh.extend(true, {}, obj1, obj2, obj3);
+        let result = MiniRefresh.extend(true, {}, obj1, obj2, obj3);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.nested.property('product.ejs', obj1.product.ejs);
         expect(result).to.have.deep.nested.property('product.m7', obj3.product.m7);
-        expect(result).to.have.deep.nested.property('product.group', obj3.product.group);      
+        expect(result).to.have.deep.nested.property('product.group', obj3.product.group);
     });
 });

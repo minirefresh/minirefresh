@@ -12,13 +12,6 @@ eslint:recommended
 
 默认开启了`eslint`的默认校验规则
 
-其中如下规则被重新覆盖：
-
-```js
-// 目前console变为警告级别
-"no-console": 1,
-
-```
 
 ### 代码风格
 
