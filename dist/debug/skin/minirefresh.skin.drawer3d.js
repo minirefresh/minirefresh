@@ -26,7 +26,7 @@
             successAnim: {
                 // successAnim
                 enable: false
-            },
+            }
         }
     };
 

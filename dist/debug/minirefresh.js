@@ -686,7 +686,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
-            dampRate: 0.4,
+            dampRate: 0.3,
             // 回弹动画时间
             bounceTime: 300,
             successAnim: {

@@ -41,6 +41,7 @@
         down: {
             // 下拉100出现释放更新
             offset: 100,
+            dampRate: 0.4,
             successAnim: {
                 // successAnim
                 enable: false
