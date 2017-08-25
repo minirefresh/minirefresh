@@ -221,7 +221,7 @@
 }
 
 .minirefresh-skin-default .downwrap-content {
-    position: absolute;
+    /*position: absolute;*/
     width: 100%;
     padding: 10px 0;
     text-align: center;

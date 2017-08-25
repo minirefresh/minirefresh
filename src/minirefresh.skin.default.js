@@ -206,6 +206,9 @@
             this.isCanPullDown = false;
 
         },
+        _cancelLoaingHook: function() {
+            // 可以实现自己的逻辑
+        },
         _upLoaingHook: function(isShowUpLoading) {
             if (isShowUpLoading) {
                 this.upWrapTips.innerText = this.options.up.contentrefresh;

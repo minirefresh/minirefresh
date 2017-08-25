@@ -10,6 +10,7 @@
  * _downLoaingHook()                            下拉触发的那一刻回调
  * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
  * _downLoaingEndHook(isSuccess)                下拉刷新动画结束后的回调
+ * _cancelLoaingHook()                          取消loading的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
  * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
@@ -93,6 +94,10 @@
             this.scroller.on('downLoading', function() {
                 self._downLoaingHook && self._downLoaingHook();
                 options.down.callback && options.down.callback();
+            });
+            
+            this.scroller.on('cancelLoading', function() {
+                self._cancelLoaingHook && self._cancelLoaingHook();
             });
 
             this.scroller.on('upLoading', function() {

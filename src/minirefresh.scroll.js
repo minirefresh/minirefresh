@@ -18,6 +18,7 @@
         EVENT_PULL = 'pull',
         EVENT_UP_LOADING = 'upLoading',
         EVENT_DOWN_LOADING = 'downLoading',
+        EVENT_CANCEL_LOADING = 'cancelLoading',
         HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
 
     var rAF = window.requestAnimationFrame ||
@@ -212,6 +213,7 @@
                     // 否则默认重置位置
                     self._translate(0, bounceTime);
                     self.downHight = 0;
+                    self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
                 }
 
                 self.isMoveDown = false;

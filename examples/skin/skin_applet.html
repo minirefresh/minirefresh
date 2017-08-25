@@ -18,13 +18,6 @@
                 -webkit-user-select: none;
             }
             
-            .header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 44px;
-            }
-            
             .minirefresh-scroll {
                 background: #FFFFFF;
             }
@@ -33,12 +26,7 @@
     </head>
 
     <body>
-        <p class="header">
-            <a class="btn-left" >main</a> 满屏加载与锁定滑动</p>
-        <!--下拉刷新容器
-					pullrefresh 和 listdata是下拉刷新组件默认的id
-					简单的调用没有必要修改,如果有自定义修改需求的,请参考详细调用
-				-->
+        
         <div id="minirefresh" class="minirefresh-wrap">
 
             <div class="minirefresh-scroll">
@@ -80,7 +68,6 @@
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
-                    appletAnimation: true,
                     callback: function() {
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);

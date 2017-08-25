@@ -1,7 +1,7 @@
 <!-- 
         作者：dailc
-        时间：2017-08-14
-        描述：  默认的皮肤
+        时间：2017-08-25
+        描述：  3D抽屉效果
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,13 +10,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>MiniFresh skin default</title>
+        <title>MiniFresh skin drawer3d</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../../dist/debug/skin/minirefresh.skin.drawer3d.css" />
         <style>
             * {
                 -webkit-user-select: none;
             }
-            
             
             .minirefresh-scroll {
                 background: #FFFFFF;
@@ -26,7 +26,7 @@
     </head>
 
     <body>
-       
+        
         <div id="minirefresh" class="minirefresh-wrap">
 
             <div class="minirefresh-scroll">
@@ -40,6 +40,7 @@
         </div>
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../../dist/debug/skin/minirefresh.skin.drawer3d.js" ></script>
         <script>
             /**
              * 将string字符串转为html对象,默认创一个div填充
@@ -67,7 +68,7 @@
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
-                    isLock: false,
+                    bounceTime: 1000,
                     callback: function() {
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);
@@ -78,25 +79,22 @@
                     }
                 },
                 up: {
-                    isLock: false,
                     auto: true,
                     callback: function() {
                         setTimeout(function() {
                             // TODO:暂时的测试代码
                             var child = parseHtml('<li>333333333333333333333333333333</li><li>544444444444444444444444444</li><li>333333333333333333333333333333</li><li>544444444444444444444444444</li><li>333333333333333333333333333333</li><li>544444444444444444444444444</li>');
                             document.querySelector('#listdata').appendChild(child);
-                            miniRefresh.endUpLoading(true);
+                            miniRefresh.endUpLoading(true, true);
                         }, 1000);
                     },
                     loadFull: {
                         // 开启配置后，只要没满屏幕，就会自动加载
                         enable: true,
                         delay: 300
-                    },
-                    isShowUpLoading: true
+                    }
                 }
             });
-            
         </script>
     </body>
 

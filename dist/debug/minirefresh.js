@@ -226,6 +226,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         EVENT_PULL = 'pull',
         EVENT_UP_LOADING = 'upLoading',
         EVENT_DOWN_LOADING = 'downLoading',
+        EVENT_CANCEL_LOADING = 'cancelLoading',
         HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
 
     var rAF = window.requestAnimationFrame ||
@@ -420,6 +421,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                     // 否则默认重置位置
                     self._translate(0, bounceTime);
                     self.downHight = 0;
+                    self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
                 }
 
                 self.isMoveDown = false;
@@ -664,6 +666,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * _downLoaingHook()                            下拉触发的那一刻回调
  * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
  * _downLoaingEndHook(isSuccess)                下拉刷新动画结束后的回调
+ * _cancelLoaingHook()                          取消loading的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
  * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
@@ -747,6 +750,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this.scroller.on('downLoading', function() {
                 self._downLoaingHook && self._downLoaingHook();
                 options.down.callback && options.down.callback();
+            });
+            
+            this.scroller.on('cancelLoading', function() {
+                self._cancelLoaingHook && self._cancelLoaingHook();
             });
 
             this.scroller.on('upLoading', function() {
@@ -1097,6 +1104,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 需要重置回来
             this.isCanPullDown = false;
 
+        },
+        _cancelLoaingHook: function() {
+            // 可以实现自己的逻辑
         },
         _upLoaingHook: function(isShowUpLoading) {
             if (isShowUpLoading) {

@@ -3,7 +3,6 @@
  * 继承自default
  */
 (function(innerUtil) {
-    // TODO: 秘密花园的后续待参考了淘宝后再决定，目前雏形已经有了
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
@@ -117,6 +116,15 @@
             this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
             this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
         },
+        
+        /**
+         * 旋转进度条
+         * @param {Number} progress 对应需要选择的进度
+         */
+        _rotateDownProgress: function(progress) {
+            this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
+            this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
+        },
 
         /**
          * 重写下拉过程动画
@@ -134,9 +142,8 @@
                 progress = FULL_DEGREE * rate;
 
             this._transformDownWrap(-this.downWrapHeight + downHight);
-            this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
-            this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
-
+            this._rotateDownProgress(progress);
+            
             if (downHight < downOffset) {
                 if (this.pullState !== STATE_PULL_DEFAULT) {
                     this.downWrapTips.classList.remove(CLASS_HIDDEN);
