@@ -13,8 +13,6 @@
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
     var CLASS_ROTATE = 'minirefresh-rotate';
-    var CLASS_FADE_IN = 'minirefresh-fade-in';
-    var CLASS_FADE_OUT = 'minirefresh-fade-out';
     var CLASS_HIDDEN = 'minirefresh-hidden';
 
     /**
@@ -31,7 +29,7 @@
      * 一些常量
      */
     var DEFAULT_DOWN_HEIGHT = 800;
-    
+
     /**
      * 一些样式
      */
@@ -84,7 +82,14 @@
             var downWrap = document.createElement('div');
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
-            downWrap.innerHTML = '<div class="downwrap-bg"></div><div class="downwrap-moon"></div><div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
+            downWrap.innerHTML = '<div class="downwrap-bg"></div>' +
+                                    '<div class="downwrap-moon"></div>' +
+                                    '<div class="downwrap-content">' +
+                                    '<p class="downwrap-progress"></p>' +
+                                    '<p class="downwrap-tips">' +
+                                    options.down.contentdown +
+                                    '</p>' +
+                                  '</div>';
             container.insertBefore(downWrap, scrollWrap);
 
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
@@ -197,7 +202,7 @@
          */
         _downLoaingEndHook: function(isSuccess) {
             this.downWrapTips.innerText = this.options.down.contentdown;
-            this.downWrapProgress.classList.remove(CLASS_ROTATE);            
+            this.downWrapProgress.classList.remove(CLASS_ROTATE);
             // 默认和scrollwrap的同步
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
             // 需要重置回来
@@ -213,12 +218,11 @@
                 bgAnimClassRemove = isInAnim ? CLASS_SECRET_GARDEN_BG_OUT : CLASS_SECRET_GARDEN_BG_IN,
                 moonAnimClassAdd = isInAnim ? CLASS_SECRET_GARDEN_MOON_IN : CLASS_SECRET_GARDEN_MOON_OUT,
                 moonAnimClassRemove = isInAnim ? CLASS_SECRET_GARDEN_MOON_OUT : CLASS_SECRET_GARDEN_MOON_IN;
-            
-            
+
             // 动画变为加载特定的css样式，这样便于外部修改
             this.downWrapBg.classList.remove(bgAnimClassRemove);
             this.downWrapBg.classList.add(bgAnimClassAdd);
-            
+
             this.downWrapMoon.classList.remove(moonAnimClassRemove);
             this.downWrapMoon.classList.add(moonAnimClassAdd);
         },
@@ -229,8 +233,8 @@
          */
         _inSecretGarden: function() {
             var downBounceTime = this.options.down.bounceTime,
-                inSecretGardenCb = this.options.down.secretGarden.inSecretGarden;;
-            
+                inSecretGardenCb = this.options.down.secretGarden.inSecretGarden;
+
             this.downWrapTips.classList.add(CLASS_HIDDEN);
             // 动画
             this.scroller.translateScrollWrap(this.scrollWrap.clientHeight, downBounceTime);
@@ -238,6 +242,7 @@
             this._secretGardenAnimation(true);
             inSecretGardenCb && inSecretGardenCb();
         },
+
         /**
          * 重置秘密花园
          */
