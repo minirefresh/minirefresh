@@ -20,7 +20,7 @@ __喜欢，你就给一个star!__
 
 ## 官网
 
-[//www.minirefresh.com](//www.minirefresh.com)
+[http://www.minirefresh.com](http://www.minirefresh.com)
 
 ## 安装
 
@@ -64,6 +64,7 @@ import { MiniRefresh } from 'xxx/minirefresh.js';
 ## 页面布局
 
 ```html
+<!-- id可以更改，class请勿修改 -->
 <div id="minirefresh" class="minirefresh-wrap">
     <div class="minirefresh-scroll">        
     </div>

@@ -28,28 +28,14 @@
             .minirefresh-scroll {
                 background: #FFFFFF;
             }
+            
+            
         </style>
 
     </head>
 
     <body>
-        <div class="minirefresh-secret-garden minirefresh-hidden">
-        	<h1>秘密花园</h1>
-        	<img src="../images/cbd.jpg" />
-        	<img src="../images/muwu.jpg" />
-        	<img src="../images/shuijiao.jpg" />
-        	<img src="../images/muwu.jpg" />
-        	<img src="../images/yuantiao.jpg" />
-        	<p>
-        	    秘密花园的最后
-        	</p>
-        </div>
-        <p class="header">
-            <a class="btn-left" >main</a> 满屏加载与锁定滑动</p>
-        <!--下拉刷新容器
-					pullrefresh 和 listdata是下拉刷新组件默认的id
-					简单的调用没有必要修改,如果有自定义修改需求的,请参考详细调用
-				-->
+        
         <div id="minirefresh" class="minirefresh-wrap">
 
             <div class="minirefresh-scroll">
@@ -63,7 +49,7 @@
         </div>
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
-        <script type="text/javascript" src="../../dist/debug/skin/minirefresh.skin.taobao.js" ></script>
+        <script type="text/javascript" src="../../dist/debug/skin/minirefresh.skin.taobao.js"></script>
         <script>
             /**
              * 将string字符串转为html对象,默认创一个div填充
@@ -91,7 +77,6 @@
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
-                    appletAnimation: true,
                     callback: function() {
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);
@@ -99,6 +84,23 @@
                     },
                     successAnim: {
                         enable: false
+                    },
+                    // 本皮肤独有的效果
+                    secretGarden: {
+                        // 是否开启秘密花园（即类似淘宝二楼效果）
+                        enable: true,
+                        // 下拉超过200后可以出现秘密花园效果，注意，必须大于down的offset
+                        offset: 200,
+                        // 过度动画
+                        duration: 1000,
+                        // 提示文字
+                        tips: '欢迎光临秘密花园',
+                        inSecretGarden: function() {
+                            console.log('进入秘密花园');
+                            setTimeout(function() {
+                                miniRefresh.resetSecretGarden();
+                            }, 1000);
+                        }
                     }
                 },
                 up: {

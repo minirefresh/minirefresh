@@ -4,14 +4,22 @@
 
 .minirefresh-wrap {
     position: absolute;
-    top: 44px;
+    top: 0;
     bottom: 0;
     left: 0;
     width: 100%;
     /*
      * 去除wrap层的滚动条，确保只有scrol层有滚动条
      */
+    overflow-x: hidden;
     overflow-y: hidden;
+    /**
+     * 使用3d加速时，尽可能的使用index，防止浏览器默认给后续的元素创建复合层渲染
+     * 因为CSS3中，如果这个元素添加了硬件加速，并且index层级比较低，
+     * 在这个元素的后面其它元素（层级比这个元素高的，或者相同的，并且releative或absolute属性相同的），会默认变为复合层渲染
+     * 如果处理不当会极大的影响性能，可以用chrome的rending查看
+     */
+    z-index: 1;
 }
 
 
@@ -48,6 +56,7 @@
 
 .minirefresh-hardware-speedup {
     -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
     transform: translateZ(0);
 }
 

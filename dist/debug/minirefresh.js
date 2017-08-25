@@ -211,15 +211,14 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * 依赖于一个 MiniRefresh对象
  */
 (function(innerUtil) {
-    
-    
+
     /**
      * 每秒多少帧
      */
     var SECOND_MILLIONS = 1000,
         NUMBER_FRAMES = 60,
         PER_SECOND = SECOND_MILLIONS / NUMBER_FRAMES;
-    
+
     /**
      * 定义一些常量
      */
@@ -228,7 +227,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         EVENT_UP_LOADING = 'upLoading',
         EVENT_DOWN_LOADING = 'downLoading',
         HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
-    
+
     var rAF = window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
         window.mozRequestAnimationFrame ||
@@ -270,7 +269,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         this._initPullUp();
 
         var self = this;
-        
+
         // 在初始化完毕后，下一个循环的开始再执行
         setTimeout(function() {
             if (self.options.down && self.options.down.auto && !self.isLockDown) {
@@ -281,6 +280,16 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 self.triggerUpLoading();
             }
         });
+    };
+    
+    /**
+     * 对外暴露的，移动wrap的同时一起修改downHeight
+     * @param {Number} y 移动的高度
+     * @param {Number} duration 过渡时间
+     */
+    MiniScroll.prototype.translateScrollWrap = function(y, duration) {
+        this._translate(y, duration);
+        this.downHight = y;
     };
 
     /**
@@ -354,7 +363,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 if (Math.abs(moveX) > Math.abs(moveY)) {
                     // 如果是横向滑动更多，阻止默认事件
                     e.preventDefault();
-                    
+
                     return;
                 }
 
@@ -369,7 +378,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                         // 下拉区域的高度，用translate动画
                         self.downHight = 0;
                     }
-                    
+
                     if (self.downHight < downOffset) {
                         // 下拉距离  < 指定距离
                         self.downHight += diff;
@@ -433,18 +442,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             scrollWrap = this.scrollWrap,
             options = this.options;
 
-        
         scrollWrap.addEventListener('scroll', function() {
             var scrollTop = scrollWrap.scrollTop,
                 scrollHeight = scrollWrap.scrollHeight,
                 clientHeight = scrollWrap.clientHeight;
-                
+
             self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
-            
+
             if (!self.upLoading) {
                 if (!self.isLockUp && !self.isFinishUp) {
                     var toBottom = scrollHeight - clientHeight - scrollTop;
-                    
+
                     if (toBottom <= options.up.offset) {
                         // 满足上拉加载
                         self.triggerUpLoading();
@@ -458,7 +466,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         var self = this,
             scrollWrap = this.scrollWrap,
             options = this.options;
-            
+
         setTimeout(function() {
             // 在下一个循环中运行
             if (!self.isLockUp && options.up.loadFull.enable && scrollWrap.scrollHeight <= scrollWrap.clientHeight) {
@@ -471,13 +479,13 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         var self = this,
             options = this.options,
             bounceTime = options.down.bounceTime;
-        
+
         if (!this.hooks[HOOK_BEFORE_DOWN_LOADING] || this.hooks[HOOK_BEFORE_DOWN_LOADING](self.downHight, options.down.offset)) {
             // 没有hook或者hook返回true都通过，主要是为了方便类似于秘密花园等的自定义下拉刷新动画实现
             self.downLoading = true;
             self.downHight = options.down.offset;
             self._translate(self.downHight, bounceTime);
-        
+
             self.events[EVENT_DOWN_LOADING] && self.events[EVENT_DOWN_LOADING]();
         }
     };
@@ -511,7 +519,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
      */
     MiniScroll.prototype.endUpLoading = function(isFinishUp) {
         if (this.upLoading) {
-            
+
             this.upLoading = false;
 
             if (isFinishUp) {
@@ -548,7 +556,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         }
         if (duration === 0) {
             scrollWrap.scrollTop = y;
-            
+
             return;
         }
 
@@ -599,16 +607,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this.isFinishUp = false;
             // TODO: 可以做一些其他操作，例如重新变为加载更多 lockUpLoading
         }
-        
+
         if (typeof isShowUpLoading === 'boolean') {
             this.isShowUpLoading = isShowUpLoading;
         }
-        
+
         // 触发一次HTML的scroll事件，以便检查当前位置是否需要加载更多
+        // 需要兼容webkit和firefox
         var evt = document.createEvent('HTMLEvents');
-        
-        // 这个事件没有必要冒泡
-        evt.initEvent('scroll', false);
+
+        // 这个事件没有必要冒泡，firefox内参数必须完整
+        evt.initEvent('scroll', false, true);
         this.scrollWrap.dispatchEvent(evt);
     };
 
@@ -674,7 +683,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
-            dampRate: 0.2,
+            dampRate: 0.4,
             // 回弹动画时间
             bounceTime: 300,
             successAnim: {
