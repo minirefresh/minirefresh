@@ -20,7 +20,7 @@ __喜欢，你就给一个star!__
 
 ## 官网
 
-[http://www.minirefresh.com](http://www.minirefresh.com)
+[https://minirefresh.github.io/](https://minirefresh.github.io/)
 
 ## 安装
 
@@ -124,11 +124,23 @@ miniRefresh.endUpLoading(true);
 
 - 源码通过`eslint`测试
 
+### 皮肤
+
+官方支持的皮肤如下
+
+- [`default`（默认皮肤）](doc/skin_default.md)
+
+- [`applet`（仿微信小程序皮肤）](doc/skin_applet.md)
+
+- [`drawer3d`（3D抽屉效果皮肤）](doc/skin_drawer3d.md)
+
+- [`taobao`（仿淘宝皮肤，含二楼效果）](doc/skin_taobao.md)
+
 ## 贡献指南
 
-- [代码规范](coderule.md)
+- [代码规范](doc/coderule.md)
 
-- [贡献者](contributor.md)
+- [贡献者](doc/contributor.md)
 
 ## 讨论
 
