@@ -1,7 +1,7 @@
 {
   "name": "minirefresh",
   "title": "minirefresh",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "一款极简的H5下拉刷新，内测版本",
   "homepage": "https://github.com/minirefresh/minirefresh",
   "repository": {
@@ -23,6 +23,8 @@
   "author": "dailc(dailichun@aliyun.com)",
   "license": "MIT",
   "scripts": {
+    "dev": "node_modules/.bin/gulp watch",
+    "build": "node_modules/.bin/gulp default",
     "test": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "test:sauce": "node_modules/.bin/karma start test/unit/karma.sauce.config.js",
     "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
@@ -47,6 +49,7 @@
     "chai": "^4.1.1",
     "codecov": "^2.3.0",
     "eslint": "^4.5.0",
+    "gulp-eslint": "^4.0.0",
     "gulp-header": "^1.8.8",
     "gulp-sequence": "^0.4.6",
     "karma": "^1.7.0",

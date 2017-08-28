@@ -1,4 +1,4 @@
-/**
+/** 1
  * 构建 MiniRefresh
  * MiniRefreshTools 是内部使用的
  * 外部皮肤会用 MiniRefresh变量

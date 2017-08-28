@@ -4,7 +4,9 @@ var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var cleanCSS = require('gulp-clean-css');
 // 串行执行任务
+// sequence的chunk错误  https://github.com/teambition/gulp-sequence/issues/2
 var gulpSequence = require('gulp-sequence');
+var eslint = require('gulp-eslint');
 // 头部注释
 var header = require('gulp-header');
 var pkg = require('./package.json');
@@ -20,6 +22,15 @@ var banner = ['/**',
 // 暂且将debug和release放在一起
 var debugPath = './dist/debug/';
 var releasePath = './dist/';
+
+// eslint代码检查，方便调试
+gulp.task('eslint_js', function() {
+    return gulp.src(['./src/**/*.js'])
+        .pipe(eslint())
+        .pipe(eslint.format());
+        // 开启后如果报错会退出
+        //.pipe(eslint.failAfterError());
+});
 
 // MiniRefresh核心文件合并，默认打包核心文件已经default皮肤
 gulp.task('pack_core_js', function() {
@@ -77,11 +88,15 @@ gulp.task('resource_uglify', function() {
         .pipe(gulp.dest(releasePath));
 });
 
+gulp.task('lint', ['eslint_js']);
+
 gulp.task('pack_debug', ['pack_core_js', 'pack_core_resources', 'pack_themes']);
 
 gulp.task('pack_release', ['js_uglify', 'clean_css', 'resource_uglify']);
 
-gulp.task('default', gulpSequence('pack_debug', 'pack_release'));
+gulp.task('default', function(callback) {
+    gulpSequence('lint', 'pack_debug', 'pack_release')(callback);
+});
 
 // 看守
 gulp.task('watch', function() {
