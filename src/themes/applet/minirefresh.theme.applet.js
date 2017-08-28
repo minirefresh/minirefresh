@@ -110,7 +110,14 @@
          */
         _downLoaingEndHook: function(isSuccess) {
             this.downWrap.classList.remove(CLASS_DOWN_LOADING);
-            this._transformDownWrap(-1 * this.downWrapHeight);
+            this._transformDownWrap(-1 * this.downWrapHeight, this.options.down.bounceTime);
+        },
+        
+        /**
+         * 取消loading的回调
+         */
+        _cancelLoaingHook: function() {
+            this._transformDownWrap(-1 * this.downWrapHeight, this.options.down.bounceTime);
         }
     });
 

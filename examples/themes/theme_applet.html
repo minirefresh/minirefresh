@@ -1,7 +1,7 @@
 <!-- 
         作者：dailc
         时间：2017-08-18
-        描述：  微信小程序的皮肤
+        描述：  微信小程序的主题
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -12,7 +12,7 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <title>MiniFresh skin applet</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
-        <link rel="stylesheet" href="../../dist/debug/skin/minirefresh.skin.applet.css" />
+        <link rel="stylesheet" href="../../dist/debug/themes/applet/minirefresh.theme.applet.css" />
         <style>
             * {
                 -webkit-user-select: none;
@@ -40,7 +40,7 @@
         </div>
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
-        <script type="text/javascript" src="../../dist/debug/skin/minirefresh.skin.applet.js" ></script>
+        <script type="text/javascript" src="../../dist/debug/themes/applet/minirefresh.theme.applet.js" ></script>
         <script>
             /**
              * 将string字符串转为html对象,默认创一个div填充
@@ -72,9 +72,6 @@
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);
                         }, 1000);
-                    },
-                    successAnim: {
-                        enable: false
                     }
                 },
                 up: {

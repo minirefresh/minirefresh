@@ -22,22 +22,22 @@ var debugPath = './dist/debug/';
 var releasePath = './dist/';
 
 // MiniRefresh核心文件合并，默认打包核心文件已经default皮肤
-gulp.task('core_concat', function() {
-    return gulp.src(['./src/minirefresh.js', './src/minirefresh.innerutil.js', './src/minirefresh.scroll.js', './src/minirefresh.core.js', './src/minirefresh.skin.default.js'])
+gulp.task('pack_core_js', function() {
+    return gulp.src(['./src/minirefresh.js', './src/minirefresh.scroll.js', './src/minirefresh.core.js', './src/minirefresh.theme.default.js'])
         .pipe(concat('minirefresh.js'))
         .pipe(gulp.dest(debugPath));
 });
 
-// 打包skin系列（除了default，因为default已经默认打包）
-gulp.task('pack_skin', function() {
-    return gulp.src(['./src/skin/*.js', '!./src/skin/minirefresh.skin.default.js'])
-        .pipe(gulp.dest(debugPath+'skin/'));
-});
-
-// 打包 css以及静态资源
-gulp.task('pack_resources', function() {
+// 打包 核心文件的资源css和资源的打包
+gulp.task('pack_core_resources', function() {
     return gulp.src(['./src/css/**/*'])
         .pipe(gulp.dest(debugPath));
+});
+
+// 打包 themes 系列,包括js和css（除了default，因为default已经默认打包）
+gulp.task('pack_themes', function() {
+    return gulp.src(['./src/themes/**/*'])
+        .pipe(gulp.dest(debugPath+'themes/'));
 });
 
 // 压缩发布的源文件
@@ -77,7 +77,7 @@ gulp.task('resource_uglify', function() {
         .pipe(gulp.dest(releasePath));
 });
 
-gulp.task('pack_debug', ['core_concat', 'pack_skin', 'pack_resources']);
+gulp.task('pack_debug', ['pack_core_js', 'pack_core_resources', 'pack_themes']);
 
 gulp.task('pack_release', ['js_uglify', 'clean_css', 'resource_uglify']);
 

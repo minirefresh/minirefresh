@@ -56,7 +56,6 @@
             // 是否默认显示上拉进度条，可以通过API改变
             isShowUpLoading: true,
             callback: innerUtil.noop
-
         },
         // 容器
         container: '#minirefresh'

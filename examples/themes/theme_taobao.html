@@ -1,7 +1,7 @@
 <!-- 
         作者：dailc
-        时间：2017-08-25
-        描述：  3D抽屉效果
+        时间：2017-08-19
+        描述：  仿淘宝的主题
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,9 +10,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>MiniFresh skin drawer3d</title>
+        <title>MiniFresh skin taobao</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
-        <link rel="stylesheet" href="../../dist/debug/skin/minirefresh.skin.drawer3d.css" />
+        <link rel="stylesheet" href="../../dist/debug/themes/taobao/minirefresh.theme.taobao.css" />
         <style>
             * {
                 -webkit-user-select: none;
@@ -21,6 +21,8 @@
             .minirefresh-scroll {
                 background: #FFFFFF;
             }
+            
+            
         </style>
 
     </head>
@@ -40,7 +42,7 @@
         </div>
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
-        <script type="text/javascript" src="../../dist/debug/skin/minirefresh.skin.drawer3d.js" ></script>
+        <script type="text/javascript" src="../../dist/debug/themes/taobao/minirefresh.theme.taobao.js"></script>
         <script>
             /**
              * 将string字符串转为html对象,默认创一个div填充
@@ -68,14 +70,27 @@
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
-                    bounceTime: 1000,
                     callback: function() {
                         setTimeout(function() {
                             miniRefresh.endDownLoading(true);
                         }, 1000);
                     },
-                    successAnim: {
-                        enable: false
+                    // 本皮肤独有的效果
+                    secretGarden: {
+                        // 是否开启秘密花园（即类似淘宝二楼效果）
+                        enable: true,
+                        // 下拉超过200后可以出现秘密花园效果，注意，必须大于down的offset
+                        offset: 200,
+                        // 过度动画
+                        duration: 1000,
+                        // 提示文字
+                        tips: '欢迎光临秘密花园',
+                        inSecretGarden: function() {
+                            console.log('进入秘密花园');
+                            setTimeout(function() {
+                                miniRefresh.resetSecretGarden();
+                            }, 1000);
+                        }
                     }
                 },
                 up: {

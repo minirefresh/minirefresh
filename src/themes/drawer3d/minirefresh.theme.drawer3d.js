@@ -23,6 +23,7 @@
             offset: 100,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
             dampRate: 0.2,
+            bounceTime: 500,
             successAnim: {
                 // successAnim
                 enable: false
