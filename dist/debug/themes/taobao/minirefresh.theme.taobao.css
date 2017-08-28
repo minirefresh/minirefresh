@@ -3,7 +3,7 @@
  * 支持淘宝二楼
  */
 
-.minirefresh-skin-taobao .minirefresh-downwrap {
+.minirefresh-theme-taobao .minirefresh-downwrap {
     position: absolute;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     height: 800px;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .downwrap-bg {
+.minirefresh-theme-taobao .minirefresh-downwrap .downwrap-bg {
     position: absolute;
     top: 0;
     left: 0;
@@ -21,7 +21,7 @@
     background-size: 100% 100%;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .downwrap-moon {
+.minirefresh-theme-taobao .minirefresh-downwrap .downwrap-moon {
     position: absolute;
     width: 120px;
     height: 80px;
@@ -32,7 +32,7 @@
     background-size: 100% 100%;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .downwrap-content {
+.minirefresh-theme-taobao .minirefresh-downwrap .downwrap-content {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -45,28 +45,28 @@
  * 以下是进入和退出秘密花园
  */
 
-.minirefresh-skin-taobao .minirefresh-downwrap .secret-garden-bg-in {
+.minirefresh-theme-taobao .minirefresh-downwrap .secret-garden-bg-in {
     transform: scale(1.5) translateZ(0px);
     -webkit-transform: scale(1.5) translateZ(0px);
     transition: 1000ms;
     -webkit-transition: 1000ms;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .secret-garden-bg-out {
+.minirefresh-theme-taobao .minirefresh-downwrap .secret-garden-bg-out {
     transform: scale(1) translateZ(0px);
     -webkit-transform: scale(1) translateZ(0px);
     transition: 1000ms;
     -webkit-transition: 1000ms;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .secret-garden-moon-in {
+.minirefresh-theme-taobao .minirefresh-downwrap .secret-garden-moon-in {
     transform: translateY(-120px) translateZ(0px);
     -webkit-transform: translateY(-120px) translateZ(0px);
     transition: 1000ms;
     -webkit-transition: 1000ms;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .secret-garden-moon-out {
+.minirefresh-theme-taobao .minirefresh-downwrap .secret-garden-moon-out {
     transform: translateY(0px) translateZ(0px);
     -webkit-transform: translateY(0px) translateZ(0px);
     transition: 1000ms;
@@ -78,12 +78,12 @@
  * 重新tips
  */
 
-.minirefresh-skin-taobao .minirefresh-downwrap .downwrap-tips {
+.minirefresh-theme-taobao .minirefresh-downwrap .downwrap-tips {
     font-size: 14px;
     color: white;
 }
 
-.minirefresh-skin-taobao .minirefresh-downwrap .downwrap-progress {
+.minirefresh-theme-taobao .minirefresh-downwrap .downwrap-progress {
     display: inline-block;
     width: 16px;
     height: 16px;

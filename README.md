@@ -126,15 +126,15 @@ miniRefresh.endUpLoading(true);
 
 ### 皮肤
 
-官方支持的皮肤如下
+官方支持的主题如下
 
-- [`default`（默认皮肤）](doc/skin_default.md)
+- [`default`（默认主题）](doc/themes/theme_default.md)
 
-- [`applet`（仿微信小程序皮肤）](doc/skin_applet.md)
+- [`applet`（仿微信小程序主题）](doc/themes/theme_applet.md)
 
-- [`drawer3d`（3D抽屉效果皮肤）](doc/skin_drawer3d.md)
+- [`drawer3d`（3D抽屉效果主题）](doc/themes/theme_drawer3d.md)
 
-- [`taobao`（仿淘宝皮肤，含二楼效果）](doc/skin_taobao.md)
+- [`taobao`（仿淘宝，含二楼效果主题）](doc/themes/theme_taobao.md)
 
 ## 贡献指南
 

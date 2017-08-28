@@ -23,8 +23,9 @@
   "author": "dailc(dailichun@aliyun.com)",
   "license": "MIT",
   "scripts": {
-    "dev": "node_modules/.bin/gulp watch",
     "build": "node_modules/.bin/gulp default",
+    "watch": "node_modules/.bin/gulp watch",
+    "dev": "npm run build && npm run watch",
     "test": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "test:sauce": "node_modules/.bin/karma start test/unit/karma.sauce.config.js",
     "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
@@ -32,7 +33,7 @@
     "test:eslint": "npm run eslint:report",
     "eslint": "node_modules/.bin/eslint ./src ./test",
     "eslint:fix": "node_modules/.bin/eslint ./src ./test --fix",
-    "eslint:report": "node_modules/.bin/eslint ./src ./test -f html -o ./_report/eslint.html"
+    "eslint:report": "node_modules/.bin/eslint ./src ./test ./examples -f html -o ./_report/eslint.html"
   },
   "devDependencies": {
     "gulp": "^3.9.1",

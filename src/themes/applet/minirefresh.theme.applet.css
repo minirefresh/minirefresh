@@ -57,14 +57,14 @@
 }
 
 
-.minirefresh-skin-applet .minirefresh-downwrap {
+.minirefresh-theme-applet .minirefresh-downwrap {
     position: absolute;
     top: 0;
     left: 0;
     height: 50px;
 }
 
-.minirefresh-skin-applet .minirefresh-downwrap .downwrap-content {
+.minirefresh-theme-applet .minirefresh-downwrap .downwrap-content {
     width: 100%;
     margin-top: 20px;
     text-align: center;

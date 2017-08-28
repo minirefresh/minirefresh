@@ -13,7 +13,8 @@ module.exports = {
     "extends": "eslint:recommended",
 
     "globals": {
-        "MiniRefreshTools": true
+        "MiniRefreshTools": true,
+        "MiniRefresh": true
     },
     // JavaScript 语言选项
     "parserOptions": {

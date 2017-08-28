@@ -7,9 +7,9 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * skin字段会根据不同的皮肤有不同值
+     * theme字段会根据不同的皮肤有不同值
      */
-    var CLASS_SKIN = 'minirefresh-skin-applet';
+    var CLASS_THEME = 'minirefresh-theme-applet';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
 
@@ -27,12 +27,12 @@
         down: {
             successAnim: {
                 // 微信小程序皮肤没有successAnim 也没有文字提示
-                enable: false
+                isEnable: false
             }
         }
     };
 
-    var MiniRefreshSkin = innerUtil.skin.defaults.extend({
+    var MiniRefreshTheme = innerUtil.theme.defaults.extend({
 
         /**
          * 拓展自定义的配置
@@ -58,7 +58,7 @@
             container.insertBefore(downWrap, scrollWrap);
 
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
-            container.classList.add(CLASS_SKIN);
+            container.classList.add(CLASS_THEME);
 
             this.downWrap = downWrap;
             // 留一个默认值，以免样式被覆盖，无法获取
@@ -122,20 +122,20 @@
     });
 
     // 挂载皮肤，这样多个皮肤可以并存
-    innerUtil.namespace('skin.applet', MiniRefreshSkin);
+    innerUtil.namespace('theme.applet', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
-    window.MiniRefresh = MiniRefreshSkin;
+    window.MiniRefresh = MiniRefreshTheme;
 
     /**
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshSkin;
+        module.exports = MiniRefreshTheme;
     } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefreshSkin;
+            return MiniRefreshTheme;
         });
     }
 

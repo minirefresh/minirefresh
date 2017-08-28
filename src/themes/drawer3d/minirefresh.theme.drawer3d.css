@@ -2,7 +2,7 @@
  * 3D抽屉效果
  */
 
-.minirefresh-skin-drawer3d .minirefresh-downwrap {
+.minirefresh-theme-drawer3d .minirefresh-downwrap {
     position: absolute;
     top: 0;
     left: 0;
@@ -10,13 +10,13 @@
     background: #000000;
 }
 
-.minirefresh-skin-drawer3d .minirefresh-downwrap .downwrap-content {
+.minirefresh-theme-drawer3d .minirefresh-downwrap .downwrap-content {
     width: 100%;
     margin-top: 20px;
     text-align: center;
 }
 
-.minirefresh-skin-drawer3d .minirefresh-downwrap .drawer3d {
+.minirefresh-theme-drawer3d .minirefresh-downwrap .drawer3d {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -31,7 +31,7 @@
     transform-origin: center bottom;
 }
 
-.minirefresh-skin-drawer3d .drawer3d .drawer3d-mask {
+.minirefresh-theme-drawer3d .drawer3d .drawer3d-mask {
    position: absolute;
    left: 0;
    top: 0;

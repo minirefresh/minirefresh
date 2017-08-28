@@ -6,9 +6,9 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * skin字段会根据不同的皮肤有不同值
+     * theme字段会根据不同的皮肤有不同值
      */
-    var CLASS_SKIN = 'minirefresh-skin-taobao';
+    var CLASS_THEME = 'minirefresh-theme-taobao';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
     var CLASS_ROTATE = 'minirefresh-rotate';
@@ -44,12 +44,12 @@
             dampRate: 0.4,
             successAnim: {
                 // successAnim
-                enable: false
+                isEnable: false
             },
             // 本皮肤独有的效果
             secretGarden: {
                 // 是否开启秘密花园（即类似淘宝二楼效果）
-                enable: true,
+                isEnable: true,
                 // 下拉超过200后可以出现秘密花园效果，注意，必须大于down的offset
                 offset: 200,
                 // 提示文字
@@ -59,7 +59,7 @@
         }
     };
 
-    var MiniRefreshSkin = innerUtil.skin.defaults.extend({
+    var MiniRefreshTheme = innerUtil.theme.defaults.extend({
 
         /**
          * 拓展自定义的配置
@@ -93,7 +93,7 @@
             container.insertBefore(downWrap, scrollWrap);
 
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
-            container.classList.add(CLASS_SKIN);
+            container.classList.add(CLASS_THEME);
 
             this.downWrap = downWrap;
             this.downWrapProgress = this.downWrap.querySelector('.downwrap-progress');
@@ -135,7 +135,7 @@
         _pullHook: function(downHight, downOffset) {
             var options = this.options,
                 down = options.down,
-                secretGarden = down.secretGarden.enable,
+                secretGarden = down.secretGarden.isEnable,
                 secretGardenOffset = down.secretGarden.offset,
                 FULL_DEGREE = 360;
 
@@ -216,6 +216,14 @@
             // 需要重置回来
             this.pullState = STATE_PULL_DEFAULT;
         },
+        
+        /**
+         * 取消loading的回调
+         */
+        _cancelLoaingHook: function() {
+            // 默认和scrollwrap的同步
+            this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
+        },
 
         /**
          * 秘密花园的动画
@@ -266,20 +274,20 @@
     });
 
     // 挂载皮肤，这样多个皮肤可以并存
-    innerUtil.namespace('skin.taobao', MiniRefreshSkin);
+    innerUtil.namespace('theme.taobao', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
-    window.MiniRefresh = MiniRefreshSkin;
+    window.MiniRefresh = MiniRefreshTheme;
 
     /**
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshSkin;
+        module.exports = MiniRefreshTheme;
     } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefreshSkin;
+            return MiniRefreshTheme;
         });
     }
 

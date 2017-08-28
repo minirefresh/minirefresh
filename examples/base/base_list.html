@@ -1,7 +1,7 @@
 <!-- 
         作者：dailc
-        时间：2017-08-18
-        描述：  微信小程序的主题
+        时间：2017-08-28
+        描述： 基本的列表页面
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,9 +10,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>MiniFresh theme applet</title>
+        <title>base list</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
-        <link rel="stylesheet" href="../../dist/debug/themes/applet/minirefresh.theme.applet.css" />
         <link rel="stylesheet" href="../common/common.css" />
 
     </head>
@@ -24,30 +23,27 @@
             <div class="minirefresh-scroll">
 
                 <ul class="data-list" id="listdata">
-                    <li>111111111111111111111111111v</li>
-                    <li>222222222222222222222222222</li>
 
                 </ul>
             </div>
         </div>
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
-        <script type="text/javascript" src="../../dist/debug/themes/applet/minirefresh.theme.applet.js"></script>
-        <script type="text/javascript" src="../common/common.js"></script>
+        <script type="text/javascript" src="../common/common.js" ></script>
         <script>
             var appendTestData = Common.appendTestData,
                 // 记录一个最新
                 maxDataSize = 30,
                 listDom = document.querySelector('#listdata'),
                 requestDelayTime = 600;
-
+        
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
                     callback: function() {
                         setTimeout(function() {
                             // 每次下拉刷新后，上拉的状态会被自动重置
-                            appendTestData(listDom, 10, true);
+                            appendTestData(listDom, 10, true);                         
                             miniRefresh.endDownLoading(true);
                         }, requestDelayTime);
                     }

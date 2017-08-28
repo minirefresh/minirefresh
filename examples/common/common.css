@@ -1,0 +1,56 @@
+/**
+ * showcase通用样式
+ */
+
+* {
+    -webkit-user-select: none;
+}
+
+.minirefresh-scroll {
+    background: #FFFFFF;
+}
+
+.data-list {
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    background-color: #fff;
+}
+
+.list-item {
+    position: relative;
+    overflow: hidden;
+    padding: 11px 15px;
+    -webkit-touch-callout: none;
+}
+
+.list-item:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 15px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+
+.list-item:active {
+    background: #F5F5F5;
+}
+
+.msg-title {
+    font-size: 15px;
+}
+
+.msg-fs14 {
+    font-size: 14px;
+    color: #999;
+}
+
+.msg-date {
+    float: right;
+}

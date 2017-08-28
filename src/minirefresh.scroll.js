@@ -65,10 +65,10 @@
 
         // 在初始化完毕后，下一个循环的开始再执行
         setTimeout(function() {
-            if (self.options.down && self.options.down.auto && !self.isLockDown) {
+            if (self.options.down && self.options.down.isAuto && !self.isLockDown) {
                 // 如果设置了auto，则自动下拉一次
                 self.triggerDownLoading();
-            } else if (self.options.up && self.options.up.auto && !self.isLockUp) {
+            } else if (self.options.up && self.options.up.isAuto && !self.isLockUp) {
                 // 如果设置了auto，则自动上拉一次
                 self.triggerUpLoading();
             }
@@ -263,7 +263,7 @@
 
         setTimeout(function() {
             // 在下一个循环中运行
-            if (!self.isLockUp && options.up.loadFull.enable && scrollWrap.scrollHeight <= scrollWrap.clientHeight) {
+            if (!self.isLockUp && options.up.loadFull.isEnable && scrollWrap.scrollHeight <= scrollWrap.clientHeight) {
                 self.triggerUpLoading();
             }
         }, options.up.loadFull.delay || 0);
@@ -399,7 +399,6 @@
     MiniScroll.prototype.resetUpLoading = function(isShowUpLoading) {
         if (this.isFinishUp) {
             this.isFinishUp = false;
-            // TODO: 可以做一些其他操作，例如重新变为加载更多 lockUpLoading
         }
 
         if (typeof isShowUpLoading === 'boolean') {

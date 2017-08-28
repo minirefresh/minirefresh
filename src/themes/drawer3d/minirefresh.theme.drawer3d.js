@@ -6,9 +6,9 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * skin字段会根据不同的皮肤有不同值
+     * theme字段会根据不同的皮肤有不同值
      */
-    var CLASS_SKIN = 'minirefresh-skin-drawer3d';
+    var CLASS_THEME = 'minirefresh-theme-drawer3d';
 
     /**
      * 一些常量
@@ -26,12 +26,12 @@
             bounceTime: 500,
             successAnim: {
                 // successAnim
-                enable: false
+                isEnable: false
             }
         }
     };
 
-    var MiniRefreshSkin = innerUtil.skin.defaults.extend({
+    var MiniRefreshTheme = innerUtil.theme.defaults.extend({
 
         /**
          * 拓展自定义的配置
@@ -63,7 +63,7 @@
                                 '<div class="drawer3d-mask"></div ></div>';
 
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
-            container.classList.add(CLASS_SKIN);
+            container.classList.add(CLASS_THEME);
 
             // 改写完后，对象需要重新查找
             this.downWrapProgress = downWrap.querySelector('.downwrap-progress');
@@ -76,13 +76,7 @@
             this._resetDownWrapAndDrawer(false);
         },
         _transformDownWrap: function(offset, duration) {
-            offset = offset || 0;
-            duration = duration || 0;
-            // 记得动画时 translateZ 否则硬件加速会被覆盖
-            this.downWrap.style.webkitTransitionDuration = duration + 'ms';
-            this.downWrap.style.transitionDuration = duration + 'ms';
-            this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
-            this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
+            this._super(offset, duration);
         },
         _transformDrawer: function(degree, duration) {
             degree = degree || 0;
@@ -130,10 +124,9 @@
          * 重写下拉动画
          */
         _downLoaingHook: function() {
+            // laoding中已经translate了
             this._super();
             
-            // 默认和scrollwrap的同步
-            this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this._transformDrawer(0, this.options.down.bounceTime);
         },
 
@@ -160,20 +153,20 @@
     });
 
     // 挂载皮肤，这样多个皮肤可以并存
-    innerUtil.namespace('skin.drawer3d', MiniRefreshSkin);
+    innerUtil.namespace('theme.drawer3d', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
-    window.MiniRefresh = MiniRefreshSkin;
+    window.MiniRefresh = MiniRefreshTheme;
 
     /**
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshSkin;
+        module.exports = MiniRefreshTheme;
     } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefreshSkin;
+            return MiniRefreshTheme;
         });
     }
 

@@ -10,25 +10,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>MiniFresh skin taobao</title>
+        <title>MiniFresh theme taobao</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
         <link rel="stylesheet" href="../../dist/debug/themes/taobao/minirefresh.theme.taobao.css" />
-        <style>
-            * {
-                -webkit-user-select: none;
-            }
-            
-            .minirefresh-scroll {
-                background: #FFFFFF;
-            }
-            
-            
-        </style>
+        <link rel="stylesheet" href="../common/common.css" />
 
     </head>
 
     <body>
-        
+
         <div id="minirefresh" class="minirefresh-wrap">
 
             <div class="minirefresh-scroll">
@@ -43,37 +33,23 @@
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
         <script type="text/javascript" src="../../dist/debug/themes/taobao/minirefresh.theme.taobao.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
         <script>
-            /**
-             * 将string字符串转为html对象,默认创一个div填充
-             * 因为很常用，所以单独提取出来了
-             * @param {String} strHtml 目标字符串
-             * @return {HTMLElement} 返回处理好后的html对象,如果字符串非法,返回null
-             */
-            function parseHtml(strHtml) {
-                if (strHtml == null || typeof(strHtml) != "string") {
-                    return null;
-                }
-                // 创一个灵活的div
-                var i, a = document.createElement("div");
-                var b = document.createDocumentFragment();
-                a.innerHTML = strHtml;
-                while (i = a.firstChild) b.appendChild(i);
-                return b;
-            }
-
-            for　 (var i = 0; i < 20; i++) {
-                var child = parseHtml('<li>1111111111111111111111</li><li>22222222222222222222222</li><li>1333333333333333333333333333</li><li>544444444444444444444444444</li>');
-                document.querySelector('#listdata').appendChild(child);
-            }
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
 
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
                     callback: function() {
                         setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
                             miniRefresh.endDownLoading(true);
-                        }, 1000);
+                        }, requestDelayTime);
                     },
                     // 本皮肤独有的效果
                     secretGarden: {
@@ -94,22 +70,16 @@
                     }
                 },
                 up: {
-                    auto: true,
+                    isAuto: true,
                     callback: function() {
                         setTimeout(function() {
-                            // TODO:暂时的测试代码
-                            var child = parseHtml('<li>333333333333333333333333333333</li><li>544444444444444444444444444</li><li>333333333333333333333333333333</li><li>544444444444444444444444444</li><li>333333333333333333333333333333</li><li>544444444444444444444444444</li>');
-                            document.querySelector('#listdata').appendChild(child);
-                            miniRefresh.endUpLoading(true, true);
-                        }, 1000);
-                    },
-                    loadFull: {
-                        // 开启配置后，只要没满屏幕，就会自动加载
-                        enable: true,
-                        delay: 300
+                            appendTestData(listDom, 4);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
                     }
                 }
             });
+
         </script>
     </body>
 

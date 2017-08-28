@@ -13,9 +13,9 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * skin字段会根据不同的皮肤有不同值
+     * THEME 字段会根据不同的主题有不同值
      */
-    var CLASS_SKIN = 'minirefresh-skin-default';
+    var CLASS_THEME = 'minirefresh-theme-default';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
     var CLASS_UP_WRAP = 'minirefresh-upwrap';
     var CLASS_FADE_IN = 'minirefresh-fade-in';
@@ -30,12 +30,17 @@
      */
     var CLASS_DOWN_SUCCESS = 'downwrap-success';
     var CLASS_DOWN_ERROR = 'downwrap-error';
+    
+    /**
+     * 一些常量
+     */
+    var DEFAULT_DOWN_HEIGHT = 200;
 
     var defaultSetting = {
         down: {
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
-                enable: true,
+                isEnable: false,
                 duration: 300
             },
             // 可选，在下拉可刷新状态时，下拉刷新控件上显示的标题内容
@@ -47,12 +52,14 @@
             // 可选，刷新成功的提示，当开启successAnim时才有效
             contentsuccess: '刷新成功',
             // 可选，刷新失败的提示，错误回调用到，当开启successAnim时才有效
-            contenterror: '刷新失败'
+            contenterror: '刷新失败',
+            // 是否默认跟随进行css动画
+            isWrapCssTranslate: false
         },
         up: {
             toTop: {
                 // 是否开启点击回到顶部
-                enable: true,
+                isEnable: true,
                 duration: 300,
                 // 滚动多少距离才显示toTop
                 offset: 800
@@ -63,7 +70,7 @@
         }
     };
 
-    var MiniRefreshSkin = innerUtil.core.extend({
+    var MiniRefreshTheme = innerUtil.core.extend({
         init: function(options) {
             // 拓展自定义的配置
             options = innerUtil.extend(true, {}, defaultSetting, options);
@@ -73,7 +80,7 @@
             var container = this.container,
                 scrollWrap = this.scrollWrap;
 
-            container.classList.add(CLASS_SKIN);
+            container.classList.add(CLASS_THEME);
             // 加上硬件加速让动画更流畅
             scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
 
@@ -98,7 +105,23 @@
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
             // 是否能下拉的变量，控制pull时的状态转变
             this.isCanPullDown = false;
+            
+            this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
+            this._transformDownWrap(-this.downWrapHeight);
         },
+        _transformDownWrap: function(offset, duration) {
+            if (!this.options.down.isWrapCssTranslate) {
+                return ;
+            }
+            offset = offset || 0;
+            duration = duration || 0;
+            // 记得动画时 translateZ 否则硬件加速会被覆盖
+            this.downWrap.style.webkitTransitionDuration = duration + 'ms';
+            this.downWrap.style.transitionDuration = duration + 'ms';
+            this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
+            this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
+        },
+        
         _initUpWrap: function() {
             var scrollWrap = this.scrollWrap,
                 options = this.options;
@@ -123,13 +146,13 @@
         _initToTop: function() {
             var self = this,
                 options = this.options,
-                toTop = options.up.toTop.enable,
+                toTop = options.up.toTop.isEnable,
                 duration = options.up.toTop.duration;
 
             if (toTop) {
                 var toTopBtn = document.createElement('div');
 
-                toTopBtn.className = CLASS_TO_TOP + ' ' + CLASS_SKIN;
+                toTopBtn.className = CLASS_TO_TOP + ' ' + CLASS_THEME;
 
                 toTopBtn.onclick = function() {
                     self.scroller.scrollTo(0, duration);
@@ -162,11 +185,12 @@
 
             this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
             this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
+            this._transformDownWrap(-this.downWrapHeight + downHight);
         },
         _scrollHook: function(scrollTop) {
             // 用来判断toTop
             var options = this.options,
-                toTop = options.up.toTop.enable,
+                toTop = options.up.toTop.isEnable,
                 toTopBtn = this.toTopBtn;
 
             if (toTop && toTopBtn) {
@@ -187,6 +211,8 @@
             }
         },
         _downLoaingHook: function() {
+            // 默认和scrollwrap的同步
+            this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
         },
@@ -204,10 +230,11 @@
             // 默认为不可见
             // 需要重置回来
             this.isCanPullDown = false;
-
+            
+            this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
         },
         _cancelLoaingHook: function() {
-            // 可以实现自己的逻辑
+            this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
         },
         _upLoaingHook: function(isShowUpLoading) {
             if (isShowUpLoading) {
@@ -242,20 +269,20 @@
     });
 
     // 挂载皮肤，这样多个皮肤可以并存，default是关键字，所以使用了defaults
-    innerUtil.namespace('skin.defaults', MiniRefreshSkin);
+    innerUtil.namespace('theme.defaults', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
-    window.MiniRefresh = MiniRefreshSkin;
+    window.MiniRefresh = MiniRefreshTheme;
 
     /**
      * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
      * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshSkin;
+        module.exports = MiniRefreshTheme;
     } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         define(function() {
-            return MiniRefreshSkin;
+            return MiniRefreshTheme;
         });
     }
 

@@ -26,7 +26,7 @@
             // 默认没有锁定，可以通过API动态设置
             isLock: false,
             // 是否自动下拉刷新
-            auto: false,
+            isAuto: false,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
@@ -35,7 +35,7 @@
             bounceTime: 300,
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
-                enable: false,
+                isEnable: false,
                 duration: 300
             },
             callback: innerUtil.noop
@@ -45,12 +45,12 @@
             // 默认没有锁定，可以通过API动态设置
             isLock: false,
             // 是否自动上拉加载-初始化是是否自动
-            auto: true,
+            isAuto: true,
             // 距离底部高度(到达该高度即触发)
             offset: 100,
             loadFull: {
                 // 开启配置后，只要没满屏幕，就会自动加载
-                enable: true,
+                isEnable: true,
                 delay: 300
             },
             // 是否默认显示上拉进度条，可以通过API改变
@@ -134,7 +134,7 @@
 
             if (this.scroller.downLoading) {
                 // 必须是loading时才允许执行对应hook
-                var successAnim = this.options.down.successAnim.enable,
+                var successAnim = this.options.down.successAnim.isEnable,
                     successAnimTime = this.options.down.successAnim.duration;
 
                 if (successAnim) {
