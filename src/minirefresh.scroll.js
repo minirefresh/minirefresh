@@ -50,7 +50,6 @@
         // 锁定上拉和下拉
         this.isLockDown = false;
         this.isLockUp = false;
-        this.isShowUpLoading = true;
         // 默认up是没有finish的
         this.isFinishUp = false;
 
@@ -73,6 +72,10 @@
                 self.triggerUpLoading();
             }
         });
+    };
+    
+    MiniScroll.prototype.refreshOptions = function(options) {
+        this.options = options;
     };
     
     /**
@@ -104,11 +107,9 @@
 
     MiniScroll.prototype._initPullDown = function() {
         var self = this,
-            scrollWrap = this.scrollWrap,
-            options = this.options,
-            bounceTime = options.down.bounceTime,
-            downOffset = options.down.offset;
-
+            // 考虑到options可以更新，所以缓存时请注意一定能最新
+            scrollWrap = this.scrollWrap;
+        
         scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
         scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
 
@@ -131,8 +132,17 @@
         scrollWrap.addEventListener('mousedown', touchstartEvent);
 
         var touchmoveEvent = function(e) {
+            var options = self.options,
+                isAllowDownloading = true;
+            
+            if (self.downLoading) {
+                isAllowDownloading = false;
+            } else if (!options.down.isAways && self.upLoading) {
+                isAllowDownloading = false;
+            }
+            
             if (self.startTop !== undefined && self.startTop <= 0 &&
-                !self.downLoading && !self.isLockDown) {
+                (isAllowDownloading) && !self.isLockDown) {
                 // 列表在顶部且不在加载中，并且没有锁住下拉动画
 
                 // 当前第一个手指距离列表顶部的距离
@@ -171,6 +181,8 @@
                         // 下拉区域的高度，用translate动画
                         self.downHight = 0;
                     }
+                    
+                    var downOffset = options.down.offset;
 
                     if (self.downHight < downOffset) {
                         // 下拉距离  < 指定距离
@@ -203,15 +215,17 @@
         scrollWrap.addEventListener('mousemove', touchmoveEvent);
 
         var touchendEvent = function(e) {
+            var options = self.options;
+            
             // 需要重置状态
             if (self.isMoveDown) {
                 // 如果下拉区域已经执行动画,则需重置回来
-                if (self.downHight >= downOffset) {
+                if (self.downHight >= options.down.offset) {
                     // 符合触发刷新的条件
                     self.triggerDownLoading();
                 } else {
                     // 否则默认重置位置
-                    self._translate(0, bounceTime);
+                    self._translate(0, options.down.bounceTime);
                     self.downHight = 0;
                     self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
                 }
@@ -233,13 +247,13 @@
 
     MiniScroll.prototype._initPullUp = function() {
         var self = this,
-            scrollWrap = this.scrollWrap,
-            options = this.options;
+            scrollWrap = this.scrollWrap;
 
         scrollWrap.addEventListener('scroll', function() {
             var scrollTop = scrollWrap.scrollTop,
                 scrollHeight = scrollWrap.scrollHeight,
-                clientHeight = scrollWrap.clientHeight;
+                clientHeight = scrollWrap.clientHeight,
+                options = self.options;
 
             self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
 
@@ -396,13 +410,9 @@
         this.options.up && (this.isLockUp = isLock);
     };
 
-    MiniScroll.prototype.resetUpLoading = function(isShowUpLoading) {
+    MiniScroll.prototype.resetUpLoading = function() {
         if (this.isFinishUp) {
             this.isFinishUp = false;
-        }
-
-        if (typeof isShowUpLoading === 'boolean') {
-            this.isShowUpLoading = isShowUpLoading;
         }
 
         // 触发一次HTML的scroll事件，以便检查当前位置是否需要加载更多

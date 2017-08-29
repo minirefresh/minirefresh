@@ -1,5 +1,5 @@
 /**
- * 微信小程序皮肤
+ * 仿微信小程序主题
  * 由于要复用default的上拉加载，toTop功能，所以直接继承自default
  * 只重写了 downWrap相关操作
  */
@@ -28,7 +28,9 @@
             successAnim: {
                 // 微信小程序皮肤没有successAnim 也没有文字提示
                 isEnable: false
-            }
+            },
+            // 继承了default的downWrap部分代码，需要这个变量
+            isWrapCssTranslate: true
         }
     };
 
@@ -66,13 +68,7 @@
             this._transformDownWrap(-1 * this.downWrapHeight);
         },
         _transformDownWrap: function(offset, duration) {
-            offset = offset || 0;
-            duration = duration || 0;
-            // 记得动画时 translateZ 否则硬件加速会被覆盖
-            this.downWrap.style.webkitTransitionDuration = duration + 'ms';
-            this.downWrap.style.transitionDuration = duration + 'ms';
-            this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
-            this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
+            this._super(offset, duration);
         },
 
         /**

@@ -1,6 +1,7 @@
 /**
- * 3D抽屉效果
+ * 3D抽屉效果主题
  * 复用了default的代码，在其基础上增加3D效果
+ * 注意，复用_super时一定要十分熟悉default中对应代码的作用
  */
 (function(innerUtil) {
 
@@ -27,7 +28,9 @@
             successAnim: {
                 // successAnim
                 isEnable: false
-            }
+            },
+            // 继承了default的downWrap部分代码，需要这个变量
+            isWrapCssTranslate: true
         }
     };
 
@@ -73,7 +76,9 @@
 
             // 留一个默认值，以免样式被覆盖，无法获取
             this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
-            this._resetDownWrapAndDrawer(false);
+            // 由于downWrap被改变了，重新移动
+            this._transformDownWrap(-this.downWrapHeight);
+            this._resetDrawer();
         },
         _transformDownWrap: function(offset, duration) {
             this._super(offset, duration);
@@ -94,12 +99,9 @@
         },
         
         /**
-         * 重置wrap和抽屉
-         * @param {Boolean} isWrapDuration 是否使用wrap的过渡时间，默认为false
-         * 一般初始化时为false，其余为true
+         * 重置抽屉，主要是旋转角度
          */
-        _resetDownWrapAndDrawer: function(isWrapDuration) {
-            this._transformDownWrap(-this.downWrapHeight, isWrapDuration ? this.options.down.bounceTime : 0);
+        _resetDrawer: function() {
             this._transformDrawer(DRAWER_FULL_DEGREE, this.options.down.bounceTime);
         },
 
@@ -115,8 +117,6 @@
             var rate = downHight / downOffset,
                 degree = DRAWER_FULL_DEGREE * (1 - Math.min(rate, 1));
             
-            // downWrap跟随tramsform
-            this._transformDownWrap(-this.downWrapHeight + downHight);
             this._transformDrawer(degree);
         },
 
@@ -141,14 +141,15 @@
          */
         _downLoaingEndHook: function(isSuccess) {
             this._super(isSuccess);
-            this._resetDownWrapAndDrawer(true);
+            this._resetDrawer();
         },
         
         /**
          * 取消loading的回调
          */
         _cancelLoaingHook: function() {
-            this._resetDownWrapAndDrawer(true);
+            this._super();
+            this._resetDrawer();
         }
     });
 

@@ -38,22 +38,29 @@
     };
 
     // 定义一个计数器
-    var counter = 0;
+    var counterArr = [0];
 
     /**
      * 添加测试数据
      * @param {String||HTMLElement} dom 目标dom
      * @param {Number} count 需要添加的数量
      * @param {Boolean} isReset 是否需要重置，下拉刷新的时候需要
+     * @param {String} prevTitle 需要加上的预设头部
      */
-    exports.appendTestData = function(dom, count, isReset) {
+    exports.appendTestData = function(dom, count, isReset, index) {
         if (typeof dom === 'string') {
             dom = document.querySelector(dom);
         }
         
+        var prevTitle = typeof index !== 'undefined' ? ('Tab' +  index) : '';
+        
+        var counterIndex = index || 0;
+        
+        counterArr[counterIndex] = counterArr[counterIndex] || 0;
+
         if (isReset) {
             dom.innerHTML = '';
-            counter = 0;
+            counterArr[counterIndex] = 0;
         }
 
         var template = '<li class="list-item"><h3 class="msg-title">{{title}}</h3><span class="msg-fs14 msg-date">{{date}}</span></li>';
@@ -61,18 +68,41 @@
         var html = '',
             dateStr = (new Date()).toLocaleString();
 
-        for (var i = 0; i < count; i++) {
-            counter++;
+        for (var i = 0; i < count; i++) {           
             html += exports.renderTemplate(template, {
-                title: '测试第【' + counter + '】条新闻标题',
+                title: prevTitle + '测试第【' + counterArr[counterIndex] + '】条新闻标题',
                 date: dateStr
             });
+            
+            counterArr[counterIndex]++;
         }
 
         var child = exports.parseHtml(html);
-        
-        
 
         dom.appendChild(child);
+    };
+
+    /**
+     * 绑定监听事件 暂时先用click
+     * @param {HTMLElement||String} dom 单个dom,或者selector
+     * @param {Function} callback 回调函数
+     * @param {String} 事件名
+     */
+    exports.bindEvent = function(dom, callback, eventName) {
+        eventName = eventName || 'click';
+        if (typeof dom === 'string') {
+            //选择
+            dom = document.querySelectorAll(dom);
+        }
+        if (!dom) {
+            return;
+        }
+        if (dom.length > 0) {
+            for (var i = 0, len = dom.length; i < len; i++) {
+                dom[i].addEventListener(eventName, callback);
+            }
+        } else {
+            dom.addEventListener(eventName, callback);
+        }
     };
 })(window.Common = {});

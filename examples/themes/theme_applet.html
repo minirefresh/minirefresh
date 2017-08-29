@@ -19,15 +19,20 @@
 
     <body>
 
-        <div id="minirefresh" class="minirefresh-wrap">
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            MiniRefresh Showcase
+        </nav>
+        <div class="content">
 
-            <div class="minirefresh-scroll">
-
-                <ul class="data-list" id="listdata">
-                    <li>111111111111111111111111111v</li>
-                    <li>222222222222222222222222222</li>
-
-                </ul>
+            <div id="minirefresh" class="minirefresh-wrap">
+    
+                <div class="minirefresh-scroll">
+    
+                    <ul class="data-list" id="listdata">
+    
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -50,13 +55,15 @@
                             appendTestData(listDom, 10, true);
                             miniRefresh.endDownLoading(true);
                         }, requestDelayTime);
-                    }
+                    },
+                    // 这个也生效
+                    isWrapCssTranslate: true
                 },
                 up: {
                     isAuto: true,
                     callback: function() {
                         setTimeout(function() {
-                            appendTestData(listDom, 4);
+                            appendTestData(listDom, 10);
                             miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
                         }, requestDelayTime);
                     }

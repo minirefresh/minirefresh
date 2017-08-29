@@ -5,6 +5,7 @@
  * 
  * 以下是皮肤类可以实现的Hook（为undefined的话相当于忽略）
  * _initHook(isLockDown, isLockUp)              初始化时的回调
+ * _refreshHook(isLockDown, isLockUp)           刷新options时的回调
  * _pullHook(downHight, downOffset)             下拉过程中持续回调
  * _scrollHook(scrollTop)                       滚动过程中持续回调
  * _downLoaingHook()                            下拉触发的那一刻回调
@@ -13,8 +14,8 @@
  * _cancelLoaingHook()                          取消loading的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
- * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
- * _lockDownLoadingHook(isLock)                 锁定下拉时的回调
+ * __lockUpLoadingHook(isLock)                   锁定上拉时的回调
+ * __lockDownLoadingHook(isLock)                 锁定下拉时的回调
  * 
  * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
  */
@@ -27,6 +28,8 @@
             isLock: false,
             // 是否自动下拉刷新
             isAuto: false,
+            // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
+            isAways: true,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
@@ -77,14 +80,20 @@
 
             // 生成一个Scroll对象 ，对象内部处理滑动监听
             this.scroller = new innerUtil.Scroll(this);
-
-            this.resetUpLoading(options.up.isShowUpLoading);
-            this.lockUpLoading(options.up.isLock);
-            this.lockDownLoading(options.down.isLock);
+           
             this._initEvent();
 
             // 初始化的hook
             this._initHook && this._initHook(this.scroller.isLockDown, this.scroller.isLockUp);
+            
+            // 一些状态需要UI更新后再进行
+            this._initOptions();
+        },
+        _initOptions: function() {
+            var options = this.options;
+
+            this._lockUpLoading(options.up.isLock);
+            this._lockDownLoading(options.down.isLock);
         },
         _initEvent: function() {
             var self = this,
@@ -94,13 +103,13 @@
                 self._downLoaingHook && self._downLoaingHook();
                 options.down.callback && options.down.callback();
             });
-            
+
             this.scroller.on('cancelLoading', function() {
                 self._cancelLoaingHook && self._cancelLoaingHook();
             });
 
             this.scroller.on('upLoading', function() {
-                self._upLoaingHook && self._upLoaingHook(self.scroller.isShowUpLoading);
+                self._upLoaingHook && self._upLoaingHook(self.options.up.isShowUpLoading);
                 options.up.callback && options.up.callback();
             });
 
@@ -119,7 +128,7 @@
                 return !self._beforeDownLoadingHook || self._beforeDownLoadingHook(downHight, downOffset);
             });
         },
-        
+
         /**
          * 内部执行，结束下拉刷新
          * @param {Boolean} isSuccess 是否下拉请求成功
@@ -154,7 +163,7 @@
                 }, successAnimTime);
             }
         },
-        
+
         /**
          * 内部执行，结束上拉加载
          * @param {Boolean} isFinishUp 是否结束了上拉加载
@@ -165,7 +174,44 @@
                 this._upLoaingEndHook && this._upLoaingEndHook(isFinishUp);
             }
         },
-        
+
+        /**
+         * 重新刷新上拉加载，刷新后会变为可以上拉加载
+         */
+        _resetUpLoading: function() {
+            this.scroller.resetUpLoading();
+        },
+
+        /**
+         * 锁定上拉加载
+         * 将开启和禁止合并成一个锁定API
+         * @param {Boolean} isLock 是否锁定
+         */
+        _lockUpLoading: function(isLock) {
+            this.scroller.lockUp(isLock);
+            this._lockUpLoadingHook && this._lockUpLoadingHook(isLock);
+        },
+
+        /**
+         * 锁定下拉刷新
+         * @param {Boolean} isLock 是否锁定
+         */
+        _lockDownLoading: function(isLock) {
+            this.scroller.lockDown(isLock);
+            this._lockDownLoadingHook && this._lockDownLoadingHook(isLock);
+        },
+
+        /**
+         * 刷新minirefresh的配置，关键性的配置请不要更新，如容器，回调等
+         * @param {Object} options 新的配置，会覆盖原有的
+         */
+        refreshOptions: function(options) {
+            this.options = innerUtil.extend(true, {}, this.options, options);
+            this.scroller.refreshOptions(this.options);
+            this._initOptions(options);
+            this._refreshHook && this._refreshHook();
+        },
+
         /**
          * 结束下拉刷新
          * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应皮肤
@@ -174,9 +220,9 @@
             typeof isSuccess !== 'boolean' && (isSuccess = true);
             this._endDownLoading(isSuccess);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
-            this.resetUpLoading();
+            this._resetUpLoading();
         },
-        
+
         /**
          * 结束上拉加载
          * @param {Boolean} isFinishUp 是否结束上拉加载，如果结束，就相当于变为了没有更多数据，无法再出发上拉加载了
@@ -185,41 +231,14 @@
         endUpLoading: function(isFinishUp) {
             this._endUpLoading(isFinishUp);
         },
-        
-        /**
-         * 重新刷新上拉加载，刷新后会变为可以上拉加载，这里面也可以主动更新一些其它状态
-         * @param {Boolean} isShowUpLoading 是否显示上拉加载动画，必须是布尔值才设置有效
-         */
-        resetUpLoading: function(isShowUpLoading) {
-            this.scroller.resetUpLoading(isShowUpLoading);
-        },
-        
-        /**
-         * 锁定上拉加载
-         * 将开启和禁止合并成一个锁定API
-         * @param {Boolean} isLock 是否锁定
-         */
-        lockUpLoading: function(isLock) {
-            this.scroller.lockUp(isLock);
-            this._lockUpLoadingHook && this._lockUpLoadingHook(isLock);
-        },
-        
-        /**
-         * 锁定下拉刷新
-         * @param {Boolean} isLock 是否锁定
-         */
-        lockDownLoading: function(isLock) {
-            this.scroller.lockDown(isLock);
-            this._lockDownLoadingHook && this._lockDownLoadingHook(isLock);
-        },
-        
+
         /**
          * 触发上拉加载
          */
         triggerUpLoading: function() {
             this.scroller.triggerUpLoading();
         },
-        
+
         /**
          * 触发下拉刷新
          */
@@ -227,7 +246,7 @@
             this.scroller.scrollTo(0);
             this.scroller.triggerDownLoading();
         },
-        
+
         /**
          * 滚动到指定的y位置
          * @param {Number} y 需要滑动到的top值

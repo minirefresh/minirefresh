@@ -1,5 +1,5 @@
 /**
- * 仿淘宝下拉刷新皮肤
+ * 仿淘宝下拉刷新主题
  * 继承自default
  */
 (function(innerUtil) {
@@ -16,13 +16,15 @@
 
     /**
      * 定义几个状态
-     * 下拉刷新默认状态
+     * 默认状态
+     * 下拉刷新状态
      * 释放刷新状态
      * 准备进入秘密花园状态
      */
     var STATE_PULL_DEFAULT = 0;
-    var STATE_PULL_READY_REFRESH = 1;
-    var STATE_PULL_READY_SECRETGARDEN = 2;
+    var STATE_PULL_DOWN = 1;
+    var STATE_PULL_READY_REFRESH = 2;
+    var STATE_PULL_READY_SECRETGARDEN = 3;
 
     /**
      * 一些常量
@@ -55,7 +57,9 @@
                 // 提示文字
                 tips: '欢迎光临秘密花园',
                 inSecretGarden: innerUtil.noop
-            }
+            },
+            // 继承了default的downWrap部分代码，需要这个变量
+            isWrapCssTranslate: true
         }
     };
 
@@ -83,13 +87,13 @@
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-bg"></div>' +
-                                    '<div class="downwrap-moon"></div>' +
-                                    '<div class="downwrap-content">' +
-                                    '<p class="downwrap-progress"></p>' +
-                                    '<p class="downwrap-tips">' +
-                                    options.down.contentdown +
-                                    '</p>' +
-                                  '</div>';
+                '<div class="downwrap-moon"></div>' +
+                '<div class="downwrap-content">' +
+                '<p class="downwrap-progress"></p>' +
+                '<p class="downwrap-tips">' +
+                options.down.contentdown +
+                '</p>' +
+                '</div>';
             container.insertBefore(downWrap, scrollWrap);
 
             // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
@@ -108,16 +112,9 @@
             this._transformDownWrap(-1 * this.downWrapHeight);
         },
         _transformDownWrap: function(offset, duration) {
-            offset = offset || 0;
-            duration = duration || 0;
-
-            // 记得动画时 translateZ 否则硬件加速会被覆盖
-            this.downWrap.style.webkitTransitionDuration = duration + 'ms';
-            this.downWrap.style.transitionDuration = duration + 'ms';
-            this.downWrap.style.webkitTransform = 'translateY(' + offset + 'px)  translateZ(0px)';
-            this.downWrap.style.transform = 'translateY(' + offset + 'px)  translateZ(0px)';
+            this._super(offset, duration);
         },
-        
+
         /**
          * 旋转进度条
          * @param {Number} progress 对应需要选择的进度
@@ -144,13 +141,17 @@
 
             this._transformDownWrap(-this.downWrapHeight + downHight);
             this._rotateDownProgress(progress);
-            
+
             if (downHight < downOffset) {
-                if (this.pullState !== STATE_PULL_DEFAULT) {
+                if (this.pullState !== STATE_PULL_DOWN) {
+                    // tips-down中需要移除bg的动画样式，如果不移除， downWrapTips修改innerText修改后可能无法重新渲染
+                    this.downWrapBg.classList.remove(CLASS_SECRET_GARDEN_BG_OUT);
+                    this.downWrapMoon.classList.remove(CLASS_SECRET_GARDEN_MOON_OUT);
+
                     this.downWrapTips.classList.remove(CLASS_HIDDEN);
                     this.downWrapProgress.classList.remove(CLASS_HIDDEN);
                     this.downWrapTips.innerText = down.contentdown;
-                    this.pullState = STATE_PULL_DEFAULT;
+                    this.pullState = STATE_PULL_DOWN;
                 }
             } else if (downHight >= downOffset && (!secretGarden || downHight < secretGardenOffset)) {
                 if (this.pullState !== STATE_PULL_READY_REFRESH) {
@@ -216,13 +217,14 @@
             // 需要重置回来
             this.pullState = STATE_PULL_DEFAULT;
         },
-        
+
         /**
          * 取消loading的回调
          */
         _cancelLoaingHook: function() {
             // 默认和scrollwrap的同步
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
+            this.pullState = STATE_PULL_DEFAULT;
         },
 
         /**
@@ -270,6 +272,8 @@
             // 重置动画区域的wrap
             this._transformDownWrap(-1 * this.downWrapHeight, downBounceTime);
             this._secretGardenAnimation(false);
+            // 需要重置回来
+            this.pullState = STATE_PULL_DEFAULT;
         }
     });
 

@@ -258,7 +258,6 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         // 锁定上拉和下拉
         this.isLockDown = false;
         this.isLockUp = false;
-        this.isShowUpLoading = true;
         // 默认up是没有finish的
         this.isFinishUp = false;
 
@@ -281,6 +280,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 self.triggerUpLoading();
             }
         });
+    };
+    
+    MiniScroll.prototype.refreshOptions = function(options) {
+        this.options = options;
     };
     
     /**
@@ -312,11 +315,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
     MiniScroll.prototype._initPullDown = function() {
         var self = this,
-            scrollWrap = this.scrollWrap,
-            options = this.options,
-            bounceTime = options.down.bounceTime,
-            downOffset = options.down.offset;
-
+            // 考虑到options可以更新，所以缓存时请注意一定能最新
+            scrollWrap = this.scrollWrap;
+        
         scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
         scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
 
@@ -339,8 +340,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         scrollWrap.addEventListener('mousedown', touchstartEvent);
 
         var touchmoveEvent = function(e) {
+            var options = self.options,
+                isAllowDownloading = true;
+            
+            if (self.downLoading) {
+                isAllowDownloading = false;
+            } else if (!options.down.isAways && self.upLoading) {
+                isAllowDownloading = false;
+            }
+            
             if (self.startTop !== undefined && self.startTop <= 0 &&
-                !self.downLoading && !self.isLockDown) {
+                (isAllowDownloading) && !self.isLockDown) {
                 // 列表在顶部且不在加载中，并且没有锁住下拉动画
 
                 // 当前第一个手指距离列表顶部的距离
@@ -379,6 +389,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                         // 下拉区域的高度，用translate动画
                         self.downHight = 0;
                     }
+                    
+                    var downOffset = options.down.offset;
 
                     if (self.downHight < downOffset) {
                         // 下拉距离  < 指定距离
@@ -411,15 +423,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         scrollWrap.addEventListener('mousemove', touchmoveEvent);
 
         var touchendEvent = function(e) {
+            var options = self.options;
+            
             // 需要重置状态
             if (self.isMoveDown) {
                 // 如果下拉区域已经执行动画,则需重置回来
-                if (self.downHight >= downOffset) {
+                if (self.downHight >= options.down.offset) {
                     // 符合触发刷新的条件
                     self.triggerDownLoading();
                 } else {
                     // 否则默认重置位置
-                    self._translate(0, bounceTime);
+                    self._translate(0, options.down.bounceTime);
                     self.downHight = 0;
                     self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
                 }
@@ -441,13 +455,13 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
     MiniScroll.prototype._initPullUp = function() {
         var self = this,
-            scrollWrap = this.scrollWrap,
-            options = this.options;
+            scrollWrap = this.scrollWrap;
 
         scrollWrap.addEventListener('scroll', function() {
             var scrollTop = scrollWrap.scrollTop,
                 scrollHeight = scrollWrap.scrollHeight,
-                clientHeight = scrollWrap.clientHeight;
+                clientHeight = scrollWrap.clientHeight,
+                options = self.options;
 
             self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
 
@@ -604,13 +618,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         this.options.up && (this.isLockUp = isLock);
     };
 
-    MiniScroll.prototype.resetUpLoading = function(isShowUpLoading) {
+    MiniScroll.prototype.resetUpLoading = function() {
         if (this.isFinishUp) {
             this.isFinishUp = false;
-        }
-
-        if (typeof isShowUpLoading === 'boolean') {
-            this.isShowUpLoading = isShowUpLoading;
         }
 
         // 触发一次HTML的scroll事件，以便检查当前位置是否需要加载更多
@@ -660,6 +670,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * 
  * 以下是皮肤类可以实现的Hook（为undefined的话相当于忽略）
  * _initHook(isLockDown, isLockUp)              初始化时的回调
+ * _refreshHook(isLockDown, isLockUp)           刷新options时的回调
  * _pullHook(downHight, downOffset)             下拉过程中持续回调
  * _scrollHook(scrollTop)                       滚动过程中持续回调
  * _downLoaingHook()                            下拉触发的那一刻回调
@@ -668,8 +679,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * _cancelLoaingHook()                          取消loading的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
- * _lockUpLoadingHook(isLock)                   锁定上拉时的回调
- * _lockDownLoadingHook(isLock)                 锁定下拉时的回调
+ * __lockUpLoadingHook(isLock)                   锁定上拉时的回调
+ * __lockDownLoadingHook(isLock)                 锁定下拉时的回调
  * 
  * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
  */
@@ -682,6 +693,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             isLock: false,
             // 是否自动下拉刷新
             isAuto: false,
+            // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
+            isAways: true,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
@@ -732,14 +745,20 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
             // 生成一个Scroll对象 ，对象内部处理滑动监听
             this.scroller = new innerUtil.Scroll(this);
-
-            this.resetUpLoading(options.up.isShowUpLoading);
-            this.lockUpLoading(options.up.isLock);
-            this.lockDownLoading(options.down.isLock);
+           
             this._initEvent();
 
             // 初始化的hook
             this._initHook && this._initHook(this.scroller.isLockDown, this.scroller.isLockUp);
+            
+            // 一些状态需要UI更新后再进行
+            this._initOptions();
+        },
+        _initOptions: function() {
+            var options = this.options;
+
+            this._lockUpLoading(options.up.isLock);
+            this._lockDownLoading(options.down.isLock);
         },
         _initEvent: function() {
             var self = this,
@@ -749,13 +768,13 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 self._downLoaingHook && self._downLoaingHook();
                 options.down.callback && options.down.callback();
             });
-            
+
             this.scroller.on('cancelLoading', function() {
                 self._cancelLoaingHook && self._cancelLoaingHook();
             });
 
             this.scroller.on('upLoading', function() {
-                self._upLoaingHook && self._upLoaingHook(self.scroller.isShowUpLoading);
+                self._upLoaingHook && self._upLoaingHook(self.options.up.isShowUpLoading);
                 options.up.callback && options.up.callback();
             });
 
@@ -774,7 +793,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 return !self._beforeDownLoadingHook || self._beforeDownLoadingHook(downHight, downOffset);
             });
         },
-        
+
         /**
          * 内部执行，结束下拉刷新
          * @param {Boolean} isSuccess 是否下拉请求成功
@@ -809,7 +828,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 }, successAnimTime);
             }
         },
-        
+
         /**
          * 内部执行，结束上拉加载
          * @param {Boolean} isFinishUp 是否结束了上拉加载
@@ -820,7 +839,44 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                 this._upLoaingEndHook && this._upLoaingEndHook(isFinishUp);
             }
         },
-        
+
+        /**
+         * 重新刷新上拉加载，刷新后会变为可以上拉加载
+         */
+        _resetUpLoading: function() {
+            this.scroller.resetUpLoading();
+        },
+
+        /**
+         * 锁定上拉加载
+         * 将开启和禁止合并成一个锁定API
+         * @param {Boolean} isLock 是否锁定
+         */
+        _lockUpLoading: function(isLock) {
+            this.scroller.lockUp(isLock);
+            this._lockUpLoadingHook && this._lockUpLoadingHook(isLock);
+        },
+
+        /**
+         * 锁定下拉刷新
+         * @param {Boolean} isLock 是否锁定
+         */
+        _lockDownLoading: function(isLock) {
+            this.scroller.lockDown(isLock);
+            this._lockDownLoadingHook && this._lockDownLoadingHook(isLock);
+        },
+
+        /**
+         * 刷新minirefresh的配置，关键性的配置请不要更新，如容器，回调等
+         * @param {Object} options 新的配置，会覆盖原有的
+         */
+        refreshOptions: function(options) {
+            this.options = innerUtil.extend(true, {}, this.options, options);
+            this.scroller.refreshOptions(this.options);
+            this._initOptions(options);
+            this._refreshHook && this._refreshHook();
+        },
+
         /**
          * 结束下拉刷新
          * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应皮肤
@@ -829,9 +885,9 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             typeof isSuccess !== 'boolean' && (isSuccess = true);
             this._endDownLoading(isSuccess);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
-            this.resetUpLoading();
+            this._resetUpLoading();
         },
-        
+
         /**
          * 结束上拉加载
          * @param {Boolean} isFinishUp 是否结束上拉加载，如果结束，就相当于变为了没有更多数据，无法再出发上拉加载了
@@ -840,41 +896,14 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         endUpLoading: function(isFinishUp) {
             this._endUpLoading(isFinishUp);
         },
-        
-        /**
-         * 重新刷新上拉加载，刷新后会变为可以上拉加载，这里面也可以主动更新一些其它状态
-         * @param {Boolean} isShowUpLoading 是否显示上拉加载动画，必须是布尔值才设置有效
-         */
-        resetUpLoading: function(isShowUpLoading) {
-            this.scroller.resetUpLoading(isShowUpLoading);
-        },
-        
-        /**
-         * 锁定上拉加载
-         * 将开启和禁止合并成一个锁定API
-         * @param {Boolean} isLock 是否锁定
-         */
-        lockUpLoading: function(isLock) {
-            this.scroller.lockUp(isLock);
-            this._lockUpLoadingHook && this._lockUpLoadingHook(isLock);
-        },
-        
-        /**
-         * 锁定下拉刷新
-         * @param {Boolean} isLock 是否锁定
-         */
-        lockDownLoading: function(isLock) {
-            this.scroller.lockDown(isLock);
-            this._lockDownLoadingHook && this._lockDownLoadingHook(isLock);
-        },
-        
+
         /**
          * 触发上拉加载
          */
         triggerUpLoading: function() {
             this.scroller.triggerUpLoading();
         },
-        
+
         /**
          * 触发下拉刷新
          */
@@ -882,7 +911,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this.scroller.scrollTo(0);
             this.scroller.triggerDownLoading();
         },
-        
+
         /**
          * 滚动到指定的y位置
          * @param {Number} y 需要滑动到的top值
@@ -985,6 +1014,24 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this._initUpWrap();
             this._initToTop();
         },
+        
+        /**
+         * 刷新的实现，需要根据新配置进行一些更改
+         */
+        _refreshHook: function() {
+            // 如果开关csstranslate，需要兼容
+            if (this.options.down.isWrapCssTranslate) {
+                this._transformDownWrap(-this.downWrapHeight);
+            } else {
+                this._transformDownWrap(0, 0, true);
+            }
+            
+            // toTop的显影控制，如果本身显示了，又更新为隐藏，需要马上隐藏
+            if (!this.options.up.toTop.isEnable) {
+                this.toTopBtn && this.toTopBtn.classList.add(CLASS_HIDDEN);
+                this.isShowToTopBtn = false;
+            }
+        },
         _initDownWrap: function() {
             var container = this.container,
                 scrollWrap = this.scrollWrap,
@@ -1006,8 +1053,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
             this._transformDownWrap(-this.downWrapHeight);
         },
-        _transformDownWrap: function(offset, duration) {
-            if (!this.options.down.isWrapCssTranslate) {
+        _transformDownWrap: function(offset, duration, isForce) {
+            if (!isForce && !this.options.down.isWrapCssTranslate) {
                 return ;
             }
             offset = offset || 0;
@@ -1127,7 +1174,6 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             // 默认为不可见
             // 需要重置回来
             this.isCanPullDown = false;
-            
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
         },
         _cancelLoaingHook: function() {
@@ -1158,10 +1204,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
         },
         _lockUpLoadingHook: function(isLock) {
-            // 可以实现自己的逻辑
+            this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';
         },
         _lockDownLoadingHook: function(isLock) {
-            // 可以实现自己的逻辑
+            this.downWrap.style.visibility = isLock ? 'hidden' : 'visible';
         }
     });
 

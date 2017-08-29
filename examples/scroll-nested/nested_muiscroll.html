@@ -1,0 +1,189 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-29
+        描述： 嵌套mui的scroll
+        minirefresh本身无依赖，只是示例依赖mui
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>nested muiscroll</title>
+        <link rel="stylesheet" href="libs/mui/css/mui.min.css" />
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .mui-fullscreen {
+                top: 45px;
+            }
+            
+            .minirefresh-wrap {
+                top: 0;
+            }
+            
+            #gallert-slider {
+                height: 220px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            嵌套mui-scroll
+        </nav>
+        <div class="content">
+            <div id="slider" class="mui-content mui-slider mui-fullscreen">
+                <div id="sliderSegmentedControl" class="mui-scroll-wrapper mui-slider-indicator mui-segmented-control mui-segmented-control-inverted">
+                    <div class="mui-scroll">
+                        <a class="mui-control-item mui-active" href="#item0mobile">
+                            列表0
+                        </a>
+                        <a class="mui-control-item" href="#item1mobile">
+                            列表1
+                        </a>
+                        <a class="mui-control-item" href="#item2mobile">
+                            列表2
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mui-slider-group">
+                    <div id="item0mobile" class="mui-slider-item mui-control-content mui-active">
+                        <div id="minirefresh0" class="minirefresh-wrap">
+                            <div class="minirefresh-scroll">
+
+                                <!-- 一个轮播示例，可以是其它的轮播  -->
+                                <div id="gallert-slider" class="mui-slider">
+                                    <div class="mui-slider-group mui-slider-loop">
+                                        <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                                        <div class="mui-slider-item mui-slider-item-duplicate">
+                                            <a href="#">
+                                                <img src="../images/yuantiao.jpg">
+                                            </a>
+                                        </div>
+                                        <!-- 第一张 -->
+                                        <div class="mui-slider-item">
+                                            <a href="#">
+                                                <img src="../images/shuijiao.jpg">
+                                            </a>
+                                        </div>
+                                        <!-- 第二张 -->
+                                        <div class="mui-slider-item">
+                                            <a href="#">
+                                                <img src="../images/muwu.jpg">
+                                            </a>
+                                        </div>
+                                        <!-- 第三张 -->
+                                        <div class="mui-slider-item">
+                                            <a href="#">
+                                                <img src="../images/cbd.jpg">
+                                            </a>
+                                        </div>
+                                        <!-- 第四张 -->
+                                        <div class="mui-slider-item">
+                                            <a href="#">
+                                                <img src="../images/yuantiao.jpg">
+                                            </a>
+                                        </div>
+                                        <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                                        <div class="mui-slider-item mui-slider-item-duplicate">
+                                            <a href="#">
+                                                <img src="../images/shuijiao.jpg">
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="mui-slider-indicator">
+                                        <div class="mui-indicator mui-active"></div>
+                                        <div class="mui-indicator"></div>
+                                        <div class="mui-indicator"></div>
+                                        <div class="mui-indicator"></div>
+                                    </div>
+                                </div>
+                                <ul class="data-list" id="listdata0">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="item1mobile" class="mui-slider-item mui-control-content">
+                        <div id="minirefresh1" class="minirefresh-wrap">
+                            <div class="minirefresh-scroll">
+                                <ul class="data-list" id="listdata1">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="item2mobile" class="mui-slider-item mui-control-content">
+                        <div id="minirefresh2" class="minirefresh-wrap">
+                            <div class="minirefresh-scroll">
+                                <ul class="data-list" id="listdata2">
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script type="text/javascript" src="libs/mui/js/mui.min.js"></script>
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDomArr = [],
+                requestDelayTime = 600,
+                miniRefreshArr = [];
+
+            var initMiniRefreshs = function(index) {
+
+                listDomArr[index] = document.querySelector('#listdata' + index);
+
+                miniRefreshArr[index] = new MiniRefresh({
+                    container: '#minirefresh' + index,
+                    down: {
+                        callback: function() {
+                            setTimeout(function() {
+                                // 每次下拉刷新后，上拉的状态会被自动重置
+                                appendTestData(listDomArr[index], 10, true, index);
+                                miniRefreshArr[index].endDownLoading(true);
+                            }, requestDelayTime);
+                        }
+                    },
+                    up: {
+                        isAuto: true,
+                        callback: function() {
+                            setTimeout(function() {
+                                appendTestData(listDomArr[index], 10, false, index);
+                                miniRefreshArr[index].endUpLoading(listDomArr[index].children.length >= maxDataSize ? true : false);
+                            }, requestDelayTime);
+                        }
+                    }
+                });
+            };
+
+            var slider = mui("#slider");
+            slider.slider({
+                interval: 0
+            });
+            
+            var slider2 = mui("#gallert-slider");
+            slider2.slider({
+                interval: 5000
+            });
+
+            initMiniRefreshs(0);
+            initMiniRefreshs(1);
+            initMiniRefreshs(2);
+        </script>
+    </body>
+
+</html>

@@ -88,6 +88,24 @@
             this._initUpWrap();
             this._initToTop();
         },
+        
+        /**
+         * 刷新的实现，需要根据新配置进行一些更改
+         */
+        _refreshHook: function() {
+            // 如果开关csstranslate，需要兼容
+            if (this.options.down.isWrapCssTranslate) {
+                this._transformDownWrap(-this.downWrapHeight);
+            } else {
+                this._transformDownWrap(0, 0, true);
+            }
+            
+            // toTop的显影控制，如果本身显示了，又更新为隐藏，需要马上隐藏
+            if (!this.options.up.toTop.isEnable) {
+                this.toTopBtn && this.toTopBtn.classList.add(CLASS_HIDDEN);
+                this.isShowToTopBtn = false;
+            }
+        },
         _initDownWrap: function() {
             var container = this.container,
                 scrollWrap = this.scrollWrap,
@@ -109,8 +127,8 @@
             this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
             this._transformDownWrap(-this.downWrapHeight);
         },
-        _transformDownWrap: function(offset, duration) {
-            if (!this.options.down.isWrapCssTranslate) {
+        _transformDownWrap: function(offset, duration, isForce) {
+            if (!isForce && !this.options.down.isWrapCssTranslate) {
                 return ;
             }
             offset = offset || 0;
@@ -230,7 +248,6 @@
             // 默认为不可见
             // 需要重置回来
             this.isCanPullDown = false;
-            
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
         },
         _cancelLoaingHook: function() {
@@ -261,10 +278,10 @@
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
         },
         _lockUpLoadingHook: function(isLock) {
-            // 可以实现自己的逻辑
+            this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';
         },
         _lockDownLoadingHook: function(isLock) {
-            // 可以实现自己的逻辑
+            this.downWrap.style.visibility = isLock ? 'hidden' : 'visible';
         }
     });
 

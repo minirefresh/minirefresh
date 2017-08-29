@@ -1,7 +1,7 @@
 <!-- 
         作者：dailc
-        时间：2017-08-25
-        描述：  3D抽屉效果主题
+        时间：2017-08-29
+        描述： css translate的开关与关闭（目前default和applet可以使用）
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,9 +10,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>MiniFresh theme drawer3d</title>
+        <title>csstranslate list</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
-        <link rel="stylesheet" href="../../dist/debug/themes/drawer3d/minirefresh.theme.drawer3d.css" />
         <link rel="stylesheet" href="../common/common.css" />
 
     </head>
@@ -21,34 +20,43 @@
 
         <nav class="navbar-header">
             <a class="nav-btn-left" href="../index.html">dashboard</a>
-            MiniRefresh Showcase
+            csstranslate的开启与关闭
         </nav>
         <div class="content">
 
             <div id="minirefresh" class="minirefresh-wrap">
-    
+
                 <div class="minirefresh-scroll">
-    
+
+                    <div class="notice">
+                        <p class="btn-switch">关闭csstranslate（当前开启）</p>
+                    </div>
+
                     <ul class="data-list" id="listdata">
-    
+
                     </ul>
                 </div>
             </div>
         </div>
 
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
-        <script type="text/javascript" src="../../dist/debug/themes/drawer3d/minirefresh.theme.drawer3d.js"></script>
-       <script type="text/javascript" src="../common/common.js"></script>
-       <script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
             var appendTestData = Common.appendTestData,
+                bindEvent = Common.bindEvent,
                 // 记录一个最新
                 maxDataSize = 30,
                 listDom = document.querySelector('#listdata'),
-                requestDelayTime = 600;
+                requestDelayTime = 600,
+                isCssTranslate = true;
 
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
                 down: {
+                    // 本皮肤的特色，是否开启wrap的css translate
+                    // 虽然继承自default的皮肤也有这个变量，但是目前只建议在defaul和applet中使用
+                    // default默认是关闭的 applet默认是开启的
+                    isWrapCssTranslate: isCssTranslate,
                     callback: function() {
                         setTimeout(function() {
                             // 每次下拉刷新后，上拉的状态会被自动重置
@@ -67,6 +75,21 @@
                     }
                 }
             });
+
+            bindEvent('.btn-switch', function() {
+                if (isCssTranslate) {
+                    this.innerText = '开启csstranslate（当前关闭）';
+                    isCssTranslate = false;
+                } else {
+                    this.innerText = '关闭csstranslate（当前开启）';
+                    isCssTranslate = true;
+                }
+                miniRefresh.refreshOptions({
+                    down: {
+                        isWrapCssTranslate: isCssTranslate                      
+                    }
+                });
+            }, 'click');
         </script>
     </body>
 
