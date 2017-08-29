@@ -33,7 +33,7 @@
     "test:eslint": "npm run eslint:report",
     "eslint": "node_modules/.bin/eslint ./src ./test",
     "eslint:fix": "node_modules/.bin/eslint ./src ./test --fix",
-    "eslint:report": "node_modules/.bin/eslint ./src ./test ./examples -f html -o ./_report/eslint.html"
+    "eslint:report": "node_modules/.bin/eslint ./src ./test -f html -o ./_report/eslint.html"
   },
   "devDependencies": {
     "gulp": "^3.9.1",
