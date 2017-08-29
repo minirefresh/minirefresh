@@ -30,6 +30,8 @@ __喜欢，你就给一个star!__
 npm install minirefresh
 ```
 
+[https://www.npmjs.com/package/minirefresh](https://www.npmjs.com/package/minirefresh)
+
 ### GIT
 
 ```js

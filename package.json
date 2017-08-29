@@ -1,7 +1,7 @@
 {
   "name": "minirefresh",
   "title": "minirefresh",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "一款极简的H5下拉刷新，内测版本",
   "homepage": "https://github.com/minirefresh/minirefresh",
   "repository": {
