@@ -1,16 +1,16 @@
 # minirefresh
 
+[![](https://img.shields.io/badge/codestyle-eslint-brightgreen.svg)](https://eslint.org/)
 [![](https://img.shields.io/circleci/project/minirefresh/minirefresh/master.svg)](https://circleci.com/gh/minirefresh/minirefresh/tree/master)
 [![](https://img.shields.io/codecov/c/github/minirefresh/minirefresh/master.svg)](https://codecov.io/github/minirefresh/minirefresh?branch=master)
 [![](https://img.shields.io/npm/dm/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/npm/v/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
 [![](https://img.shields.io/npm/l/minirefresh.svg)](https://www.npmjs.com/package/minirefresh)
-[![](https://img.shields.io/badge/codestyle-eslint-brightgreen.svg)](https://eslint.org/)
 [![](https://img.shields.io/gitter/room/nwjs/nw.js.svg)](https://gitter.im/minirefreshjs/minirefresh)
 
 [![](https://saucelabs.com/browser-matrix/minirefreshs.svg)](https://saucelabs.com/beta/builds/62749d602ec849809265f00ba5259eae)
 
-极简主义的H5下拉刷新
+零依赖，高性能，多主题，易拓展。优雅的H5下拉刷新
 
 ## Notice
 
@@ -39,6 +39,11 @@ __喜欢，你就给一个star!__
 ## 官网
 
 [https://minirefresh.github.io/](https://minirefresh.github.io/)
+
+_官网介绍更新中，暂时请先看下面的使用教程_
+
+[https://minirefresh.github.io/minirefresh-doc/](https://minirefresh.github.io/minirefresh-doc/)
+
 
 ## 安装
 

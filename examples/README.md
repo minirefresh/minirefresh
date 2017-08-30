@@ -34,6 +34,8 @@ minirefresh嵌套各自scroll的使用，包括
 
 - `drawer3d`主题
 
+- `drawerslider`主题
+
 - `taobao`主题
 
 ## senior
