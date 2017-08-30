@@ -1,6 +1,6 @@
 /**
  * minirefresh - 一款极简的H5下拉刷新，内测版本
- * @version v0.0.3
+ * @version v0.0.4
  * @author dailc(dailichun@aliyun.com)
  * https://github.com/minirefresh/minirefresh
  */

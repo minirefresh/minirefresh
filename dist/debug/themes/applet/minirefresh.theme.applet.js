@@ -7,14 +7,14 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * theme字段会根据不同的皮肤有不同值
+     * theme字段会根据不同的主题有不同值
      */
     var CLASS_THEME = 'minirefresh-theme-applet';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
 
     /**
-     * 本皮肤的特色样式
+     * 本主题的特色样式
      */
     var CLASS_DOWN_LOADING = 'loading-applet';
 
@@ -26,7 +26,7 @@
     var defaultSetting = {
         down: {
             successAnim: {
-                // 微信小程序皮肤没有successAnim 也没有文字提示
+                // 微信小程序没有successAnim 也没有文字提示
                 isEnable: false
             },
             // 继承了default的downWrap部分代码，需要这个变量
@@ -59,7 +59,7 @@
             downWrap.innerHTML = '<div class="downwrap-content ball-beat"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
             container.insertBefore(downWrap, scrollWrap);
 
-            // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
+            // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);
 
             this.downWrap = downWrap;
@@ -117,15 +117,15 @@
         }
     });
 
-    // 挂载皮肤，这样多个皮肤可以并存
+    // 挂载主题，这样多个主题可以并存
     innerUtil.namespace('theme.applet', MiniRefreshTheme);
 
-    // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
+    // 覆盖全局对象，使的全局对象只会指向一个最新的主题
     window.MiniRefresh = MiniRefreshTheme;
 
     /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
-     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     * 兼容require，为了方便使用，暴露出去的就是最终的主题
+     * 如果要自己实现主题，也请在对应的主题中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = MiniRefreshTheme;

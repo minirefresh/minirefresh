@@ -43,9 +43,12 @@
         <script type="text/javascript" src="../common/common.js"></script>
         <script>
             (function(innerUtil) {
-                // 仿照default皮肤的实现，拓展一个自定义皮肤
-                // 这里继承于core，其实也可以跟其它皮肤一样直接继承default的
-                // 这个自定义皮肤生成完后直接覆盖了default的
+
+                /**
+                 * 仿照default主题的实现，拓展一个自定义主题
+                 * 这里继承于core，其实也可以跟其它主题一样直接继承default的
+                 * 这个自定义主题生成完后直接覆盖了default的
+                 */
                 var MiniRefreshTheme = innerUtil.core.extend({
                     init: function(options) {
                         // 简单示例中就不再使用自定义配置了，直接使用core的默认配置
@@ -133,10 +136,10 @@
                     }
                 });
 
-                // 挂载皮肤到命名空间，这样多个皮肤可以并存
+                // 挂载主题到命名空间，这样多个主题可以并存
                 innerUtil.namespace('theme.customtheme', MiniRefreshTheme);
 
-                // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
+                // 覆盖全局对象，使的全局对象只会指向一个最新的主题
                 window.MiniRefresh = MiniRefreshTheme;
             })(MiniRefreshTools);
 

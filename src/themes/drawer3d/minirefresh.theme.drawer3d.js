@@ -7,7 +7,7 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * theme字段会根据不同的皮肤有不同值
+     * theme字段会根据不同的主题有不同值
      */
     var CLASS_THEME = 'minirefresh-theme-drawer3d';
 
@@ -65,7 +65,7 @@
                                 ' </p></div>' +
                                 '<div class="drawer3d-mask"></div ></div>';
 
-            // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
+            // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);
 
             // 改写完后，对象需要重新查找
@@ -153,15 +153,15 @@
         }
     });
 
-    // 挂载皮肤，这样多个皮肤可以并存
+    // 挂载主题，这样多个主题可以并存
     innerUtil.namespace('theme.drawer3d', MiniRefreshTheme);
 
-    // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
+    // 覆盖全局对象，使的全局对象只会指向一个最新的主题
     window.MiniRefresh = MiniRefreshTheme;
 
     /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
-     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     * 兼容require，为了方便使用，暴露出去的就是最终的主题
+     * 如果要自己实现主题，也请在对应的主题中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = MiniRefreshTheme;

@@ -184,7 +184,7 @@
 
 /**
  * 重写部分toTop样式，可以这样重新（没有空格）
- * .minirefresh-totop.minirefresh-theme-default（或其它皮肤）
+ * .minirefresh-totop.minirefresh-theme-default（或其它主题）
  * 可以在外部重新这个样式来达到自定义的目的
  * 由于totop和theme并列，所以这样取了
  */
@@ -203,7 +203,7 @@
 
 
 /**
- * default 皮肤的样式
+ * default 主题的样式
  */
 
 .minirefresh-theme-default .minirefresh-downwrap {

@@ -1,7 +1,7 @@
 /** 1
  * 构建 MiniRefresh
  * MiniRefreshTools 是内部使用的
- * 外部皮肤会用 MiniRefresh变量
+ * 外部主题会用 MiniRefresh变量
  */
 window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     'use strict';

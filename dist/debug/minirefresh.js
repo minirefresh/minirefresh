@@ -1,7 +1,7 @@
 /** 1
  * 构建 MiniRefresh
  * MiniRefreshTools 是内部使用的
- * 外部皮肤会用 MiniRefresh变量
+ * 外部主题会用 MiniRefresh变量
  */
 window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     'use strict';
@@ -665,10 +665,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 })(MiniRefreshTools);
 /**
  * MiniRerefresh 的核心代码，代码中约定对外的API
- * 可以通过继承  MiniRefreshCore， 得到一个皮肤类，然后在皮肤类中实现UI hook函数可以达到不同的动画效果
- * 核心类内部没有任何UI实现，所有的UI都依赖于皮肤类
+ * 可以通过继承  MiniRefreshCore， 得到一个主题类，然后在主题类中实现UI hook函数可以达到不同的动画效果
+ * 核心类内部没有任何UI实现，所有的UI都依赖于主题类
  * 
- * 以下是皮肤类可以实现的Hook（为undefined的话相当于忽略）
+ * 以下是主题类可以实现的Hook（为undefined的话相当于忽略）
  * _initHook(isLockDown, isLockUp)              初始化时的回调
  * _refreshHook(isLockDown, isLockUp)           刷新options时的回调
  * _pullHook(downHight, downOffset)             下拉过程中持续回调
@@ -879,7 +879,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
         /**
          * 结束下拉刷新
-         * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应皮肤
+         * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应主题
          */
         endDownLoading: function(isSuccess) {
             typeof isSuccess !== 'boolean' && (isSuccess = true);
@@ -925,15 +925,15 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     innerUtil.core = MiniRefreshCore;
 })(MiniRefreshTools);
 /**
- * minirefresh的默认皮肤
- * 默认皮肤会打包到核心代码中
- * 皮肤类继承自基类，所以可以调用基类的属性（但是不建议滥用）
- * 拓展其它皮肤有两种方案：
+ * minirefresh的默认主题
+ * 默认主题会打包到核心代码中
+ * 主题类继承自基类，所以可以调用基类的属性（但是不建议滥用）
+ * 拓展其它主题有两种方案：
  * 1. 直接继承自default，会默认拥有default的属性，只需要覆盖自定义功能即可（注意必须覆盖，否则会调用dwfault的默认操作）
  * 2. 和default一样，继承自 innerUtil.core，这样会与default无关，所以的一切UI都必须自己实现（可以参考default去实现）
  * 
  * 一般，在进行一些小修改时，建议继承自default（这样toTop，上拉加载大部分代码都可复用）
- * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写皮肤
+ * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写主题
  */
 (function(innerUtil) {
 
@@ -952,7 +952,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     var CLASS_HIDDEN = 'minirefresh-hidden';
 
     /**
-     * 本皮肤的特色样式
+     * 本主题的特色样式
      */
     var CLASS_DOWN_SUCCESS = 'downwrap-success';
     var CLASS_DOWN_ERROR = 'downwrap-error';
@@ -960,7 +960,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     /**
      * 一些常量
      */
-    var DEFAULT_DOWN_HEIGHT = 200;
+    var DEFAULT_DOWN_HEIGHT = 75;
 
     var defaultSetting = {
         down: {
@@ -1084,7 +1084,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         },
         
         /**
-         * 自定义实现一个toTop，由于这个是属于额外的事件所以没有添加的核心中，而是由各自的皮肤决定是否实现或者实现成什么样子
+         * 自定义实现一个toTop，由于这个是属于额外的事件所以没有添加的核心中，而是由各自的主题决定是否实现或者实现成什么样子
          * 不过框架中仍然提供了一个默认的minirefresh-totop样式，可以方便使用
          */
         _initToTop: function() {
@@ -1211,15 +1211,15 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         }
     });
 
-    // 挂载皮肤，这样多个皮肤可以并存，default是关键字，所以使用了defaults
+    // 挂载主题，这样多个主题可以并存，default是关键字，所以使用了defaults
     innerUtil.namespace('theme.defaults', MiniRefreshTheme);
 
-    // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
+    // 覆盖全局对象，使的全局对象只会指向一个最新的主题
     window.MiniRefresh = MiniRefreshTheme;
 
     /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
-     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     * 兼容require，为了方便使用，暴露出去的就是最终的主题
+     * 如果要自己实现主题，也请在对应的主题中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = MiniRefreshTheme;

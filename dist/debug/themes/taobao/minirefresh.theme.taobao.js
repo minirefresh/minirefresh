@@ -6,7 +6,7 @@
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
-     * theme字段会根据不同的皮肤有不同值
+     * theme字段会根据不同的主题有不同值
      */
     var CLASS_THEME = 'minirefresh-theme-taobao';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
@@ -48,7 +48,7 @@
                 // successAnim
                 isEnable: false
             },
-            // 本皮肤独有的效果
+            // 本主题独有的效果
             secretGarden: {
                 // 是否开启秘密花园（即类似淘宝二楼效果）
                 isEnable: true,
@@ -96,7 +96,7 @@
                 '</div>';
             container.insertBefore(downWrap, scrollWrap);
 
-            // 由于直接继承的default，所以其实已经有default皮肤了，这里再加上本皮肤样式
+            // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);
 
             this.downWrap = downWrap;
@@ -277,15 +277,15 @@
         }
     });
 
-    // 挂载皮肤，这样多个皮肤可以并存
+    // 挂载主题，这样多个主题可以并存
     innerUtil.namespace('theme.taobao', MiniRefreshTheme);
 
-    // 覆盖全局对象，使的全局对象只会指向一个最新的皮肤
+    // 覆盖全局对象，使的全局对象只会指向一个最新的主题
     window.MiniRefresh = MiniRefreshTheme;
 
     /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的皮肤
-     * 如果要自己实现皮肤，也请在对应的皮肤中增加require支持
+     * 兼容require，为了方便使用，暴露出去的就是最终的主题
+     * 如果要自己实现主题，也请在对应的主题中增加require支持
      */
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = MiniRefreshTheme;

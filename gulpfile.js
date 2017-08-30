@@ -32,7 +32,7 @@ gulp.task('eslint_js', function() {
         //.pipe(eslint.failAfterError());
 });
 
-// MiniRefresh核心文件合并，默认打包核心文件已经default皮肤
+// MiniRefresh核心文件合并，默认打包核心文件已经default主题
 gulp.task('pack_core_js', function() {
     return gulp.src(['./src/minirefresh.js', './src/minirefresh.scroll.js', './src/minirefresh.core.js', './src/minirefresh.theme.default.js'])
         .pipe(concat('minirefresh.js'))

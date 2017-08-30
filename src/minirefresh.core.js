@@ -1,9 +1,9 @@
 /**
  * MiniRerefresh 的核心代码，代码中约定对外的API
- * 可以通过继承  MiniRefreshCore， 得到一个皮肤类，然后在皮肤类中实现UI hook函数可以达到不同的动画效果
- * 核心类内部没有任何UI实现，所有的UI都依赖于皮肤类
+ * 可以通过继承  MiniRefreshCore， 得到一个主题类，然后在主题类中实现UI hook函数可以达到不同的动画效果
+ * 核心类内部没有任何UI实现，所有的UI都依赖于主题类
  * 
- * 以下是皮肤类可以实现的Hook（为undefined的话相当于忽略）
+ * 以下是主题类可以实现的Hook（为undefined的话相当于忽略）
  * _initHook(isLockDown, isLockUp)              初始化时的回调
  * _refreshHook(isLockDown, isLockUp)           刷新options时的回调
  * _pullHook(downHight, downOffset)             下拉过程中持续回调
@@ -214,7 +214,7 @@
 
         /**
          * 结束下拉刷新
-         * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应皮肤
+         * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应主题
          */
         endDownLoading: function(isSuccess) {
             typeof isSuccess !== 'boolean' && (isSuccess = true);
