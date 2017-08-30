@@ -10,13 +10,31 @@
 
 [![](https://saucelabs.com/browser-matrix/minirefreshs.svg)](https://saucelabs.com/beta/builds/62749d602ec849809265f00ba5259eae)
 
+极简主义的H5下拉刷新
 
+## Notice
 
 __内测中，正式发布版本会从1.0.0开始...__
 
 __喜欢，你就给一个star!__
 
-极简主义的下拉刷新，H5环境使用
+## 特点
+
+- 零依赖（原生JS实现，不依赖于任何库）
+
+- 多平台支持。一套代码，多端运行，支持Android，iOS，主流浏览器
+
+- 丰富的主题，官方提供多种主题（包括默认，applet-仿小程序，drawer3d-3d抽屉效果，taobao-仿淘宝等）
+
+- 高性能。动画采用css3+硬件加速，在主流手机上流畅运行
+
+- 良好的兼容性。支持和各种Scroll的嵌套（包括mui-scroll,IScroll,Swipe等），支持Vue环境下的使用
+
+- 易拓展，三层架构，专门抽取UI层面，方便实现各种的主题，实现一套主题非常方便，而且几乎可以实现任何的效果
+
+- 优雅的API和源码，API设计科学，简单，源码严谨，所有源码通过`ESlint`检测
+
+- 完善的文档与示例，提供完善的showcase，以及文档（文档正在更新中...）
 
 ## 官网
 
@@ -38,6 +56,8 @@ npm install minirefresh
 git clone git://github.com/minirefresh/minirefresh.git
 ```
 
+[https://github.com/minirefresh/minirefresh](https://github.com/minirefresh/minirefresh)
+
 ## 引入
 
 ```html
@@ -48,12 +68,6 @@ git clone git://github.com/minirefresh/minirefresh.git
 ### `require`引入
 
 ```js
-// npm安装情况
-var MiniRefresh = require('minirefresh');
-```
-
-```js
-// 直接通过路径引入
 var MiniRefresh = require('xxx/minirefresh.js');
 ```
 
@@ -66,7 +80,7 @@ import { MiniRefresh } from 'xxx/minirefresh.js';
 ## 页面布局
 
 ```html
-<!-- id可以更改，class请勿修改 -->
+<!-- minirefresh开头的class请勿修改 -->
 <div id="minirefresh" class="minirefresh-wrap">
     <div class="minirefresh-scroll">        
     </div>
@@ -105,42 +119,81 @@ miniRefresh.endDownLoading();
 miniRefresh.endUpLoading(true);
 ```
 
-### 功能
+## 使用文档
 
-下拉刷新，支持主流浏览器，支持移动端和PC
+[https://minirefresh.github.io/minirefresh-doc/](https://minirefresh.github.io/minirefresh-doc/)
 
+- 在线教程
 
-### 特点
+- API文档
 
-- 零依赖，与依赖其它任何代码
+- 主题支持
 
-- 多端支持，Android，iOS，手机各浏览器，PC端主流浏览器
+- 高级使用
 
-- 高性能，底层使用CSS3动画和硬件加速，在低端机上也流畅运行
+- 贡献指南
 
-- 多种主题可供选择，官方提供各式各样的主题可供选择
+## 效果
 
-- 易拓展，可拓展自定义主题。且底层源码解耦分层，拓展主题只需要少量代码
+### 基础示例
 
-- 简单，易用。完善的文档，简洁的API，轻松写出优雅的代码
+__1. 【基础新闻列表】最基本的下拉刷新使用__
 
-- 源码通过`eslint`测试
+![](staticresource/screenshoot/base_default.gif)
 
-### 主题
+__2. 【多列表单容器】每次切换菜单时刷新容器__
 
-官方支持的主题如下
+![](staticresource/screenshoot/base_single.gif)
 
-- [`default`（默认主题）](doc/themes/theme_default.md)
+__3. 【多列表多容器】多个列表都有一个Minirefresh对象__
 
-- [`applet`（仿微信小程序主题）](doc/themes/theme_applet.md)
+![](staticresource/screenshoot/base_multi.gif)
 
-- [`drawer3d`（3D抽屉效果主题）](doc/themes/theme_drawer3d.md)
+__4. 【Vue支持】支持Vue下的使用__
 
-- [`taobao`（仿淘宝，含二楼效果主题）](doc/themes/theme_taobao.md)
+![](staticresource/screenshoot/base_vue.gif)
 
-## 贡献指南
+### 嵌套示例
 
-- [代码规范](doc/coderule.md)
+__1. 【Mui-Slider】内部嵌套图片轮播__
+
+![](staticresource/screenshoot/nested_slider.gif)
+
+__2. 【Mui-Scroll】嵌套在Mui-Scroll中__
+
+![](staticresource/screenshoot/nested_muiscroll.gif)
+
+__3. 【Swipe】嵌套在Swipe中__
+
+![](staticresource/screenshoot/nested_swipe.gif)
+
+### 主题示例
+
+__1. 【applet】仿微信小程序主题__
+
+![](staticresource/screenshoot/theme_applet.gif)
+
+__2. 【taobao】仿淘宝刷新主题__
+
+![](staticresource/screenshoot/theme_taobao.gif)
+
+__3. 【drawer3d】3D抽屉效果主题__
+
+![](staticresource/screenshoot/theme_drawer3d.gif)
+
+__4. 【drawer-slider】滑动抽屉效果主题__
+
+![](staticresource/screenshoot/theme_drawerslider.gif)
+
+## showcase
+
+可以直接在线体验效果
+
+[https://minirefresh.github.io/minirefresh/examples/](https://minirefresh.github.io/minirefresh/examples/)
+
+![](staticresource/showcase/qrcode.png)
+
+## 贡献名单
 
 - [贡献者](doc/contributor.md)
 
