@@ -200,7 +200,7 @@ __4. 【drawer-slider】滑动抽屉效果主题__
 
 ## 贡献名单
 
-- [贡献者](doc/contributor.md)
+- [贡献者](contributor.md)
 
 ## 讨论
 
