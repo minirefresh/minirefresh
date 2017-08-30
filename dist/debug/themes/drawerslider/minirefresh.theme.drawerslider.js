@@ -1,7 +1,7 @@
 /**
- * 3D抽屉效果主题
- * 复用了default的代码，在其基础上增加3D效果
- * 注意，复用_super时一定要十分熟悉default中对应代码的作用
+ * 滑动抽屉效果
+ * 复用了default的代码
+ * 下拉动画时完全自定义重写，不移动scroll，而是直接css动画
  */
 (function(innerUtil) {
 
@@ -9,15 +9,15 @@
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
      * theme字段会根据不同的主题有不同值
      */
-    var CLASS_THEME = 'minirefresh-theme-drawer3d';
+    var CLASS_THEME = 'minirefresh-theme-drawerslider';
 
     /**
      * 一些常量
      * 默认高度是200
      * 其中背景默认是黑色，内容是白色，再增设阻尼系数可以较好的达到3D效果
      */
-    var DEFAULT_DOWN_HEIGHT = 200;
-    var DRAWER_FULL_DEGREE = 90;
+    var DEFAULT_DOWN_HEIGHT = 200,
+        DOWN_SHADOW_HEIGHT = 2;
 
     var defaultSetting = {
         down: {
@@ -30,7 +30,10 @@
                 isEnable: false
             },
             // 继承了default的downWrap部分代码，需要这个变量
-            isWrapCssTranslate: true
+            isWrapCssTranslate: true,
+            // 是否scroll在下拉时会进行css移动，本主题关闭它，完全自定义
+            // 这种方案记得修改动画区域的index
+            isScrollCssTranslate: false
         }
     };
 
@@ -57,54 +60,51 @@
                 downWrap = this.downWrap;
             
             // 改写内容区域
-            downWrap.innerHTML = '<div class="drawer3d">' +
+            downWrap.innerHTML = '<div class="drawer">' +
                                 '<div class="downwrap-content">' +
                                 '<p class="downwrap-progress"></p>' +
                                 '<p class="downwrap-tips">' +
                                 options.down.contentdown +
                                 ' </p></div>' +
-                                '<div class="drawer3d-mask"></div ></div>';
+                                '<div class="drawer-mask"></div ></div>';
 
             // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);
 
-            // 改写完后，对象需要重新查找
+            // 改写完后，对象需要重新查找，需要给default用
             this.downWrapProgress = downWrap.querySelector('.downwrap-progress');
             this.downWrapTips = downWrap.querySelector('.downwrap-tips');
-            this.drawer = downWrap.querySelector('.drawer3d');
-            this.drawerMask = downWrap.querySelector('.drawer3d-mask');
+            this.drawer = downWrap.querySelector('.drawer');
+            this.drawerMask = downWrap.querySelector('.drawer-mask');
 
             // 留一个默认值，以免样式被覆盖，无法获取
-            this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
+            // +2是去除阴影的位置
+            this.downWrapHeight = DOWN_SHADOW_HEIGHT + downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
             // 由于downWrap被改变了，重新移动
             this._transformDownWrap(-this.downWrapHeight);
-            this._resetDrawer();
         },
         _transformDownWrap: function(offset, duration) {
             this._super(offset, duration);
+            this._transformDrawer(offset, duration);
         },
-        _transformDrawer: function(degree, duration) {
-            degree = degree || 0;
-            duration = duration || 0;
-            this.drawer.style.webkitTransform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) translateY(2px)';
-            this.drawer.style.transform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) translateY(2px)';
-            this.drawer.style.webkitTransitionDuration = duration + 'ms';
-            this.drawer.style.transitionDuration = duration + 'ms';
+        _transformDrawer: function(offset, duration) {
+            if (!this.drawerMask) {
+                return ;
+            }
             
-            var opacity = degree / DRAWER_FULL_DEGREE;
+            offset = offset || 0;
+            duration = duration || 0;
+
+            var opacity = (-offset - this.options.down.offset) / this.downWrapHeight;
+            
+            opacity = Math.min(1, opacity);
+            opacity = Math.max(0, opacity);
             
             this.drawerMask.style.opacity = opacity;
             this.drawerMask.style.webkitTransitionDuration = duration + 'ms';
             this.drawerMask.style.transitionDuration = duration + 'ms';
         },
         
-        /**
-         * 重置抽屉，主要是旋转角度
-         */
-        _resetDrawer: function() {
-            this._transformDrawer(DRAWER_FULL_DEGREE, this.options.down.bounceTime);
-        },
-
         /**
          * 重写下拉过程动画
          * @param {Number} downHight 当前下拉的高度
@@ -113,11 +113,6 @@
         _pullHook: function(downHight, downOffset) {
             // 复用default的同名函数代码           
             this._super(downHight, downOffset);
-            
-            var rate = downHight / downOffset,
-                degree = DRAWER_FULL_DEGREE * (1 - Math.min(rate, 1));
-            
-            this._transformDrawer(degree);
         },
 
         /**
@@ -126,8 +121,6 @@
         _downLoaingHook: function() {
             // loading中已经translate了
             this._super();
-            
-            this._transformDrawer(0, this.options.down.bounceTime);
         },
 
         /**
@@ -141,7 +134,6 @@
          */
         _downLoaingEndHook: function(isSuccess) {
             this._super(isSuccess);
-            this._resetDrawer();
         },
         
         /**
@@ -149,7 +141,6 @@
          */
         _cancelLoaingHook: function() {
             this._super();
-            this._resetDrawer();
         }
     });
 

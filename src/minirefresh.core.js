@@ -36,11 +36,17 @@
             dampRate: 0.3,
             // 回弹动画时间
             bounceTime: 300,
+            // 是否scroll在下拉时会进行css移动，通过关闭它可以实现自定义动画
+            isScrollCssTranslate: true,
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
                 isEnable: false,
                 duration: 300
             },
+            // 下拉时会提供回调，默认为null不会执行
+            onPull: null,
+            // 取消时回调
+            onCalcel: null,
             callback: innerUtil.noop
         },
         // 上拉有关
@@ -58,6 +64,8 @@
             },
             // 是否默认显示上拉进度条，可以通过API改变
             isShowUpLoading: true,
+            // 滚动时会提供回调，默认为null不会执行
+            onScroll: null,
             callback: innerUtil.noop
         },
         // 容器
@@ -106,6 +114,7 @@
 
             this.scroller.on('cancelLoading', function() {
                 self._cancelLoaingHook && self._cancelLoaingHook();
+                options.down.onCalcel && options.down.onCalcel();
             });
 
             this.scroller.on('upLoading', function() {
@@ -115,12 +124,12 @@
 
             this.scroller.on('pull', function(downHight, downOffset) {
                 self._pullHook && self._pullHook(downHight, downOffset);
-                options.down.pull && options.down.pull();
+                options.down.onPull && options.down.onPull(downHight, downOffset);
             });
 
             this.scroller.on('scroll', function(scrollTop) {
                 self._scrollHook && self._scrollHook(scrollTop);
-                options.up.scroll && options.up.scroll();
+                options.up.onScroll && options.up.onScroll(scrollTop);
             });
 
             // 检查是否允许普通的加载中，如果返回false，就代表自定义下拉刷新，通常自己处理

@@ -124,7 +124,7 @@
          * 重写下拉动画
          */
         _downLoaingHook: function() {
-            // laoding中已经translate了
+            // loading中已经translate了
             this._super();
             
             this._transformDrawer(0, this.options.down.bounceTime);

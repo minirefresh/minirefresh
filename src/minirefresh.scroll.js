@@ -73,11 +73,11 @@
             }
         });
     };
-    
+
     MiniScroll.prototype.refreshOptions = function(options) {
         this.options = options;
     };
-    
+
     /**
      * 对外暴露的，移动wrap的同时一起修改downHeight
      * @param {Number} y 移动的高度
@@ -94,6 +94,10 @@
      * @param {Number} duration 过渡时间
      */
     MiniScroll.prototype._translate = function(y, duration) {
+        if (!this.options.down.isScrollCssTranslate) {
+            // 只有允许动画时才会scroll也translate,否则只会改变downHeight
+            return ;
+        }
         y = y || 0;
         duration = duration || 0;
 
@@ -109,7 +113,7 @@
         var self = this,
             // 考虑到options可以更新，所以缓存时请注意一定能最新
             scrollWrap = this.scrollWrap;
-        
+
         scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
         scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
 
@@ -134,13 +138,13 @@
         var touchmoveEvent = function(e) {
             var options = self.options,
                 isAllowDownloading = true;
-            
+
             if (self.downLoading) {
                 isAllowDownloading = false;
             } else if (!options.down.isAways && self.upLoading) {
                 isAllowDownloading = false;
             }
-            
+
             if (self.startTop !== undefined && self.startTop <= 0 &&
                 (isAllowDownloading) && !self.isLockDown) {
                 // 列表在顶部且不在加载中，并且没有锁住下拉动画
@@ -181,7 +185,7 @@
                         // 下拉区域的高度，用translate动画
                         self.downHight = 0;
                     }
-                    
+
                     var downOffset = options.down.offset;
 
                     if (self.downHight < downOffset) {
@@ -216,7 +220,7 @@
 
         var touchendEvent = function(e) {
             var options = self.options;
-            
+
             // 需要重置状态
             if (self.isMoveDown) {
                 // 如果下拉区域已经执行动画,则需重置回来

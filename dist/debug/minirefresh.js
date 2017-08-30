@@ -281,11 +281,11 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             }
         });
     };
-    
+
     MiniScroll.prototype.refreshOptions = function(options) {
         this.options = options;
     };
-    
+
     /**
      * 对外暴露的，移动wrap的同时一起修改downHeight
      * @param {Number} y 移动的高度
@@ -302,6 +302,10 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
      * @param {Number} duration 过渡时间
      */
     MiniScroll.prototype._translate = function(y, duration) {
+        if (!this.options.down.isScrollCssTranslate) {
+            // 只有允许动画时才会scroll也translate,否则只会改变downHeight
+            return ;
+        }
         y = y || 0;
         duration = duration || 0;
 
@@ -317,7 +321,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         var self = this,
             // 考虑到options可以更新，所以缓存时请注意一定能最新
             scrollWrap = this.scrollWrap;
-        
+
         scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
         scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
 
@@ -342,13 +346,13 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         var touchmoveEvent = function(e) {
             var options = self.options,
                 isAllowDownloading = true;
-            
+
             if (self.downLoading) {
                 isAllowDownloading = false;
             } else if (!options.down.isAways && self.upLoading) {
                 isAllowDownloading = false;
             }
-            
+
             if (self.startTop !== undefined && self.startTop <= 0 &&
                 (isAllowDownloading) && !self.isLockDown) {
                 // 列表在顶部且不在加载中，并且没有锁住下拉动画
@@ -389,7 +393,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
                         // 下拉区域的高度，用translate动画
                         self.downHight = 0;
                     }
-                    
+
                     var downOffset = options.down.offset;
 
                     if (self.downHight < downOffset) {
@@ -424,7 +428,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
         var touchendEvent = function(e) {
             var options = self.options;
-            
+
             // 需要重置状态
             if (self.isMoveDown) {
                 // 如果下拉区域已经执行动画,则需重置回来
@@ -701,11 +705,17 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             dampRate: 0.3,
             // 回弹动画时间
             bounceTime: 300,
+            // 是否scroll在下拉时会进行css移动，通过关闭它可以实现自定义动画
+            isScrollCssTranslate: true,
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
                 isEnable: false,
                 duration: 300
             },
+            // 下拉时会提供回调，默认为null不会执行
+            onPull: null,
+            // 取消时回调
+            onCalcel: null,
             callback: innerUtil.noop
         },
         // 上拉有关
@@ -723,6 +733,8 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
             },
             // 是否默认显示上拉进度条，可以通过API改变
             isShowUpLoading: true,
+            // 滚动时会提供回调，默认为null不会执行
+            onScroll: null,
             callback: innerUtil.noop
         },
         // 容器
@@ -771,6 +783,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
             this.scroller.on('cancelLoading', function() {
                 self._cancelLoaingHook && self._cancelLoaingHook();
+                options.down.onCalcel && options.down.onCalcel();
             });
 
             this.scroller.on('upLoading', function() {
@@ -780,12 +793,12 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
 
             this.scroller.on('pull', function(downHight, downOffset) {
                 self._pullHook && self._pullHook(downHight, downOffset);
-                options.down.pull && options.down.pull();
+                options.down.onPull && options.down.onPull(downHight, downOffset);
             });
 
             this.scroller.on('scroll', function(scrollTop) {
                 self._scrollHook && self._scrollHook(scrollTop);
-                options.up.scroll && options.up.scroll();
+                options.up.onScroll && options.up.onScroll(scrollTop);
             });
 
             // 检查是否允许普通的加载中，如果返回false，就代表自定义下拉刷新，通常自己处理

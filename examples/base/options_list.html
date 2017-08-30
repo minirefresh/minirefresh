@@ -78,6 +78,14 @@
                             appendTestData(listDom, 10, true);
                             miniRefresh.endDownLoading(true);
                         }, requestDelayTime);
+                    },
+                    // 下拉取消的回调
+                    onCalcel: function() {
+                        console.log("取消了刷新");
+                    },
+                    // 下拉过程回调
+                    onPull: function(downHight, downOffset) {
+                        console.log("下拉:" + downHight);
                     }
                 },
                 // 上拉有关
@@ -104,6 +112,10 @@
                             appendTestData(listDom, 4);
                             miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
                         }, requestDelayTime);
+                    },
+                    // 滑动过程回调
+                    onScroll: function(scrollTop) {
+                        console.log("滑动:" + scrollTop);
                     }
                 },
                 // 容器
