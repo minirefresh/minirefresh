@@ -57,14 +57,14 @@
                 downWrap = this.downWrap;
             
             // 改写内容区域
-            downWrap.innerHTML = '<div class="drawer3d">' +
+            downWrap.innerHTML = '<div class="state-3d"><div class="drawer3d">' +
                                 '<div class="downwrap-content">' +
                                 '<p class="downwrap-progress"></p>' +
                                 '<p class="downwrap-tips">' +
                                 options.down.contentdown +
                                 ' </p></div>' +
-                                '<div class="drawer3d-mask"></div ></div>';
-
+                                '<div class="drawer3d-mask"></div ></div></div>';
+            
             // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);
 
@@ -86,9 +86,9 @@
         _transformDrawer: function(degree, duration) {
             degree = degree || 0;
             duration = duration || 0;
-            // iOS perspective rotateX 的bug
-            this.drawer.style.transform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) rotateZ(0deg) translateY(2px)';
-            this.drawer.style.webkitTransform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) rotateZ(0deg) translateY(2px)';
+            // 一些3D相关属性写到了CSS中
+            this.drawer.style.transform = 'rotateX(' + degree + 'deg) rotateY(0deg)';
+            this.drawer.style.webkitTransform = 'rotateX(' + degree + 'deg) rotateY(0deg)';
             this.drawer.style.transitionDuration = duration + 'ms';
             this.drawer.style.webkitTransitionDuration = duration + 'ms';
        

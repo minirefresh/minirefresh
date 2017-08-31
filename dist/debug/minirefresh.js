@@ -910,7 +910,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
         },
         
         /**
-         * 重置上拉加载状态
+         * 重置上拉加载状态,如果是没有更多数据后重置，会变为可以继续上拉加载
          */
         resetUpLoading: function() {
             this._resetUpLoading();
