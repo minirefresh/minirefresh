@@ -40,11 +40,6 @@ __喜欢，你就给一个star!__
 
 [https://minirefresh.github.io/](https://minirefresh.github.io/)
 
-_官网介绍更新中，暂时请先看下面的使用教程_
-
-[https://minirefresh.github.io/minirefresh-doc/](https://minirefresh.github.io/minirefresh-doc/)
-
-
 ## 安装
 
 ### NPM
@@ -198,12 +193,22 @@ __4. 【drawer-slider】滑动抽屉效果主题__
 
 ![](staticresource/showcase/qrcode.png)
 
-## 贡献名单
+## 贡献
 
-- [贡献者](contributor.md)
+__`minirefresh`需要你!__
+
+来为项目添砖加瓦，新的`Idea`，新的主题，重大Bug发现，新的设计资源（如图标，官网设计等）
+
+都可以通过`Issue`或`PR`的方式提交！
+
+贡献被采纳后会加入贡献者名单，如果有杰出贡献（如持续贡献），可以加入`Manager`小组，成为`Minirefresh`的主人，共同开发维护`MiniRefresh`
+
+更多参考：[https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html](https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html)
 
 ## 讨论
 
 - [gitter](https://gitter.im/minirefreshjs/minirefresh)
 
 - QQ群（`601988892`）
+
+_注意，申请加入群时请添加验证信息，例如：minirefresh使用遇到问题等等_
