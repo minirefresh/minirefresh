@@ -145,7 +145,7 @@
     });
 
     // 挂载主题，这样多个主题可以并存
-    innerUtil.namespace('theme.drawer3d', MiniRefreshTheme);
+    innerUtil.namespace('theme.drawerslider', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的主题
     window.MiniRefresh = MiniRefreshTheme;

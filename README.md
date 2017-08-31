@@ -201,7 +201,9 @@ __`minirefresh`需要你!__
 
 都可以通过`Issue`或`PR`的方式提交！
 
-贡献被采纳后会加入贡献者名单，如果有杰出贡献（如持续贡献），可以加入`Manager`小组，成为`Minirefresh`的主人，共同开发维护`MiniRefresh`
+贡献被采纳后会加入贡献者名单，如果有杰出贡献（如持续贡献），可以加入`Manager`小组，共同开发维护`MiniRefresh`
+
+有共同参与项目意愿的，可以申请成为`Member`，成为`Minirefresh`真正的主人！
 
 更多参考：[https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html](https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html)
 

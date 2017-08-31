@@ -28,16 +28,18 @@
             isLock: false,
             // 是否自动下拉刷新
             isAuto: false,
+            // 设置isAuto=true时生效，是否在初始化的下拉刷新触发事件中显示动画，如果是false，初始化的加载只会触发回调，不会触发动画
+            isAllowAutoLoading: true,
             // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
-            isAways: true,
+            isAways: false,
+            // 是否scroll在下拉时会进行css移动，通过关闭它可以实现自定义动画
+            isScrollCssTranslate: true,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
             dampRate: 0.3,
             // 回弹动画时间
             bounceTime: 300,
-            // 是否scroll在下拉时会进行css移动，通过关闭它可以实现自定义动画
-            isScrollCssTranslate: true,
             successAnim: {
                 // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
                 isEnable: false,
@@ -55,6 +57,8 @@
             isLock: false,
             // 是否自动上拉加载-初始化是是否自动
             isAuto: true,
+            // 是否默认显示上拉进度条，可以通过API改变
+            isShowUpLoading: true,
             // 距离底部高度(到达该高度即触发)
             offset: 100,
             loadFull: {
@@ -62,8 +66,6 @@
                 isEnable: true,
                 delay: 300
             },
-            // 是否默认显示上拉进度条，可以通过API改变
-            isShowUpLoading: true,
             // 滚动时会提供回调，默认为null不会执行
             onScroll: null,
             callback: innerUtil.noop
@@ -94,10 +96,11 @@
             // 初始化的hook
             this._initHook && this._initHook(this.scroller.isLockDown, this.scroller.isLockUp);
             
-            // 一些状态需要UI更新后再进行
-            this._initOptions();
+            // 如果初始化时锁定了，需要触发锁定，避免没有锁定时解锁（会触发逻辑bug）
+            options.up.isLock && this._lockUpLoading(options.up.isLock);
+            options.down.isLock && this._lockDownLoading(options.down.isLock);
         },
-        _initOptions: function() {
+        _resetOptions: function() {
             var options = this.options;
 
             this._lockUpLoading(options.up.isLock);
@@ -107,8 +110,8 @@
             var self = this,
                 options = self.options;
 
-            this.scroller.on('downLoading', function() {
-                self._downLoaingHook && self._downLoaingHook();
+            this.scroller.on('downLoading', function(isHideLoading) {
+                !isHideLoading && self._downLoaingHook && self._downLoaingHook();
                 options.down.callback && options.down.callback();
             });
 
@@ -217,7 +220,7 @@
         refreshOptions: function(options) {
             this.options = innerUtil.extend(true, {}, this.options, options);
             this.scroller.refreshOptions(this.options);
-            this._initOptions(options);
+            this._resetOptions(options);
             this._refreshHook && this._refreshHook();
         },
 
@@ -229,6 +232,13 @@
             typeof isSuccess !== 'boolean' && (isSuccess = true);
             this._endDownLoading(isSuccess);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
+            this._resetUpLoading();
+        },
+        
+        /**
+         * 重置上拉加载状态,如果是没有更多数据后重置，会变为可以继续上拉加载
+         */
+        resetUpLoading: function() {
             this._resetUpLoading();
         },
 

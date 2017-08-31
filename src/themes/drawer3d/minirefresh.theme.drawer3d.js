@@ -86,16 +86,17 @@
         _transformDrawer: function(degree, duration) {
             degree = degree || 0;
             duration = duration || 0;
-            this.drawer.style.webkitTransform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) translateY(2px)';
-            this.drawer.style.transform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) translateY(2px)';
-            this.drawer.style.webkitTransitionDuration = duration + 'ms';
+            // iOS perspective rotateX 的bug
+            this.drawer.style.transform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) rotateZ(0deg) translateY(2px)';
+            this.drawer.style.webkitTransform = 'perspective(100px) rotateX(' + degree + 'deg) rotateY(0deg) rotateZ(0deg) translateY(2px)';
             this.drawer.style.transitionDuration = duration + 'ms';
-            
+            this.drawer.style.webkitTransitionDuration = duration + 'ms';
+       
             var opacity = degree / DRAWER_FULL_DEGREE;
             
             this.drawerMask.style.opacity = opacity;
-            this.drawerMask.style.webkitTransitionDuration = duration + 'ms';
             this.drawerMask.style.transitionDuration = duration + 'ms';
+            this.drawerMask.style.webkitTransitionDuration = duration + 'ms';
         },
         
         /**

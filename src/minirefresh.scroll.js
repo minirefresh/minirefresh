@@ -66,7 +66,12 @@
         setTimeout(function() {
             if (self.options.down && self.options.down.isAuto && !self.isLockDown) {
                 // 如果设置了auto，则自动下拉一次
-                self.triggerDownLoading();
+                // 需要判断是否需要动画
+                if (self.options.down.isAllowAutoLoading) {
+                    self.triggerDownLoading();
+                } else {
+                    self.events[EVENT_DOWN_LOADING] && self.events[EVENT_DOWN_LOADING](true);
+                }
             } else if (self.options.up && self.options.up.isAuto && !self.isLockUp) {
                 // 如果设置了auto，则自动上拉一次
                 self.triggerUpLoading();

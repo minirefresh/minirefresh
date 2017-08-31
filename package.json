@@ -1,8 +1,8 @@
 {
   "name": "minirefresh",
   "title": "minirefresh",
-  "version": "0.0.4",
-  "description": "一款极简的H5下拉刷新，内测版本",
+  "version": "0.0.5",
+  "description": "优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。",
   "homepage": "https://github.com/minirefresh/minirefresh",
   "repository": {
     "type": "git",
