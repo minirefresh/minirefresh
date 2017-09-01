@@ -1,10 +1,34 @@
-/** 1
+/** 
  * 构建 MiniRefresh
  * MiniRefreshTools 是内部使用的
  * 外部主题会用 MiniRefresh变量
  */
-window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
+(function(globalContext, factory) {
     'use strict';
+
+    //  if (!globalContext.document) {
+    //      throw new Error("minirefresh requires a window with a document");
+    //  }
+    
+    // 不重复执行
+    var moduleExports = globalContext.MiniRefreshTools || factory(globalContext);
+
+    if (typeof module !== 'undefined' && module.exports) {
+        // 用exports，导出一个MiniRefreshTools对象
+        exports.MiniRefreshTools = moduleExports;
+    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
+        // require模式默认导出整个工具类
+        define(function() {
+            return moduleExports;
+        });
+    }
+
+    // 单独引入时暴露的是这个tools 
+    globalContext.MiniRefreshTools = moduleExports;
+})(typeof window !== 'undefined' ? window : global, function(globalContext, exports) {
+    'use strict';
+
+    exports = exports || {};
 
     /**
      * 模拟Class的基类,以便模拟Class进行继承等
@@ -181,7 +205,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
      * @return {Object} 返回最终的对象
      */
     exports.namespace = function(namespace, obj) {
-        var parent = window.MiniRefreshTools;
+        var parent = globalContext.MiniRefreshTools;
 
         if (!namespace) {
             return parent;
@@ -205,7 +229,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     };
 
     return exports;
-})({});
+});
 /**
  * MiniRerefresh 处理滑动监听的关键代码，都是逻辑操作，没有UI实现
  * 依赖于一个 MiniRefresh对象
@@ -963,7 +987,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
  * 一般，在进行一些小修改时，建议继承自default（这样toTop，上拉加载大部分代码都可复用）
  * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写主题
  */
-(function(innerUtil) {
+(function(innerUtil, globalContext) {
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
@@ -1243,18 +1267,6 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     innerUtil.namespace('theme.defaults', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的主题
-    window.MiniRefresh = MiniRefreshTheme;
+    globalContext.MiniRefresh = MiniRefreshTheme;
 
-    /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的主题
-     * 如果要自己实现主题，也请在对应的主题中增加require支持
-     */
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshTheme;
-    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
-        define(function() {
-            return MiniRefreshTheme;
-        });
-    }
-
-})(MiniRefreshTools);
+})(MiniRefreshTools, typeof window !== 'undefined' ? window : global);

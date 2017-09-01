@@ -1,4 +1,3 @@
-var MiniRefresh = require('./dist/minirefresh.min.js');
+var MiniRefreshTools = require('./dist/debug/minirefresh.js');
 
-
-module.exports = MiniRefresh;
+module.exports = MiniRefreshTools;

@@ -1,3 +1,4 @@
+var minirefresh = require('./src/minirefresh.js');
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');

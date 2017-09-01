@@ -1,10 +1,34 @@
-/** 1
+/** 
  * 构建 MiniRefresh
  * MiniRefreshTools 是内部使用的
  * 外部主题会用 MiniRefresh变量
  */
-window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
+(function(globalContext, factory) {
     'use strict';
+
+    //  if (!globalContext.document) {
+    //      throw new Error("minirefresh requires a window with a document");
+    //  }
+    
+    // 不重复执行
+    var moduleExports = globalContext.MiniRefreshTools || factory(globalContext);
+
+    if (typeof module !== 'undefined' && module.exports) {
+        // 用exports，导出一个MiniRefreshTools对象
+        exports.MiniRefreshTools = moduleExports;
+    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
+        // require模式默认导出整个工具类
+        define(function() {
+            return moduleExports;
+        });
+    }
+
+    // 单独引入时暴露的是这个tools 
+    globalContext.MiniRefreshTools = moduleExports;
+})(typeof window !== 'undefined' ? window : global, function(globalContext, exports) {
+    'use strict';
+
+    exports = exports || {};
 
     /**
      * 模拟Class的基类,以便模拟Class进行继承等
@@ -181,7 +205,7 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
      * @return {Object} 返回最终的对象
      */
     exports.namespace = function(namespace, obj) {
-        var parent = window.MiniRefreshTools;
+        var parent = globalContext.MiniRefreshTools;
 
         if (!namespace) {
             return parent;
@@ -205,4 +229,4 @@ window.MiniRefreshTools = window.MiniRefreshTools || (function(exports) {
     };
 
     return exports;
-})({});
+});

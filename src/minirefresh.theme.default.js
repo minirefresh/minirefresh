@@ -9,7 +9,7 @@
  * 一般，在进行一些小修改时，建议继承自default（这样toTop，上拉加载大部分代码都可复用）
  * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写主题
  */
-(function(innerUtil) {
+(function(innerUtil, globalContext) {
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
@@ -289,18 +289,6 @@
     innerUtil.namespace('theme.defaults', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的主题
-    window.MiniRefresh = MiniRefreshTheme;
+    globalContext.MiniRefresh = MiniRefreshTheme;
 
-    /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的主题
-     * 如果要自己实现主题，也请在对应的主题中增加require支持
-     */
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshTheme;
-    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
-        define(function() {
-            return MiniRefreshTheme;
-        });
-    }
-
-})(MiniRefreshTools);
+})(MiniRefreshTools, typeof window !== 'undefined' ? window : global);

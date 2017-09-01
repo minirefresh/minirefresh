@@ -2,7 +2,7 @@
  * 仿淘宝下拉刷新主题
  * 继承自default
  */
-(function(innerUtil) {
+(function(innerUtil, globalContext) {
 
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
@@ -281,18 +281,6 @@
     innerUtil.namespace('theme.taobao', MiniRefreshTheme);
 
     // 覆盖全局对象，使的全局对象只会指向一个最新的主题
-    window.MiniRefresh = MiniRefreshTheme;
+    globalContext.MiniRefresh = MiniRefreshTheme;
 
-    /**
-     * 兼容require，为了方便使用，暴露出去的就是最终的主题
-     * 如果要自己实现主题，也请在对应的主题中增加require支持
-     */
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = MiniRefreshTheme;
-    } else if (typeof define === 'function' && (define.amd || define.cmd)) {
-        define(function() {
-            return MiniRefreshTheme;
-        });
-    }
-
-})(MiniRefreshTools);
+})(MiniRefreshTools, typeof window !== 'undefined' ? window : global);

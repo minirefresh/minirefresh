@@ -66,14 +66,15 @@ git clone git://github.com/minirefresh/minirefresh.git
 ### `require`引入
 
 ```js
-var MiniRefresh = require('xxx/minirefresh.js');
+var MiniRefreshTools = require('xxx/minirefresh.js');
 ```
 
 ### `import`引入
 
 ```js
-import { MiniRefresh } from 'xxx/minirefresh.js';
+import { MiniRefreshTools } from 'xxx/minirefresh.js';
 ```
+
 
 ## 页面布局
 
@@ -88,6 +89,7 @@ import { MiniRefresh } from 'xxx/minirefresh.js';
 ## 初始化
 
 ```js
+// 引入任何一个主题后，都会有一个 MiniRefresh 全局变量
 var miniRefresh = new MiniRefresh({
     container: '#minirefresh',
     down: {

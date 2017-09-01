@@ -1,8 +1,6 @@
 import {expect} from 'chai';
 // 引入核心工具类，帮助全局变量上
-import '../src/minirefresh.js';
-
-let MiniRefresh = MiniRefreshTools;
+import {MiniRefreshTools} from '../src/minirefresh.js';
 
 describe('extend', function() {
     let obj1,
@@ -36,7 +34,7 @@ describe('extend', function() {
     });
 
     it('拓展单个（浅层拓展）', function() {
-        let result = MiniRefresh.extend({}, obj1, obj2);
+        let result = MiniRefreshTools.extend({}, obj1, obj2);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.property('product', obj2.product);
@@ -44,7 +42,7 @@ describe('extend', function() {
     });
 
     it('拓展多个（浅层拓展）', function() {
-        let result = MiniRefresh.extend({}, obj1, obj2, obj3);
+        let result = MiniRefreshTools.extend({}, obj1, obj2, obj3);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.property('product', obj3.product);
@@ -52,7 +50,7 @@ describe('extend', function() {
     });
 
     it('拓展多个（递归拓展）', function() {
-        let result = MiniRefresh.extend(true, {}, obj1, obj2, obj3);
+        let result = MiniRefreshTools.extend(true, {}, obj1, obj2, obj3);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.nested.property('product.ejs', obj1.product.ejs);
