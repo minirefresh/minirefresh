@@ -75,7 +75,6 @@ var MiniRefreshTools = require('xxx/minirefresh.js');
 import { MiniRefreshTools } from 'xxx/minirefresh.js';
 ```
 
-
 ## 页面布局
 
 ```html
