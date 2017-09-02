@@ -36,6 +36,12 @@ __喜欢，你就给一个star!__
 
 - 完善的文档与示例，提供完善的showcase，以及文档
 
+## 官网与文档
+
+[http://www.minirefresh.com](http://www.minirefresh.com)
+
+[https://minirefresh.github.io/](https://minirefresh.github.io/)
+
 ## 安装
 
 ### NPM
@@ -116,19 +122,9 @@ miniRefresh.endDownLoading();
 miniRefresh.endUpLoading(true);
 ```
 
-## 使用文档
+### 更多
 
-[https://minirefresh.github.io/minirefresh-doc/](https://minirefresh.github.io/minirefresh-doc/)
-
-- 在线教程
-
-- API文档
-
-- 主题支持
-
-- 高级使用
-
-- 贡献指南
+更多的使用请参考官方文档
 
 ## 效果
 
