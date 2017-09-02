@@ -12,6 +12,8 @@
 
 优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。
 
+### [http://www.minirefresh.com](http://www.minirefresh.com)
+
 ## Notice
 
 __喜欢，你就给一个star!__
@@ -33,10 +35,6 @@ __喜欢，你就给一个star!__
 - 优雅的API和源码，API设计科学，简单，源码严谨，所有源码通过`ESlint`检测
 
 - 完善的文档与示例，提供完善的showcase，以及文档
-
-## 官网
-
-[https://minirefresh.github.io/](https://minirefresh.github.io/)
 
 ## 安装
 
