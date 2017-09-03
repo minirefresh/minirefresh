@@ -10,41 +10,43 @@
 
 [![](https://saucelabs.com/browser-matrix/minirefreshs.svg)](https://saucelabs.com/beta/builds/62749d602ec849809265f00ba5259eae)
 
-优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。
+A Graceful HTML5 Drop-Down-Refresh Plugin. 
 
-[README in English](READM.en.md)
+No Dependency. High Performance. Multi Themes. Easy To Expand.
+
+[README in Chinese](READM.md)
 
 ### [http://www.minirefresh.com](http://www.minirefresh.com)
 
 ## Notice
 
-__喜欢，你就给一个star!__
+__You Can Star It!__
 
-## 特点
+## Features
 
-- 零依赖（原生JS实现，不依赖于任何库）
+- No Dependency(do not depend on any library)
 
-- 多平台支持。一套代码，多端运行，支持Android，iOS，主流浏览器
+- Multi Platform Support(Android, iOS, Browser)
 
-- 丰富的主题，官方提供多种主题（包括默认，applet-仿小程序，drawer3d-3d抽屉效果，taobao-仿淘宝等）
+- Multi Themes(default, applet, taobao, drawer3d, drawerslider)
 
-- 高性能。动画采用css3+硬件加速，在主流手机上流畅运行
+- High Performance(CSS3 hardware speedup)
 
-- 良好的兼容性。支持和各种Scroll的嵌套（包括mui-scroll,IScroll,Swipe等），支持Vue环境下的使用
+- Good Compatibility(scroll-nested, support Vue)
 
-- 易拓展，三层架构，专门抽取UI层面，方便实现各种的主题，实现一套主题非常方便，而且几乎可以实现任何的效果
+- Easy To Expand(by implementing the UI hooks)
 
-- 优雅的API和源码，API设计科学，简单，源码严谨，所有源码通过`ESlint`检测
+- Graceful API(detected by `ESlint`)
 
-- 完善的文档与示例，提供完善的showcase，以及文档
+- Documentation And Examples(Introduction, API, Tutorial)
 
-## 官网与文档
+## Website
 
 [http://www.minirefresh.com](http://www.minirefresh.com)
 
 [https://minirefresh.github.io/](https://minirefresh.github.io/)
 
-## 安装
+## Install
 
 ### NPM
 
@@ -62,150 +64,149 @@ git clone git://github.com/minirefresh/minirefresh.git
 
 [https://github.com/minirefresh/minirefresh](https://github.com/minirefresh/minirefresh)
 
-## 引入
+## Import
 
 ```html
 <link rel="stylesheet" href="xxx/minirefresh.css" />
 <script type="text/javascript" src="xxx/minirefresh.js"></script>
 ```
 
-### `require`引入
+### `require`
 
 ```js
 var MiniRefreshTools = require('xxx/minirefresh.js');
 ```
 
-### `import`引入
+### `import`
 
 ```js
 import { MiniRefreshTools } from 'xxx/minirefresh.js';
 ```
 
-## 页面布局
+## HTML Layout
 
 ```html
-<!-- minirefresh开头的class请勿修改 -->
+<!-- do not modify "minirefresh-xxx" -->
 <div id="minirefresh" class="minirefresh-wrap">
     <div class="minirefresh-scroll">        
     </div>
 </div>
 ```
 
-## 初始化
+## Initial
 
 ```js
-// 引入任何一个主题后，都会有一个 MiniRefresh 全局变量
+// MiniRefresh is a global variable
 var miniRefresh = new MiniRefresh({
     container: '#minirefresh',
     down: {
         callback: function() {
-            // 下拉事件
+            // pulldown event
         }
     },
     up: {
 
         callback: function() {
-            // 上拉事件
+            // pullup event
         }
     }
 });
 ```
 
-### 结束刷新
+### End Refresh
 
 ```js
-// 结束下拉刷新
+// end pulldown
 miniRefresh.endDownLoading();
 ```
 
 ```js
-// 结束上拉加载
-// 参数为true代表没有更多数据，否则接下来可以继续加载
+// end pullup
+// true: no more data
+// false: can still load more
 miniRefresh.endUpLoading(true);
 ```
 
-### 更多
+### More
 
-更多的使用请参考官方文档
+For more detail, refer to the official documentation
 
-## 效果
+## Effect
 
-### 基础示例
+### Base Showcase
 
-__1. 【基础新闻列表】最基本的下拉刷新使用__
+__1. 【Base List】basic usage__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/base_default.gif)
 
-__2. 【多列表单容器】每次切换菜单时刷新容器__
+__2. 【Multi List Single Container】refresh the container when the list is switched__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/base_single.gif)
 
-__3. 【多列表多容器】多个列表都有一个Minirefresh对象__
+__3. 【Multi List Multi Container】there are miltiple containers at the same time__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/base_multi.gif)
 
-__4. 【Vue支持】支持Vue下的使用__
+__4. 【Vue Support】support Vue__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/base_vue.gif)
 
-### 嵌套示例
+### Nested Showcase
 
-__1. 【Mui-Slider】内部嵌套图片轮播__
+__1. 【Mui-Slider】nested gallery carousel__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/nested_slider.gif)
 
-__2. 【Mui-Scroll】嵌套在Mui-Scroll中__
+__2. 【Mui-Scroll】nested in Mui-Scroll__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/nested_muiscroll.gif)
 
-__3. 【Swipe】嵌套在Swipe中__
+__3. 【Swipe】nested in Swipe__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/nested_swipe.gif)
 
-### 主题示例
+### Themes Showcase
 
-__1. 【applet】仿微信小程序主题__
+__1. 【applet】imitate weichat aplet__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/theme_applet.gif)
 
-__2. 【taobao】仿淘宝刷新主题__
+__2. 【taobao】imitate taobao refresh__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/theme_taobao.gif)
 
-__3. 【drawer3d】3D抽屉效果主题__
+__3. 【drawer3d】3D slidingdrawer__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/theme_drawer3d.gif)
 
-__4. 【drawer-slider】滑动抽屉效果主题__
+__4. 【drawer-slider】slidingdrawer__
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/screenshoot/theme_drawerslider.gif)
 
 ## showcase
 
-可以直接在线体验效果
-
 [https://minirefresh.github.io/minirefresh/examples/](https://minirefresh.github.io/minirefresh/examples/)
 
 ![](https://minirefresh.github.io/minirefresh/staticresource/showcase/qrcode.png)
 
-## 贡献
+## Contribute
 
-__`minirefresh`需要你!__
+__`minirefresh` Need You!__
 
-来为项目添砖加瓦，新的`Idea`，新的主题，重大Bug发现，新的设计资源（如图标，官网设计等）
+new `Idea`,new Themes,Fix bugs,new design(icon, pages)
 
-都可以通过`Issue`或`PR`的方式提交！
+by `Issue`or`Pull Request`!
 
-贡献被采纳后会加入贡献者名单，如果有杰出贡献（如持续贡献），可以加入`Manager`小组，共同开发维护`MiniRefresh`
+__You Can Apply To Be An Owner Of This Project__
 
-有共同参与项目意愿的，可以申请成为`Member`，成为`Minirefresh`真正的主人！
+- first, to be a `Contributor`(contribute your code or ideas)
 
-更多参考：[https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html](https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html)
+- second, to be a `Manager`(the permissions of read and modify)- brilliant contribution
 
-## 讨论
+- finally, to be a `Member`(the member of the `MiniRefresh Organization`, the real master!)- collaborative participate in this project
+
+reference：[https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html](https://minirefresh.github.io/minirefresh-doc/site/contribute/howtocontributor.html)
+
+## Discuss
 
 - [gitter](https://gitter.im/minirefreshjs/minirefresh)
-
-- QQ群（`601988892`）
-
-_注意，申请加入群时请添加验证信息，例如：minirefresh使用遇到问题等等_
