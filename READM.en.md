@@ -16,7 +16,7 @@ No Dependency. High Performance. Multi Themes. Easy To Expand.
 
 [README in Chinese](READM.md)
 
-[Docs in Chinese](https://minirefresh.github.io/minirefresh-doc)
+[Docs in English](https://minirefresh.github.io/minirefresh-doc-en/)
 
 ### [http://www.minirefresh.com](http://www.minirefresh.com)
 
