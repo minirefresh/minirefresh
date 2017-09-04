@@ -14,6 +14,8 @@
 
 [README in English](READM.en.md)
 
+[Docs in English](https://minirefresh.github.io/minirefresh-doc-en/)
+
 ### [http://www.minirefresh.com](http://www.minirefresh.com)
 
 ## Notice
