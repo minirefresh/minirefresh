@@ -18,7 +18,7 @@ No Dependency. High Performance. Multi Themes. Easy To Expand.
 
 [Docs in English](https://minirefresh.github.io/minirefresh-doc-en/)
 
-### [http://www.minirefresh.com](http://www.minirefresh.com)
+### [https://minirefresh.github.io](https://minirefresh.github.io)
 
 ## Notice
 
