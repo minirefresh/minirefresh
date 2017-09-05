@@ -179,13 +179,6 @@
                     return;
                 }
 
-                if (Math.abs(moveX) > Math.abs(moveY)) {
-                    // 如果是横向滑动更多，阻止默认事件
-                    e.preventDefault();
-
-                    return;
-                }
-
                 if (moveY > 0) {
                     // 向下拉
                     self.isMoveDown = true;
