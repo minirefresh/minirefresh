@@ -13,6 +13,30 @@
         <title>base list</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
         <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .native-scroll {
+                padding: 15px;
+                overflow: hidden;
+                border-bottom: 1px solid #c8c7cc;
+            }
+            .scroll__list {
+                position: relative;
+                -webkit-overflow-scrolling: touch;
+                font-size: 0;
+                white-space: nowrap;
+                overflow-x: auto;
+            }
+            .scroll__item {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 120px;
+                height: 90px;
+                margin: 0 7.5px;
+                font-size: 15px;
+                background-color: #ccc;
+            }
+        </style>
     </head>
 
     <body>
@@ -25,6 +49,20 @@
             <div id="minirefresh" class="minirefresh-wrap">
 
                 <div class="minirefresh-scroll">
+
+                    <div class="native-scroll">
+                        <div class="scroll__list">
+                            <div class="scroll__item">item_1</div>
+                            <div class="scroll__item">item_2</div>
+                            <div class="scroll__item">item_3</div>
+                            <div class="scroll__item">item_4</div>
+                            <div class="scroll__item">item_5</div>
+                            <div class="scroll__item">item_6</div>
+                            <div class="scroll__item">item_7</div>
+                            <div class="scroll__item">item_8</div>
+                            <div class="scroll__item">item_9</div>
+                        </div>
+                    </div>
 
                     <ul class="data-list" id="listdata">
 
@@ -44,6 +82,7 @@
 
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
+                isLockX: false, // 设置为 false 原生滚动条可以滑动
                 down: {
                     callback: function() {
                         setTimeout(function() {

@@ -404,10 +404,10 @@
                 var moveY = curY - self.startY;
                 var moveX = curX - self.startX;
 
-                if (Math.abs(moveX) > Math.abs(moveY)) {
-                    // 如果是横向滑动更多，阻止默认事件
+                // 如果锁定横向滑动并且横向滑动更多，阻止默认事件
+                if (options.isLockX && Math.abs(moveX) > Math.abs(moveY)) {
                     e.preventDefault();
-
+    
                     return;
                 }
 
@@ -769,7 +769,9 @@
             callback: innerUtil.noop
         },
         // 容器
-        container: '#minirefresh'
+        container: '#minirefresh',
+        // 是否锁定横向滑动，如果锁定则原生滚动条无法滑动
+        isLockX: true
     };
 
     var MiniRefreshCore = innerUtil.Clazz.extend({

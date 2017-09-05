@@ -172,10 +172,10 @@
                 var moveY = curY - self.startY;
                 var moveX = curX - self.startX;
 
-                if (Math.abs(moveX) > Math.abs(moveY)) {
-                    // 如果是横向滑动更多，阻止默认事件
+                // 如果锁定横向滑动并且横向滑动更多，阻止默认事件
+                if (options.isLockX && Math.abs(moveX) > Math.abs(moveY)) {
                     e.preventDefault();
-
+    
                     return;
                 }
 
