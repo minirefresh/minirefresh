@@ -1,7 +1,7 @@
 <!-- 
-        作者：dailc
-        时间：2017-08-28
-        描述： 基本的列表页面
+        作者：xyyjk
+        时间：2017-09-05
+        描述： 嵌套原生横向滚动
 -->
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -10,21 +10,68 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <title>base list</title>
+        <title>nested horizonscroll</title>
         <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
         <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .native-scroll {
+                padding: 0 15px;
+                overflow: hidden;
+                border-bottom: 1px solid #c8c7cc;
+            }
+            .scroll__title {
+                font-size: 15px;
+                line-height: 48px;
+                font-weight: bold;
+            }
+            .scroll__list {
+                margin-bottom: 15px;
+                font-size: 0;
+                white-space: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .scroll__item {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 120px;
+                height: 90px;
+                margin-left: 15px;
+                font-size: 15px;
+                background-color: #ccc;
+            }
+            .scroll__item:first-child {
+                margin-left: 0;
+             }
+        </style>
     </head>
 
     <body>
 
         <nav class="navbar-header">
             <a class="nav-btn-left" href="../index.html">dashboard</a>
-            最基础的新闻列表
+            嵌套原生横向滚动
         </nav>
         <div class="content">
             <div id="minirefresh" class="minirefresh-wrap">
 
                 <div class="minirefresh-scroll">
+
+                    <div class="native-scroll">
+                        <div class="scroll__title">这里是一个原生横向滚动</div>
+                        <div class="scroll__list">
+                            <div class="scroll__item">item_1</div>
+                            <div class="scroll__item">item_2</div>
+                            <div class="scroll__item">item_3</div>
+                            <div class="scroll__item">item_4</div>
+                            <div class="scroll__item">item_5</div>
+                            <div class="scroll__item">item_6</div>
+                            <div class="scroll__item">item_7</div>
+                            <div class="scroll__item">item_8</div>
+                            <div class="scroll__item">item_9</div>
+                        </div>
+                    </div>
 
                     <ul class="data-list" id="listdata">
 
@@ -44,6 +91,7 @@
 
             var miniRefresh = new MiniRefresh({
                 container: '#minirefresh',
+                isLockX: false, // 设置为 false 原生滚动条可以滑动
                 down: {
                     callback: function() {
                         setTimeout(function() {
