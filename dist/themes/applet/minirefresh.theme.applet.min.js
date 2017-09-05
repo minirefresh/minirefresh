@@ -1,6 +1,6 @@
 /**
  * minirefresh - 优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。
- * @version v0.0.7
+ * @version v1.0.1
  * @author dailc(dailichun@aliyun.com)
  * https://github.com/minirefresh/minirefresh
  */
