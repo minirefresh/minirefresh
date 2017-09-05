@@ -71,7 +71,9 @@
             callback: innerUtil.noop
         },
         // 容器
-        container: '#minirefresh'
+        container: '#minirefresh',
+        // 是否锁定横向滑动，如果锁定则原生滚动条无法滑动
+        isLockX: true
     };
 
     var MiniRefreshCore = innerUtil.Clazz.extend({
