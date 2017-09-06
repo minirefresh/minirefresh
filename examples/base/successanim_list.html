@@ -62,7 +62,7 @@
                         setTimeout(function() {
                             // 每次下拉刷新后，上拉的状态会被自动重置
                             appendTestData(listDom, 10, true);
-                            miniRefresh.endDownLoading(true);
+                            miniRefresh.endDownLoading(true, '成功更新10条数据');
                         }, requestDelayTime);
                     }
                 },

@@ -844,8 +844,10 @@
         /**
          * 内部执行，结束下拉刷新
          * @param {Boolean} isSuccess 是否下拉请求成功
+         * @param {String} successTips 需要更新的成功提示
+         * 在开启了成功动画时，往往成功的提示是需要由外传入动态更新的，譬如  update 10 news
          */
-        _endDownLoading: function(isSuccess) {
+        _endDownLoading: function(isSuccess, successTips) {
             var self = this;
 
             if (!this.options.down) {
@@ -860,7 +862,7 @@
 
                 if (successAnim) {
                     // 如果有成功动画    
-                    this._downLoaingSuccessHook && this._downLoaingSuccessHook(isSuccess);
+                    this._downLoaingSuccessHook && this._downLoaingSuccessHook(isSuccess, successTips);
                 } else {
                     // 默认为没有成功动画
                     successAnimTime = 0;
@@ -927,10 +929,12 @@
         /**
          * 结束下拉刷新
          * @param {Boolean} isSuccess 是否请求成功，这个状态会中转给对应主题
+         * @param {String} successTips 需要更新的成功提示
+         * 在开启了成功动画时，往往成功的提示是需要由外传入动态更新的，譬如  update 10 news
          */
-        endDownLoading: function(isSuccess) {
+        endDownLoading: function(isSuccess, successTips) {
             typeof isSuccess !== 'boolean' && (isSuccess = true);
-            this._endDownLoading(isSuccess);
+            this._endDownLoading(isSuccess, successTips);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
             this._resetUpLoading();
         },
@@ -1214,7 +1218,8 @@
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
         },
-        _downLoaingSuccessHook: function(isSuccess) {
+        _downLoaingSuccessHook: function(isSuccess, successTips) {
+            this.options.down.contentsuccess = successTips || this.options.down.contentsuccess;
             this.downWrapTips.innerText = isSuccess ? this.options.down.contentsuccess : this.options.down.contenterror;
             this.downWrapProgress.classList.remove(CLASS_ROTATE);
             this.downWrapProgress.classList.add(CLASS_FADE_OUT);

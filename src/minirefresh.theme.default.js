@@ -234,7 +234,8 @@
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
         },
-        _downLoaingSuccessHook: function(isSuccess) {
+        _downLoaingSuccessHook: function(isSuccess, successTips) {
+            this.options.down.contentsuccess = successTips || this.options.down.contentsuccess;
             this.downWrapTips.innerText = isSuccess ? this.options.down.contentsuccess : this.options.down.contenterror;
             this.downWrapProgress.classList.remove(CLASS_ROTATE);
             this.downWrapProgress.classList.add(CLASS_FADE_OUT);
