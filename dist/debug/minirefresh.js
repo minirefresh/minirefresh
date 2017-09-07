@@ -197,6 +197,23 @@
 
         return element;
     };
+    
+    /**
+     * 获取DOM的可视区高度，兼容PC上的body高度获取
+     * 因为在通过body获取时，在PC上会有CSS1Compat形式，所以需要兼容
+     * @param {HTMLElement} dom 需要获取可视区高度的dom,对body对象有特殊的兼容方案
+     * @return {Number} 返回最终的高度
+     */
+    exports.getClientHeightByDom = function(dom) {
+        var height = dom.clientHeight;
+        
+        if (dom === document.body && document.compatMode === 'CSS1Compat') {
+            // PC上body的可视区的特殊处理
+            height = document.documentElement.clientHeight;
+        }
+        
+        return height;
+    };
 
     /**
      * 设置一个Util对象下的命名空间
@@ -266,6 +283,7 @@
     var MiniScroll = function(minirefresh) {
         this.minirefresh = minirefresh;
         this.container = minirefresh.container;
+        this.contentWrap = minirefresh.contentWrap;
         this.scrollWrap = minirefresh.scrollWrap;
         this.options = minirefresh.options;
         // 默认没有事件，需要主动绑定
@@ -273,21 +291,18 @@
         // 默认没有hook
         this.hooks = {};
 
+        // 锁定上拉和下拉,core内如果想改变，需要通过API调用设置
+        this.isLockDown = false;
+        this.isLockUp = false;
+
         // 是否使用了scrollto功能，使用这个功能时会禁止操作
         this.isScrollTo = false;
         // 上拉和下拉的状态
         this.upLoading = false;
         this.downLoading = false;
 
-        // 锁定上拉和下拉
-        this.isLockDown = false;
-        this.isLockUp = false;
         // 默认up是没有finish的
         this.isFinishUp = false;
-
-        // 判断是否有down和up决定初始化时是否锁定
-        !this.options.down && (this.isLockDown = true);
-        !this.options.up && (this.isLockUp = true);
 
         this._initPullDown();
         this._initPullUp();
@@ -320,7 +335,7 @@
      * @param {Number} y 移动的高度
      * @param {Number} duration 过渡时间
      */
-    MiniScroll.prototype.translateScrollWrap = function(y, duration) {
+    MiniScroll.prototype.translateContentWrap = function(y, duration) {
         this._translate(y, duration);
         this.downHight = y;
     };
@@ -333,12 +348,12 @@
     MiniScroll.prototype._translate = function(y, duration) {
         if (!this.options.down.isScrollCssTranslate) {
             // 只有允许动画时才会scroll也translate,否则只会改变downHeight
-            return ;
+            return;
         }
         y = y || 0;
         duration = duration || 0;
 
-        var wrap = this.scrollWrap;
+        var wrap = this.contentWrap;
 
         wrap.style.webkitTransitionDuration = duration + 'ms';
         wrap.style.transitionDuration = duration + 'ms';
@@ -407,7 +422,7 @@
                 // 如果锁定横向滑动并且横向滑动更多，阻止默认事件
                 if (options.isLockX && Math.abs(moveX) > Math.abs(moveY)) {
                     e.preventDefault();
-    
+
                     return;
                 }
 
@@ -423,21 +438,25 @@
                         self.downHight = 0;
                     }
 
-                    var downOffset = options.down.offset;
+                    var downOffset = options.down.offset,
+                        dampRate = 1;
 
                     if (self.downHight < downOffset) {
                         // 下拉距离  < 指定距离
-                        self.downHight += diff;
+                        dampRate = options.down.dampRateBegin;
                     } else {
                         // 超出了指定距离，随时可以刷新
-                        if (diff > 0) {
-                            // 需要加上阻尼系数
-                            self.downHight += diff * options.down.dampRate;
-                        } else {
-                            // 向上收回高度,则向上滑多少收多少高度
-                            self.downHight += diff;
-                        }
+                        dampRate = options.down.dampRate;
                     }
+
+                    if (diff > 0) {
+                        // 需要加上阻尼系数
+                        self.downHight += diff * dampRate;
+                    } else {
+                        // 向上收回高度,则向上滑多少收多少高度
+                        self.downHight += diff;
+                    }
+
                     self.events[EVENT_PULL] && self.events[EVENT_PULL](self.downHight, downOffset);
                     // 执行动画
                     self._translate(self.downHight);
@@ -490,10 +509,13 @@
         var self = this,
             scrollWrap = this.scrollWrap;
 
-        scrollWrap.addEventListener('scroll', function() {
+        // 如果是Body上的滑动，需要监听window的scroll
+        var targetScrollDom = scrollWrap === document.body ? window : scrollWrap;
+
+        targetScrollDom.addEventListener('scroll', function() {
             var scrollTop = scrollWrap.scrollTop,
                 scrollHeight = scrollWrap.scrollHeight,
-                clientHeight = scrollWrap.clientHeight,
+                clientHeight = innerUtil.getClientHeightByDom(scrollWrap),
                 options = self.options;
 
             self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
@@ -518,7 +540,7 @@
 
         setTimeout(function() {
             // 在下一个循环中运行
-            if (!self.isLockUp && options.up.loadFull.isEnable && scrollWrap.scrollHeight <= scrollWrap.clientHeight) {
+            if (!self.isLockUp && options.up.loadFull.isEnable && scrollWrap.scrollHeight <= innerUtil.getClientHeightByDom(scrollWrap)) {
                 self.triggerUpLoading();
             }
         }, options.up.loadFull.delay || 0);
@@ -592,7 +614,7 @@
         duration = duration || 0;
 
         // 最大可滚动的y
-        var maxY = scrollWrap.scrollHeight - scrollWrap.clientHeight;
+        var maxY = scrollWrap.scrollHeight - innerUtil.getClientHeightByDom(scrollWrap);
 
         y = Math.max(y, 0);
         y = Math.min(y, maxY);
@@ -734,6 +756,8 @@
             isScrollCssTranslate: true,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
+            // 阻尼系数，下拉小于offset时的阻尼系数，值越接近0,高度变化越小,表现为越往下越难拉
+            dampRateBegin: 1,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
             dampRate: 0.3,
             // 回弹动画时间
@@ -771,7 +795,10 @@
         // 容器
         container: '#minirefresh',
         // 是否锁定横向滑动，如果锁定则原生滚动条无法滑动
-        isLockX: true
+        isLockX: true,
+        // 是否使用body对象的scroll而不是minirefresh-scroll对象的scroll
+        // 开启后一个页面只能有一个下拉刷新，否则会有冲突
+        isUseBodyScroll: false
     };
 
     var MiniRefreshCore = innerUtil.Clazz.extend({
@@ -784,18 +811,22 @@
             options = innerUtil.extend(true, {}, defaultSetting, options);
 
             this.container = innerUtil.selector(options.container);
-            // scroll的dom-wrapper下的第一个节点
-            this.scrollWrap = this.container.children[0];
+            // scroll的dom-wrapper下的第一个节点，作用是down动画时的操作
+            this.contentWrap = this.container.children[0];
+            // 默认和contentWrap一致，但是为了兼容body的滚动，拆分为两个对象方便处理
+            // 如果是使用body的情况，scrollWrap恒为body
+            this.scrollWrap = options.isUseBodyScroll ? document.body : this.contentWrap;
+            
             this.options = options;
+            
+            // 初始化的hook
+            this._initHook && this._initHook(this.options.down.isLock, this.options.up.isLock);
 
             // 生成一个Scroll对象 ，对象内部处理滑动监听
             this.scroller = new innerUtil.Scroll(this);
            
             this._initEvent();
 
-            // 初始化的hook
-            this._initHook && this._initHook(this.scroller.isLockDown, this.scroller.isLockUp);
-            
             // 如果初始化时锁定了，需要触发锁定，避免没有锁定时解锁（会触发逻辑bug）
             options.up.isLock && this._lockUpLoading(options.up.isLock);
             options.down.isLock && this._lockDownLoading(options.down.isLock);
@@ -998,6 +1029,7 @@
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
      * THEME 字段会根据不同的主题有不同值
+     * 在使用body的scroll时，需要加上样式 CLASS_BODY_SCROLL_WRAP
      */
     var CLASS_THEME = 'minirefresh-theme-default';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
@@ -1008,6 +1040,7 @@
     var CLASS_ROTATE = 'minirefresh-rotate';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
     var CLASS_HIDDEN = 'minirefresh-hidden';
+    var CLASS_BODY_SCROLL_WRAP = 'body-scroll-wrap';
 
     /**
      * 本主题的特色样式
@@ -1062,11 +1095,17 @@
         },
         _initHook: function(isLockDown, isLockUp) {
             var container = this.container,
-                scrollWrap = this.scrollWrap;
+                contentWrap = this.contentWrap;
 
             container.classList.add(CLASS_THEME);
             // 加上硬件加速让动画更流畅
-            scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
+            contentWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
+            
+            if (this.options.isUseBodyScroll) {
+                // 如果使用了body的scroll，需要增加对应的样式，否则默认的absolute无法被监听到
+                container.classList.add(CLASS_BODY_SCROLL_WRAP);
+                contentWrap.classList.add(CLASS_BODY_SCROLL_WRAP);
+            }
 
             this._initDownWrap();
             this._initUpWrap();
@@ -1092,7 +1131,7 @@
         },
         _initDownWrap: function() {
             var container = this.container,
-                scrollWrap = this.scrollWrap,
+                contentWrap = this.contentWrap,
                 options = this.options;
 
             // 下拉的区域
@@ -1100,7 +1139,7 @@
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
-            container.insertBefore(downWrap, scrollWrap);
+            container.insertBefore(downWrap, contentWrap);
 
             this.downWrap = downWrap;
             this.downWrapProgress = this.downWrap.querySelector('.downwrap-progress');
@@ -1125,7 +1164,7 @@
         },
         
         _initUpWrap: function() {
-            var scrollWrap = this.scrollWrap,
+            var contentWrap = this.contentWrap,
                 options = this.options;
             
             // 上拉区域
@@ -1134,7 +1173,7 @@
             upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
             upWrap.style.visibility = 'hidden';
-            scrollWrap.appendChild(upWrap);
+            contentWrap.appendChild(upWrap);
 
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
@@ -1213,7 +1252,7 @@
             }
         },
         _downLoaingHook: function() {
-            // 默认和scrollwrap的同步
+            // 默认和contentWrap的同步
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);

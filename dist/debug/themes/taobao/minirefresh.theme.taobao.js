@@ -79,7 +79,7 @@
          */
         _initDownWrap: function() {
             var container = this.container,
-                scrollWrap = this.scrollWrap,
+                contentWrap = this.contentWrap,
                 options = this.options;
 
             // 下拉的区域
@@ -94,7 +94,7 @@
                 options.down.contentdown +
                 '</p>' +
                 '</div>';
-            container.insertBefore(downWrap, scrollWrap);
+            container.insertBefore(downWrap, contentWrap);
 
             // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);
@@ -194,7 +194,7 @@
         _downLoaingHook: function() {
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
-            // 默认和scrollwrap的同步
+            // 默认和contentWrap的同步
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
         },
 
@@ -212,7 +212,7 @@
         _downLoaingEndHook: function(isSuccess) {
             this.downWrapTips.innerText = this.options.down.contentdown;
             this.downWrapProgress.classList.remove(CLASS_ROTATE);
-            // 默认和scrollwrap的同步
+            // 默认和contentWrap的同步
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
             // 需要重置回来
             this.pullState = STATE_PULL_DEFAULT;
@@ -222,7 +222,7 @@
          * 取消loading的回调
          */
         _cancelLoaingHook: function() {
-            // 默认和scrollwrap的同步
+            // 默认和contentWrap的同步
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
             this.pullState = STATE_PULL_DEFAULT;
         },
@@ -255,8 +255,8 @@
 
             this.downWrapTips.classList.add(CLASS_HIDDEN);
             // 动画
-            this.scroller.translateScrollWrap(this.scrollWrap.clientHeight, downBounceTime);
-            this._transformDownWrap(this.scrollWrap.clientHeight - this.downWrapHeight, downBounceTime);
+            this.scroller.translateContentWrap(this.contentWrap.clientHeight, downBounceTime);
+            this._transformDownWrap(this.contentWrap.clientHeight - this.downWrapHeight, downBounceTime);
             this._secretGardenAnimation(true);
             inSecretGardenCb && inSecretGardenCb();
         },
@@ -268,7 +268,7 @@
             var downBounceTime = this.options.down.bounceTime;
 
             // 重置scroll
-            this.scroller.translateScrollWrap(0, downBounceTime);
+            this.scroller.translateContentWrap(0, downBounceTime);
             // 重置动画区域的wrap
             this._transformDownWrap(-1 * this.downWrapHeight, downBounceTime);
             this._secretGardenAnimation(false);

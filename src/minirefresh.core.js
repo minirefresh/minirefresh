@@ -36,6 +36,8 @@
             isScrollCssTranslate: true,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
+            // 阻尼系数，下拉小于offset时的阻尼系数，值越接近0,高度变化越小,表现为越往下越难拉
+            dampRateBegin: 1,
             // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
             dampRate: 0.3,
             // 回弹动画时间
@@ -73,7 +75,10 @@
         // 容器
         container: '#minirefresh',
         // 是否锁定横向滑动，如果锁定则原生滚动条无法滑动
-        isLockX: true
+        isLockX: true,
+        // 是否使用body对象的scroll而不是minirefresh-scroll对象的scroll
+        // 开启后一个页面只能有一个下拉刷新，否则会有冲突
+        isUseBodyScroll: false
     };
 
     var MiniRefreshCore = innerUtil.Clazz.extend({
@@ -86,18 +91,22 @@
             options = innerUtil.extend(true, {}, defaultSetting, options);
 
             this.container = innerUtil.selector(options.container);
-            // scroll的dom-wrapper下的第一个节点
-            this.scrollWrap = this.container.children[0];
+            // scroll的dom-wrapper下的第一个节点，作用是down动画时的操作
+            this.contentWrap = this.container.children[0];
+            // 默认和contentWrap一致，但是为了兼容body的滚动，拆分为两个对象方便处理
+            // 如果是使用body的情况，scrollWrap恒为body
+            this.scrollWrap = options.isUseBodyScroll ? document.body : this.contentWrap;
+            
             this.options = options;
+            
+            // 初始化的hook
+            this._initHook && this._initHook(this.options.down.isLock, this.options.up.isLock);
 
             // 生成一个Scroll对象 ，对象内部处理滑动监听
             this.scroller = new innerUtil.Scroll(this);
            
             this._initEvent();
 
-            // 初始化的hook
-            this._initHook && this._initHook(this.scroller.isLockDown, this.scroller.isLockUp);
-            
             // 如果初始化时锁定了，需要触发锁定，避免没有锁定时解锁（会触发逻辑bug）
             options.up.isLock && this._lockUpLoading(options.up.isLock);
             options.down.isLock && this._lockDownLoading(options.down.isLock);

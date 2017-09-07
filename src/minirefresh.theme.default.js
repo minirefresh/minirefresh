@@ -14,6 +14,7 @@
     /**
      * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
      * THEME 字段会根据不同的主题有不同值
+     * 在使用body的scroll时，需要加上样式 CLASS_BODY_SCROLL_WRAP
      */
     var CLASS_THEME = 'minirefresh-theme-default';
     var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
@@ -24,6 +25,7 @@
     var CLASS_ROTATE = 'minirefresh-rotate';
     var CLASS_HARDWARE_SPEEDUP = 'minirefresh-hardware-speedup';
     var CLASS_HIDDEN = 'minirefresh-hidden';
+    var CLASS_BODY_SCROLL_WRAP = 'body-scroll-wrap';
 
     /**
      * 本主题的特色样式
@@ -78,11 +80,17 @@
         },
         _initHook: function(isLockDown, isLockUp) {
             var container = this.container,
-                scrollWrap = this.scrollWrap;
+                contentWrap = this.contentWrap;
 
             container.classList.add(CLASS_THEME);
             // 加上硬件加速让动画更流畅
-            scrollWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
+            contentWrap.classList.add(CLASS_HARDWARE_SPEEDUP);
+            
+            if (this.options.isUseBodyScroll) {
+                // 如果使用了body的scroll，需要增加对应的样式，否则默认的absolute无法被监听到
+                container.classList.add(CLASS_BODY_SCROLL_WRAP);
+                contentWrap.classList.add(CLASS_BODY_SCROLL_WRAP);
+            }
 
             this._initDownWrap();
             this._initUpWrap();
@@ -108,7 +116,7 @@
         },
         _initDownWrap: function() {
             var container = this.container,
-                scrollWrap = this.scrollWrap,
+                contentWrap = this.contentWrap,
                 options = this.options;
 
             // 下拉的区域
@@ -116,7 +124,7 @@
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
-            container.insertBefore(downWrap, scrollWrap);
+            container.insertBefore(downWrap, contentWrap);
 
             this.downWrap = downWrap;
             this.downWrapProgress = this.downWrap.querySelector('.downwrap-progress');
@@ -141,7 +149,7 @@
         },
         
         _initUpWrap: function() {
-            var scrollWrap = this.scrollWrap,
+            var contentWrap = this.contentWrap,
                 options = this.options;
             
             // 上拉区域
@@ -150,7 +158,7 @@
             upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
             upWrap.style.visibility = 'hidden';
-            scrollWrap.appendChild(upWrap);
+            contentWrap.appendChild(upWrap);
 
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
@@ -229,7 +237,7 @@
             }
         },
         _downLoaingHook: function() {
-            // 默认和scrollwrap的同步
+            // 默认和contentWrap的同步
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);

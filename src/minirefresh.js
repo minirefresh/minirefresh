@@ -197,6 +197,23 @@
 
         return element;
     };
+    
+    /**
+     * 获取DOM的可视区高度，兼容PC上的body高度获取
+     * 因为在通过body获取时，在PC上会有CSS1Compat形式，所以需要兼容
+     * @param {HTMLElement} dom 需要获取可视区高度的dom,对body对象有特殊的兼容方案
+     * @return {Number} 返回最终的高度
+     */
+    exports.getClientHeightByDom = function(dom) {
+        var height = dom.clientHeight;
+        
+        if (dom === document.body && document.compatMode === 'CSS1Compat') {
+            // PC上body的可视区的特殊处理
+            height = document.documentElement.clientHeight;
+        }
+        
+        return height;
+    };
 
     /**
      * 设置一个Util对象下的命名空间

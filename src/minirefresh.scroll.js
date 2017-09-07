@@ -34,6 +34,7 @@
     var MiniScroll = function(minirefresh) {
         this.minirefresh = minirefresh;
         this.container = minirefresh.container;
+        this.contentWrap = minirefresh.contentWrap;
         this.scrollWrap = minirefresh.scrollWrap;
         this.options = minirefresh.options;
         // 默认没有事件，需要主动绑定
@@ -41,21 +42,18 @@
         // 默认没有hook
         this.hooks = {};
 
+        // 锁定上拉和下拉,core内如果想改变，需要通过API调用设置
+        this.isLockDown = false;
+        this.isLockUp = false;
+
         // 是否使用了scrollto功能，使用这个功能时会禁止操作
         this.isScrollTo = false;
         // 上拉和下拉的状态
         this.upLoading = false;
         this.downLoading = false;
 
-        // 锁定上拉和下拉
-        this.isLockDown = false;
-        this.isLockUp = false;
         // 默认up是没有finish的
         this.isFinishUp = false;
-
-        // 判断是否有down和up决定初始化时是否锁定
-        !this.options.down && (this.isLockDown = true);
-        !this.options.up && (this.isLockUp = true);
 
         this._initPullDown();
         this._initPullUp();
@@ -88,7 +86,7 @@
      * @param {Number} y 移动的高度
      * @param {Number} duration 过渡时间
      */
-    MiniScroll.prototype.translateScrollWrap = function(y, duration) {
+    MiniScroll.prototype.translateContentWrap = function(y, duration) {
         this._translate(y, duration);
         this.downHight = y;
     };
@@ -101,12 +99,12 @@
     MiniScroll.prototype._translate = function(y, duration) {
         if (!this.options.down.isScrollCssTranslate) {
             // 只有允许动画时才会scroll也translate,否则只会改变downHeight
-            return ;
+            return;
         }
         y = y || 0;
         duration = duration || 0;
 
-        var wrap = this.scrollWrap;
+        var wrap = this.contentWrap;
 
         wrap.style.webkitTransitionDuration = duration + 'ms';
         wrap.style.transitionDuration = duration + 'ms';
@@ -175,7 +173,7 @@
                 // 如果锁定横向滑动并且横向滑动更多，阻止默认事件
                 if (options.isLockX && Math.abs(moveX) > Math.abs(moveY)) {
                     e.preventDefault();
-    
+
                     return;
                 }
 
@@ -191,21 +189,25 @@
                         self.downHight = 0;
                     }
 
-                    var downOffset = options.down.offset;
+                    var downOffset = options.down.offset,
+                        dampRate = 1;
 
                     if (self.downHight < downOffset) {
                         // 下拉距离  < 指定距离
-                        self.downHight += diff;
+                        dampRate = options.down.dampRateBegin;
                     } else {
                         // 超出了指定距离，随时可以刷新
-                        if (diff > 0) {
-                            // 需要加上阻尼系数
-                            self.downHight += diff * options.down.dampRate;
-                        } else {
-                            // 向上收回高度,则向上滑多少收多少高度
-                            self.downHight += diff;
-                        }
+                        dampRate = options.down.dampRate;
                     }
+
+                    if (diff > 0) {
+                        // 需要加上阻尼系数
+                        self.downHight += diff * dampRate;
+                    } else {
+                        // 向上收回高度,则向上滑多少收多少高度
+                        self.downHight += diff;
+                    }
+
                     self.events[EVENT_PULL] && self.events[EVENT_PULL](self.downHight, downOffset);
                     // 执行动画
                     self._translate(self.downHight);
@@ -258,10 +260,13 @@
         var self = this,
             scrollWrap = this.scrollWrap;
 
-        scrollWrap.addEventListener('scroll', function() {
+        // 如果是Body上的滑动，需要监听window的scroll
+        var targetScrollDom = scrollWrap === document.body ? window : scrollWrap;
+
+        targetScrollDom.addEventListener('scroll', function() {
             var scrollTop = scrollWrap.scrollTop,
                 scrollHeight = scrollWrap.scrollHeight,
-                clientHeight = scrollWrap.clientHeight,
+                clientHeight = innerUtil.getClientHeightByDom(scrollWrap),
                 options = self.options;
 
             self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
@@ -286,7 +291,7 @@
 
         setTimeout(function() {
             // 在下一个循环中运行
-            if (!self.isLockUp && options.up.loadFull.isEnable && scrollWrap.scrollHeight <= scrollWrap.clientHeight) {
+            if (!self.isLockUp && options.up.loadFull.isEnable && scrollWrap.scrollHeight <= innerUtil.getClientHeightByDom(scrollWrap)) {
                 self.triggerUpLoading();
             }
         }, options.up.loadFull.delay || 0);
@@ -360,7 +365,7 @@
         duration = duration || 0;
 
         // 最大可滚动的y
-        var maxY = scrollWrap.scrollHeight - scrollWrap.clientHeight;
+        var maxY = scrollWrap.scrollHeight - innerUtil.getClientHeightByDom(scrollWrap);
 
         y = Math.max(y, 0);
         y = Math.min(y, maxY);

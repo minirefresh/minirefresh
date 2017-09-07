@@ -50,14 +50,14 @@
          */
         _initDownWrap: function() {
             var container = this.container,
-                scrollWrap = this.scrollWrap;
+                contentWrap = this.contentWrap;
 
             // 下拉的区域
             var downWrap = document.createElement('div');
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content ball-beat"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-            container.insertBefore(downWrap, scrollWrap);
+            container.insertBefore(downWrap, contentWrap);
 
             // 由于直接继承的default，所以其实已经有default主题了，这里再加上本主题样式
             container.classList.add(CLASS_THEME);

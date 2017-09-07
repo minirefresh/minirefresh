@@ -8015,11 +8015,14 @@ Function.prototype.bind = Function.prototype.bind || function(to) {
         }
     }
     Transparent.prototype.handleScroll = function(e) {
+        // TODO: 调试后该回去
         var y = window.scrollY;
         if (!this.isNativeScroll && e && e.detail) {
             y = -e.detail.y;
         }
+        
         var opacity = (y - this.options.top) / this.options.offset + this._A;
+
         opacity = Math.min(Math.max(this._A, opacity), 1);
         this._style.backgroundColor = 'rgba(' + this._R + ',' + this._G + ',' + this._B + ',' + opacity + ')';
         if (opacity > this._A) {

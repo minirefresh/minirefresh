@@ -122,7 +122,10 @@
                 },
                 // 容器
                 container: '#minirefresh',
-                isLock: true
+                isLock: true,
+                // 默认不使用body的scroll而是使用dom本身的scroll
+                // 如果使用body的scroll，一个页面请只配置一个下拉刷新，否则会有冲突
+                isUseBodyScroll: false
             });
             
             var STATE_DEFAULT = 0,
