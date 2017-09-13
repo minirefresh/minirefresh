@@ -73,16 +73,20 @@ git clone git://github.com/minirefresh/minirefresh.git
 <script type="text/javascript" src="xxx/minirefresh.js"></script>
 ```
 
-### `require`
+### `require`引入
 
 ```js
+// support NPM and UMD
 var MiniRefreshTools = require('xxx/minirefresh.js');
+require('xxx/minirefresh.css');
 ```
 
-### `import`
+### `import`引入
 
 ```js
-import { MiniRefreshTools } from 'xxx/minirefresh.js';
+// debug:.js   dist:.min.js
+import MiniRefreshTools from 'minirefresh';
+import 'minirefresh/dist/debug/minirefresh.css'
 ```
 
 ## HTML Layout
