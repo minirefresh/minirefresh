@@ -1,7 +1,7 @@
 {
   "name": "minirefresh",
   "title": "minirefresh",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。",
   "homepage": "https://github.com/minirefresh/minirefresh",
   "repository": {
@@ -40,9 +40,7 @@
     "gulp-clean-css": "^2.0.10",
     "gulp-concat": "^2.6.0",
     "gulp-rename": "^1.2.2",
-    "gulp-uglify": "^1.5.1"
-  },
-  "dependencies": {
+    "gulp-uglify": "^1.5.1",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-istanbul": "^4.1.4",
@@ -66,5 +64,8 @@
     "karma-webpack": "^2.0.4",
     "mocha": "^3.5.0",
     "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    
   }
 }

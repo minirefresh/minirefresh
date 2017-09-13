@@ -14,8 +14,8 @@
     var moduleExports = globalContext.MiniRefreshTools || factory(globalContext);
 
     if (typeof module !== 'undefined' && module.exports) {
-        // 用exports，导出一个MiniRefreshTools对象
-        exports.MiniRefreshTools = moduleExports;
+        // 导出一个默认对象
+        module.exports = moduleExports;
     } else if (typeof define === 'function' && (define.amd || define.cmd)) {
         // require模式默认导出整个工具类
         define(function() {
