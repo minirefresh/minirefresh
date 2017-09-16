@@ -124,6 +124,7 @@
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
+            downWrap.style.visibility = 'hidden';
             container.insertBefore(downWrap, contentWrap);
 
             this.downWrap = downWrap;
@@ -149,7 +150,7 @@
         },
         
         _initUpWrap: function() {
-            var contentWrap = this.contentWrap,
+            var container = this.container,
                 options = this.options;
             
             // 上拉区域
@@ -158,7 +159,8 @@
             upWrap.className = CLASS_UP_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
             upWrap.style.visibility = 'hidden';
-            contentWrap.appendChild(upWrap);
+            // 加到container中
+            container.appendChild(upWrap);
 
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
@@ -212,6 +214,7 @@
             this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
             this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
             this._transformDownWrap(-this.downWrapHeight + downHight);
+            this.downWrap.style.visibility = 'visible';
         },
         _scrollHook: function(scrollTop) {
             // 用来判断toTop
@@ -241,6 +244,7 @@
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
+            this.downWrap.style.visibility = 'visible';
         },
         _downLoaingSuccessHook: function(isSuccess, successTips) {
             this.options.down.contentsuccess = successTips || this.options.down.contentsuccess;
@@ -285,6 +289,10 @@
             }
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
+        },
+        _resetUpLoadingHook: function() {
+            this.upWrap.style.visibility = 'hidden';
+            this.upWrapTips.innerText = this.options.up.contentdown;
         },
         _lockUpLoadingHook: function(isLock) {
             this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';

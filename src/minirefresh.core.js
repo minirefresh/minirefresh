@@ -14,8 +14,9 @@
  * _cancelLoaingHook()                          取消loading的回调
  * _upLoaingHook()                              上拉触发的那一刻回调
  * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
- * __lockUpLoadingHook(isLock)                   锁定上拉时的回调
- * __lockDownLoadingHook(isLock)                 锁定下拉时的回调
+ * _resetUpLoadingHook()                         重置上拉状态，变为又可继续上拉
+ * __lockUpLoadingHook(isLock)                  锁定上拉时的回调
+ * __lockDownLoadingHook(isLock)                锁定下拉时的回调
  * 
  * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
  */
@@ -93,9 +94,11 @@
             this.container = innerUtil.selector(options.container);
             // scroll的dom-wrapper下的第一个节点，作用是down动画时的操作
             this.contentWrap = this.container.children[0];
-            // 默认和contentWrap一致，但是为了兼容body的滚动，拆分为两个对象方便处理
+            // 默认是整个container进行滑动
+            // 但是为了兼容body的滚动，拆分为两个对象方便处理
             // 如果是使用body的情况，scrollWrap恒为body
-            this.scrollWrap = options.isUseBodyScroll ? document.body : this.contentWrap;
+            // 注意，滑动不是指下拉时的translate（这时候时contentWrap），而是只默认的原生滑动
+            this.scrollWrap = options.isUseBodyScroll ? document.body : this.container;
             
             this.options = options;
             
@@ -134,6 +137,10 @@
             this.scroller.on('upLoading', function() {
                 self._upLoaingHook && self._upLoaingHook(self.options.up.isShowUpLoading);
                 options.up.callback && options.up.callback();
+            });
+            
+            this.scroller.on('resetUpLoading', function() {
+                self._resetUpLoadingHook && self._resetUpLoadingHook();
             });
 
             this.scroller.on('pull', function(downHight, downOffset) {

@@ -17,6 +17,7 @@
     var EVENT_SCROLL = 'scroll',
         EVENT_PULL = 'pull',
         EVENT_UP_LOADING = 'upLoading',
+        EVENT_RESET_UP_LOADING = 'resetUpLoading',
         EVENT_DOWN_LOADING = 'downLoading',
         EVENT_CANCEL_LOADING = 'cancelLoading',
         HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
@@ -436,6 +437,7 @@
         // 这个事件没有必要冒泡，firefox内参数必须完整
         evt.initEvent('scroll', false, true);
         this.scrollWrap.dispatchEvent(evt);
+        this.events[EVENT_RESET_UP_LOADING] && this.events[EVENT_RESET_UP_LOADING]();
     };
 
     /**
