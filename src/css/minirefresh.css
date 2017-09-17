@@ -214,10 +214,6 @@
     left: 0;
     width: 100%;
     height: 75px;
-    /**
-     * 默认比scroll层级低
-     */
-    z-index: 0;
 }
 
 .minirefresh-theme-default .minirefresh-upwrap {
@@ -247,7 +243,8 @@
 
 .minirefresh-theme-default .minirefresh-downwrap .downwrap-success,
 .minirefresh-theme-default .minirefresh-downwrap .downwrap-error {
-    border-bottom-color: gray;
+    /*border-bottom-color: gray;*/
+   display: none;
 }
 
 .minirefresh-theme-default .minirefresh-downwrap .downwrap-tips,

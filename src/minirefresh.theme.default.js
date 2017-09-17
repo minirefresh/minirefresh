@@ -66,7 +66,8 @@
                 // 滚动多少距离才显示toTop
                 offset: 800
             },
-            contentdown: '上拉显示更多',
+            // 默认为空，可以自行改为 上拉显示更多 等
+            contentdown: '',
             contentrefresh: '加载中...',
             contentnomore: '没有更多数据了'
         }
@@ -124,7 +125,6 @@
 
             downWrap.className = CLASS_DOWN_WRAP + ' ' + CLASS_HARDWARE_SPEEDUP;
             downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-progress"></p><p class="downwrap-tips">' + options.down.contentdown + ' </p></div>';
-            downWrap.style.visibility = 'hidden';
             container.insertBefore(downWrap, contentWrap);
 
             this.downWrap = downWrap;
@@ -150,7 +150,7 @@
         },
         
         _initUpWrap: function() {
-            var container = this.container,
+            var contentWrap = this.contentWrap,
                 options = this.options;
             
             // 上拉区域
@@ -160,7 +160,7 @@
             upWrap.innerHTML = '<p class="upwrap-progress"></p><p class="upwrap-tips">' + options.up.contentdown + '</p>';
             upWrap.style.visibility = 'hidden';
             // 加到container中
-            container.appendChild(upWrap);
+            contentWrap.appendChild(upWrap);
 
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
@@ -214,7 +214,6 @@
             this.downWrapProgress.style.webkitTransform = 'rotate(' + progress + 'deg)';
             this.downWrapProgress.style.transform = 'rotate(' + progress + 'deg)';
             this._transformDownWrap(-this.downWrapHeight + downHight);
-            this.downWrap.style.visibility = 'visible';
         },
         _scrollHook: function(scrollTop) {
             // 用来判断toTop
@@ -244,7 +243,6 @@
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
-            this.downWrap.style.visibility = 'visible';
         },
         _downLoaingSuccessHook: function(isSuccess, successTips) {
             this.options.down.contentsuccess = successTips || this.options.down.contentsuccess;
@@ -280,19 +278,21 @@
         _upLoaingEndHook: function(isFinishUp) {
             if (!isFinishUp) {
                 // 接下来还可以加载更多
-                this.upWrap.style.visibility = 'hidden';
+                // this.upWrap.style.visibility = 'hidden';
                 this.upWrapTips.innerText = this.options.up.contentdown;
             } else {
                 // 已经没有更多数据了
-                this.upWrap.style.visibility = 'visible';
+                // this.upWrap.style.visibility = 'visible';
                 this.upWrapTips.innerText = this.options.up.contentnomore;
             }
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
         },
         _resetUpLoadingHook: function() {
-            this.upWrap.style.visibility = 'hidden';
+            // this.upWrap.style.visibility = 'hidden';
             this.upWrapTips.innerText = this.options.up.contentdown;
+            this.upWrapProgress.classList.remove(CLASS_ROTATE);
+            this.upWrapProgress.classList.add(CLASS_HIDDEN);
         },
         _lockUpLoadingHook: function(isLock) {
             this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';
