@@ -270,6 +270,10 @@
         EVENT_DOWN_LOADING = 'downLoading',
         EVENT_CANCEL_LOADING = 'cancelLoading',
         HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
+        
+    var os = {
+        ios: navigator.userAgent.match(/(iPhone\sOS)\s([\d_]+)/) || navigator.userAgent.match(/(iPad).*OS\s([\d_]+)/)
+    };
 
     var rAF = window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -426,6 +430,12 @@
 
                     return;
                 }
+                
+                if (self.isBounce && os.ios) {
+                    // 暂时iOS中去回弹
+                    // 下一个版本中，分开成两种情况，一种是absolute的固定动画，一种是在scrollWrap内部跟随滚动的动画
+                    return ;
+                }
 
                 if (moveY > 0) {
                     // 向下拉
@@ -459,9 +469,11 @@
                     }
 
                     self.events[EVENT_PULL] && self.events[EVENT_PULL](self.downHight, downOffset);
+                    
                     // 执行动画
                     self._translate(self.downHight);
                 } else {
+                    self.isBounce = true;
                     // 解决嵌套问题。在嵌套有 IScroll，或类似的组件时，这段代码会生效，可以辅助滚动scrolltop
                     // 否则有可能在最开始滚不动
                     if (scrollWrap.scrollTop <= 0) {
@@ -498,6 +510,8 @@
             self.startX = 0;
             self.preY = 0;
             self.startTop = undefined;
+            // 当前是否正处于回弹中，常用于iOS中判断，如果先上拉再下拉就处于回弹中（只要moveY为负）
+            self.isBounce = false;
         };
 
         scrollWrap.addEventListener('touchend', touchendEvent);
