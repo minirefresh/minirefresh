@@ -295,6 +295,14 @@
          */
         scrollTo: function(y, duration) {
             this.scroller.scrollTo(y, duration);
+        },
+        
+        /**
+         * 获取当前的滚动位置
+         * @return {Number} 返回当前的滚动位置
+         */
+        getPosition: function() {
+            return this.scrollWrap.scrollTop;
         }
     });
 
