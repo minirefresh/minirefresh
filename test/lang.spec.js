@@ -118,12 +118,6 @@ describe('selector', () => {
         
         expectDom(dom);
     });
-    
-    it('tag选择', () => {
-        const dom = selector(TAG);
-        
-        expectDom(dom);
-    });
 });
 
 describe('getClientHeightByDom', () => {

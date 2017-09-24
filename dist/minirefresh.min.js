@@ -54,7 +54,7 @@ function MiniRefresh(options) {
  */
 
 
-MiniRefresh.version = '3.0.0';
+MiniRefresh.version = '3.0.1';
 
 return MiniRefresh;
 

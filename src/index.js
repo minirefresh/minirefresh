@@ -21,6 +21,6 @@ class MiniRefresh {
  * 静态属性es6没有，需要es7
  * 因此es6手动绑定
  */
-MiniRefresh.version = '3.0.0';
+MiniRefresh.version = '3.0.1';
 
 export default MiniRefresh;

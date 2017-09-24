@@ -5,11 +5,11 @@
 }(this, (function (chai) { 'use strict';
 
 function getNow() {
-    return window.performance &&
-        window.performance.now ?
-        (window.performance.now() +
-            window.performance.timing.navigationStart) :
-        +new Date();
+    return window.performance
+        && (window.performance.now
+            ? (window.performance.now()
+                + window.performance.timing.navigationStart)
+            : +new Date());
 }
 
 const noop = () => {};
@@ -193,12 +193,6 @@ describe('selector', () => {
     
     it('class选择', () => {
         const dom = selector(`.${CLASS}`);
-        
-        expectDom(dom);
-    });
-    
-    it('tag选择', () => {
-        const dom = selector(TAG);
         
         expectDom(dom);
     });
