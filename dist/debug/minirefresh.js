@@ -692,14 +692,10 @@
         if (this.isFinishUp) {
             this.isFinishUp = false;
         }
-
-        // 触发一次HTML的scroll事件，以便检查当前位置是否需要加载更多
-        // 需要兼容webkit和firefox
-        var evt = document.createEvent('HTMLEvents');
-
-        // 这个事件没有必要冒泡，firefox内参数必须完整
-        evt.initEvent('scroll', false, true);
-        this.scrollWrap.dispatchEvent(evt);
+        
+        // 检测是否需要加载满屏
+        this._loadFull();
+        
         this.events[EVENT_RESET_UP_LOADING] && this.events[EVENT_RESET_UP_LOADING]();
     };
 
