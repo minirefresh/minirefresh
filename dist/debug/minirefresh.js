@@ -368,6 +368,7 @@
 
     MiniScroll.prototype._initPullDown = function() {
         var self = this,
+            clientHeight = document.documentElement.clientHeight,
             // 考虑到options可以更新，所以缓存时请注意一定能最新
             scrollWrap = this.scrollWrap;
 
@@ -409,6 +410,12 @@
                 // 当前第一个手指距离列表顶部的距离
                 var curY = e.touches ? e.touches[0].pageY : e.clientY;
                 var curX = e.touches ? e.touches[0].pageX : e.clientX;
+
+                // 手指滑出屏幕触发刷新
+                if (curY > clientHeight) {
+                    touchendEvent(e);
+                    return;
+                }
 
                 if (!self.preY) {
                     // 设置上次移动的距离，作用是用来计算滑动方向
@@ -515,6 +522,7 @@
         };
 
         scrollWrap.addEventListener('touchend', touchendEvent);
+        scrollWrap.addEventListener('touchcancel', touchendEvent);
         scrollWrap.addEventListener('mouseup', touchendEvent);
         scrollWrap.addEventListener('mouseleave', touchendEvent);
 
