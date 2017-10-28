@@ -254,7 +254,7 @@
             typeof isSuccess !== 'boolean' && (isSuccess = true);
             this._endDownLoading(isSuccess, successTips);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
-            if (this.options.isAutoResetUpLoading) {
+            if (this.options.down.isAutoResetUpLoading) {
                 this._resetUpLoading();
             }
         },
