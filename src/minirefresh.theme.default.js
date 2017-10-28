@@ -5,7 +5,6 @@
  * 拓展其它主题有两种方案：
  * 1. 直接继承自default，会默认拥有default的属性，只需要覆盖自定义功能即可（注意必须覆盖，否则会调用dwfault的默认操作）
  * 2. 和default一样，继承自 innerUtil.core，这样会与default无关，所以的一切UI都必须自己实现（可以参考default去实现）
- * 
  * 一般，在进行一些小修改时，建议继承自default（这样toTop，上拉加载大部分代码都可复用）
  * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写主题
  */
@@ -32,6 +31,12 @@
      */
     var CLASS_DOWN_SUCCESS = 'downwrap-success';
     var CLASS_DOWN_ERROR = 'downwrap-error';
+    var CLASS_STATUS_DEFAULT = 'status-default';
+    var CLASS_STATUS_PULL = 'status-pull';
+    var CLASS_STATUS_LOADING = 'status-loading';
+    var CLASS_STATUS_SUCCESS = 'status-success';
+    var CLASS_STATUS_ERROR = 'status-error';
+    var CLASS_STATUS_NOMORE = 'status-nomore';
     
     /**
      * 一些常量
@@ -115,6 +120,15 @@
                 this.isShowToTopBtn = false;
             }
         },
+        _changeWrapStatusClass: function(wrap, statusClass) {
+            wrap.classList.remove(CLASS_STATUS_NOMORE);
+            wrap.classList.remove(CLASS_STATUS_DEFAULT);
+            wrap.classList.remove(CLASS_STATUS_PULL);
+            wrap.classList.remove(CLASS_STATUS_LOADING);
+            wrap.classList.remove(CLASS_STATUS_SUCCESS);
+            wrap.classList.remove(CLASS_STATUS_ERROR);
+            wrap.classList.add(statusClass);
+        },
         _initDownWrap: function() {
             var container = this.container,
                 contentWrap = this.contentWrap,
@@ -132,6 +146,7 @@
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
             // 是否能下拉的变量，控制pull时的状态转变
             this.isCanPullDown = false;
+            this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
             
             this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
             this._transformDownWrap(-this.downWrapHeight);
@@ -165,6 +180,7 @@
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
             this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
+            this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
         },
         
         /**
@@ -189,7 +205,8 @@
                 this.toTopBtn = toTopBtn;
                 this.isShowToTopBtn = false;
                 // 默认添加到body中防止冲突
-                document.body.appendChild(toTopBtn);
+                // 需要添加到container，否则多个totop无法识别
+                this.container.appendChild(toTopBtn);
             }
         },
         _pullHook: function(downHight, downOffset) {
@@ -200,11 +217,13 @@
                 if (this.isCanPullDown) {
                     this.downWrapTips.innerText = options.down.contentdown;
                     this.isCanPullDown = false;
+                    this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
                 }
             } else {
                 if (!this.isCanPullDown) {
                     this.downWrapTips.innerText = options.down.contentover;
                     this.isCanPullDown = true;
+                    this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_PULL);
                 }
             }
 
@@ -243,6 +262,7 @@
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
+            this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_LOADING);
         },
         _downLoaingSuccessHook: function(isSuccess, successTips) {
             this.options.down.contentsuccess = successTips || this.options.down.contentsuccess;
@@ -250,6 +270,7 @@
             this.downWrapProgress.classList.remove(CLASS_ROTATE);
             this.downWrapProgress.classList.add(CLASS_FADE_OUT);
             this.downWrapProgress.classList.add(isSuccess ? CLASS_DOWN_SUCCESS : CLASS_DOWN_ERROR);
+            this._changeWrapStatusClass(this.downWrap, isSuccess ? CLASS_STATUS_SUCCESS : CLASS_STATUS_ERROR);
         },
         _downLoaingEndHook: function(isSuccess) {
             this.downWrapTips.innerText = this.options.down.contentdown;
@@ -260,6 +281,7 @@
             // 需要重置回来
             this.isCanPullDown = false;
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
+            this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
         },
         _cancelLoaingHook: function() {
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
@@ -273,26 +295,30 @@
             } else {
                 this.upWrap.style.visibility = 'hidden';
             }
-
+            this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_LOADING);
         },
         _upLoaingEndHook: function(isFinishUp) {
             if (!isFinishUp) {
                 // 接下来还可以加载更多
                 // this.upWrap.style.visibility = 'hidden';
                 this.upWrapTips.innerText = this.options.up.contentdown;
+                this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
             } else {
                 // 已经没有更多数据了
                 // this.upWrap.style.visibility = 'visible';
                 this.upWrapTips.innerText = this.options.up.contentnomore;
+                this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_NOMORE);
             }
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
+            
         },
         _resetUpLoadingHook: function() {
             // this.upWrap.style.visibility = 'hidden';
             this.upWrapTips.innerText = this.options.up.contentdown;
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
+            this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
         },
         _lockUpLoadingHook: function(isLock) {
             this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';

@@ -112,7 +112,7 @@
          * @param {Number} downOffset 下拉的阈值
          */
         _pullHook: function(downHight, downOffset) {
-            // 复用default的同名函数代码           
+            // 复用default的同名函数代码
             this._super(downHight, downOffset);
             
             var rate = downHight / downOffset,

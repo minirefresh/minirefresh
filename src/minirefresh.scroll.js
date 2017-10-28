@@ -143,6 +143,38 @@
         // 兼容手指滑动与鼠标
         scrollWrap.addEventListener('touchstart', touchstartEvent);
         scrollWrap.addEventListener('mousedown', touchstartEvent);
+        
+        var touchendEvent = function(e) {
+            var options = self.options;
+
+            // 需要重置状态
+            if (self.isMoveDown) {
+                // 如果下拉区域已经执行动画,则需重置回来
+                if (self.downHight >= options.down.offset) {
+                    // 符合触发刷新的条件
+                    self.triggerDownLoading();
+                } else {
+                    // 否则默认重置位置
+                    self._translate(0, options.down.bounceTime);
+                    self.downHight = 0;
+                    self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
+                }
+
+                self.isMoveDown = false;
+            }
+
+            self.startY = 0;
+            self.startX = 0;
+            self.preY = 0;
+            self.startTop = undefined;
+            // 当前是否正处于回弹中，常用于iOS中判断，如果先上拉再下拉就处于回弹中（只要moveY为负）
+            self.isBounce = false;
+        };
+
+        scrollWrap.addEventListener('touchend', touchendEvent);
+        scrollWrap.addEventListener('touchcancel', touchendEvent);
+        scrollWrap.addEventListener('mouseup', touchendEvent);
+        scrollWrap.addEventListener('mouseleave', touchendEvent);
 
         var touchmoveEvent = function(e) {
             var options = self.options,
@@ -165,6 +197,7 @@
                 // 手指滑出屏幕触发刷新
                 if (curY > clientHeight) {
                     touchendEvent(e);
+                    
                     return;
                 }
 
@@ -245,38 +278,6 @@
         scrollWrap.addEventListener('touchmove', touchmoveEvent);
         scrollWrap.addEventListener('mousemove', touchmoveEvent);
 
-        var touchendEvent = function(e) {
-            var options = self.options;
-
-            // 需要重置状态
-            if (self.isMoveDown) {
-                // 如果下拉区域已经执行动画,则需重置回来
-                if (self.downHight >= options.down.offset) {
-                    // 符合触发刷新的条件
-                    self.triggerDownLoading();
-                } else {
-                    // 否则默认重置位置
-                    self._translate(0, options.down.bounceTime);
-                    self.downHight = 0;
-                    self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
-                }
-
-                self.isMoveDown = false;
-            }
-
-            self.startY = 0;
-            self.startX = 0;
-            self.preY = 0;
-            self.startTop = undefined;
-            // 当前是否正处于回弹中，常用于iOS中判断，如果先上拉再下拉就处于回弹中（只要moveY为负）
-            self.isBounce = false;
-        };
-
-        scrollWrap.addEventListener('touchend', touchendEvent);
-        scrollWrap.addEventListener('touchcancel', touchendEvent);
-        scrollWrap.addEventListener('mouseup', touchendEvent);
-        scrollWrap.addEventListener('mouseleave', touchendEvent);
-
     };
 
     MiniScroll.prototype._initPullUp = function() {
@@ -293,8 +294,16 @@
                 options = self.options;
 
             self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
-
-            if (!self.upLoading) {
+            
+            var isAllowUploading = true;
+            
+            if (self.upLoading) {
+                isAllowUploading = false;
+            } else if (!options.down.isAways && self.downLoading) {
+                isAllowUploading = false;
+            }
+            
+            if (isAllowUploading) {
                 if (!self.isLockUp && !self.isFinishUp) {
                     var toBottom = scrollHeight - clientHeight - scrollTop;
 

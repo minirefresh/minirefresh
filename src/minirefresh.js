@@ -1,4 +1,4 @@
-/** 
+/**
  * 构建 MiniRefresh
  * MiniRefreshTools 是内部使用的
  * 外部主题会用 MiniRefresh变量
@@ -23,7 +23,7 @@
         });
     }
 
-    // 单独引入时暴露的是这个tools 
+    // 单独引入时暴露的是这个tools
     globalContext.MiniRefreshTools = moduleExports;
 })(typeof window !== 'undefined' ? window : global, function(globalContext, exports) {
     'use strict';

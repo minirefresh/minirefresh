@@ -2,7 +2,6 @@
  * MiniRerefresh 的核心代码，代码中约定对外的API
  * 可以通过继承  MiniRefreshCore， 得到一个主题类，然后在主题类中实现UI hook函数可以达到不同的动画效果
  * 核心类内部没有任何UI实现，所有的UI都依赖于主题类
- * 
  * 以下是主题类可以实现的Hook（为undefined的话相当于忽略）
  * _initHook(isLockDown, isLockUp)              初始化时的回调
  * _refreshHook(isLockDown, isLockUp)           刷新options时的回调
@@ -17,7 +16,6 @@
  * _resetUpLoadingHook()                         重置上拉状态，变为又可继续上拉
  * __lockUpLoadingHook(isLock)                  锁定上拉时的回调
  * __lockDownLoadingHook(isLock)                锁定下拉时的回调
- * 
  * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
  */
 (function(innerUtil) {
@@ -35,6 +33,8 @@
             isAways: false,
             // 是否scroll在下拉时会进行css移动，通过关闭它可以实现自定义动画
             isScrollCssTranslate: true,
+            // 是否每次下拉完毕后默认重置上拉
+            isAutoResetUpLoading: true,
             // 下拉要大于多少长度后再下拉刷新
             offset: 75,
             // 阻尼系数，下拉小于offset时的阻尼系数，值越接近0,高度变化越小,表现为越往下越难拉
@@ -179,7 +179,7 @@
                     successAnimTime = this.options.down.successAnim.duration;
 
                 if (successAnim) {
-                    // 如果有成功动画    
+                    // 如果有成功动画
                     this._downLoaingSuccessHook && this._downLoaingSuccessHook(isSuccess, successTips);
                 } else {
                     // 默认为没有成功动画
@@ -254,7 +254,9 @@
             typeof isSuccess !== 'boolean' && (isSuccess = true);
             this._endDownLoading(isSuccess, successTips);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
-            this._resetUpLoading();
+            if (this.options.isAutoResetUpLoading) {
+                this._resetUpLoading();
+            }
         },
         
         /**
