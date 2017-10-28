@@ -87,6 +87,8 @@
         <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
         <script type="text/javascript" src="../common/common.js"></script>
         <script>
+            // 如果需要除body之外的dom对象也支持Mui的透明滑动
+            // 可以更改mui.js-3.7源码，8018行，y的位置变为scrollby.scrollTop而不是window.scrollY
             var appendTestData = Common.appendTestData,
                 // 记录一个最新
                 maxDataSize = 30,
