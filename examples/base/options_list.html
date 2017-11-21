@@ -1,0 +1,212 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-28
+        描述： 配置项全开的列表示例（所有主题都支持的配置项）
+        一些特殊的配置项会单独作为示例（如default主题的successAnim）
+        
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>options list</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+
+    </head>
+
+    <body>
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            所有通用配置项全开
+        </nav>
+        <div class="content">
+
+            <div id="minirefresh" class="minirefresh-wrap">
+
+                <div class="minirefresh-scroll">
+
+                    <div class="notice">
+                        <p class="btn-switch">更新options状态（默认状态）</p>
+                    </div>
+
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            var appendTestData = Common.appendTestData,
+                bindEvent = Common.bindEvent,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
+
+            var miniRefresh = new MiniRefresh({
+                // 下拉有关
+                down: {
+                    // 默认没有锁定，可以通过API动态设置
+                    isLock: false,
+                    // 是否自动下拉刷新,启用后会自动触发一次下拉刷新，优先级要高于up的自动loading，有了这个up的就不会执行了
+                    // 注意,default主题时，其实下拉刷新动画和上拉效果一样的，不要被迷惑了
+                    isAuto: false,
+                    // 设置isAuto=true时生效，是否在初始化的下拉刷新触发事件中显示动画，如果是false，初始化的加载只会触发回调，不会触发动画
+                    isAllowAutoLoading: true,
+                    // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
+                    isAways: false,
+                    // 是否每次下拉完毕后默认重置上拉
+                    isAutoResetUpLoading: true,
+                    // 下拉要大于多少长度后再下拉刷新
+                    offset: 75,
+                    // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
+                    dampRate: 0.3,
+                    // 回弹动画时间
+                    bounceTime: 300,
+                    // 以下几个字段是主题显示中的，几乎所有主题都会提供配置
+                    contentdown: '下拉刷新',
+                    // 可选，在释放可刷新状态时，下拉刷新控件上显示的标题内容
+                    contentover: '释放刷新',
+                    // 可选，正在刷新状态时，下拉刷新控件上显示的标题内容
+                    contentrefresh: '加载中...',
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    },
+                    // 下拉取消的回调
+                    onCalcel: function() {
+                        console.log("取消了刷新");
+                    },
+                    // 下拉过程回调
+                    onPull: function(downHight, downOffset) {
+                        console.log("下拉:" + downHight);
+                    }
+                },
+                // 上拉有关
+                up: {
+                    // 默认没有锁定，可以通过API动态设置
+                    isLock: false,
+                    // 是否自动上拉加载-初始化是是否自动
+                    isAuto: true,
+                    // 距离底部高度(到达该高度即触发)
+                    offset: 100,
+                    loadFull: {
+                        // 开启配置后，只要没满屏幕，就会自动加载
+                        isEnable: true,
+                        delay: 300
+                    },
+                    // 是否默认显示上拉进度条，可以通过API改变
+                    isShowUpLoading: true,
+                    // 以下几个字段是主题显示中的，几乎所有主题都会提供配置
+                    contentdown: '上拉显示更多',
+                    contentrefresh: '加载中...',
+                    contentnomore: '没有更多数据了',
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 4);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    },
+                    // 滑动过程回调
+                    onScroll: function(scrollTop) {
+                        console.log("滑动:" + scrollTop);
+                    }
+                },
+                // 容器
+                container: '#minirefresh',
+                isLock: true,
+                // 默认不使用body的scroll而是使用dom本身的scroll
+                // 如果使用body的scroll，一个页面请只配置一个下拉刷新，否则会有冲突
+                isUseBodyScroll: false
+            });
+            
+            var STATE_DEFAULT = 0,
+                // 锁定下拉
+                STATE_LOCK_DOWN = 1,
+                // 锁定上拉
+                STATE_LOCK_UP = 2,
+                // 下拉变为always，就是是上拉时也可以加载
+                STATE_DOWN_ALWAYS = 3,
+                // 开启成功动画
+                STATE_DOWN_SUCCESS_ANIM = 4,
+                // 拉长下拉时间
+                STATE_DOWN_DURATION = 5,
+                // 隐藏toTop
+                STATE_UP_TOTOP_HIDE = 6,
+                // 关闭loadfull
+                STATE_UP_LOADFULL_DISABLE = 7,
+                // 隐藏加载更多动画
+                STATE_UP_LOADING_HIDE = 8;
+                
+            var STATE_TIPS = ['默认状态', '锁定下拉', '锁定上拉', '允许上拉时下拉',
+                '开启下拉成功动画', '延长下拉动画时间', '隐藏toTop', '关闭自动满屏', '隐藏上拉动画'];
+                
+            var currStatus = STATE_DEFAULT;
+            
+            var changeStatus = function(status) {
+                status++;                
+                status %= STATE_UP_LOADING_HIDE + 1;
+                
+                return status;
+            }; 
+            
+            var getOptionsByStatus = function(status) {
+                return {
+                    down: {
+                        // 默认没有锁定，可以通过API动态设置
+                        isLock: status === STATE_LOCK_DOWN,
+                        // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
+                        isAways: status === STATE_DOWN_ALWAYS,
+                        // 回弹动画时间
+                        bounceTime: status === STATE_DOWN_DURATION ? 2000 : 500,
+                        successAnim: {
+                            // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
+                            isEnable: status === STATE_DOWN_SUCCESS_ANIM
+                        }
+                    },
+                    up: {
+                        // 默认没有锁定，可以通过API动态设置
+                        isLock: status === STATE_LOCK_UP,
+                        toTop: {
+                            isEnable: !(status === STATE_UP_TOTOP_HIDE)
+                        },
+                        loadFull: {
+                            // 开启配置后，只要没满屏幕，就会自动加载
+                            isEnable: !(status === STATE_UP_LOADFULL_DISABLE)
+                        },
+                        isShowUpLoading: !(status === STATE_UP_LOADING_HIDE)
+                    }
+                };
+            };
+            
+            var needReLoadingStatus = [STATE_DOWN_ALWAYS, STATE_UP_LOADFULL_DISABLE];
+
+            bindEvent('.btn-switch', function() {
+                currStatus = changeStatus(currStatus);
+                
+                this.innerText = '更新options状态（' + STATE_TIPS[currStatus] + '）';
+                
+                // 更新时一些关键特征，如 容器，回调等不要改变
+                // 只演示了部分，其实例如阻尼系数等都是可以改变的
+                miniRefresh.refreshOptions(getOptionsByStatus(currStatus));
+  
+                // 一些特殊处理，比如always，因为需要看出效果
+                if (needReLoadingStatus.indexOf(currStatus) !== -1) {
+                    appendTestData(listDom, 0, true);
+                    miniRefresh.triggerUpLoading();
+                }
+            }, 'click');
+        </script>
+    </body>
+
+</html>

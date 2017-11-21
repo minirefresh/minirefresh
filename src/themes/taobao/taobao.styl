@@ -1,0 +1,73 @@
+/**
+ * 仿淘宝的主题
+ * 支持淘宝二楼效果
+ */
+            
+.minirefresh-theme-taobao
+    .minirefresh-downwrap
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 800px;
+        
+        .downwrap-bg
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(images/taobao-bg.jpg);
+            background-size: 100% 100%;
+        .downwrap-moon
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            bottom: 80px;
+            margin-left: -60px;
+            left: 50%;
+            background-image: url(images/taobao-moon.png);
+            background-size: 100% 100%;
+        .downwrap-content
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        
+        /**
+         * 以下是进入和退出秘密花园
+         */
+        .secret-garden-bg-in
+            transform: scale(1.5) translateZ(0px);
+            -webkit-transform: scale(1.5) translateZ(0px);
+            transition: 1000ms;
+            -webkit-transition: 1000ms;
+        .secret-garden-bg-out
+            transform: scale(1) translateZ(0px);
+            -webkit-transform: scale(1) translateZ(0px);
+            transition: 1000ms;
+            -webkit-transition: 1000ms;
+        .secret-garden-moon-in
+            transform: translateY(-120px) translateZ(0px);
+            -webkit-transform: translateY(-120px) translateZ(0px);
+            transition: 1000ms;
+            -webkit-transition: 1000ms;
+        .secret-garden-moon-out
+            transform: translateY(0px) translateZ(0px);
+            -webkit-transform: translateY(0px) translateZ(0px);
+            transition: 1000ms;
+            -webkit-transition: 1000ms;
+            
+        .downwrap-tips
+            font-size: 14px;
+            color: white;
+        .downwrap-progress
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid white;
+            margin-right: 8px;
+            border-bottom-color: transparent;
+            vertical-align: middle;

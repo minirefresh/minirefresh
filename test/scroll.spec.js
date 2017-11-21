@@ -1,8 +1,4 @@
 import { expect } from 'chai';
-import {
-    extend,
-} from '../src/util/lang';
-
 import Scroll from '../src/core/scroll';
 
 const defaultSetting = {
@@ -40,7 +36,7 @@ const defaultSetting = {
         loadFull: {
             // 开启配置后，只要没满屏幕，就会自动加载
             isEnable: true,
-            delay: 300
+            delay: 300,
         },
     },
     // 是否锁定横向滑动，如果锁定则原生滚动条无法滑动
@@ -63,7 +59,9 @@ minirefresh.options = defaultSetting;
 minirefresh.container = container;
 // scroll的dom-wrapper下的第一个节点，作用是down动画时的操作
 minirefresh.contentWrap = minirefresh.container.children[0];
-minirefresh.scrollWrap = minirefresh.options.isUseBodyScroll ? document.body : minirefresh.container;
+minirefresh.scrollWrap = minirefresh.options.isUseBodyScroll
+    ? document.body
+    : minirefresh.container;
 
 describe('创建Scroll', () => {
     beforeEach(() => {
@@ -71,69 +69,67 @@ describe('创建Scroll', () => {
     });
     
     it('监听init', (done) => {
-        let scroll = new Scroll(minirefresh);
+        const scroll = new Scroll(minirefresh);
         
         scroll.on('init', () => {
             done();
-        }); 
+        });
     });
     
     it('创建自动下拉，带动画', (done) => {
         minirefresh.options.down.isAuto = true;
      
-        let scroll = new Scroll(minirefresh);
+        const scroll = new Scroll(minirefresh);
         
         scroll.on('downLoading', () => {
             done();
-        }); 
+        });
     });
     
     it('创建自动下拉，带动画，但不允许移动', (done) => {
         minirefresh.options.down.isAuto = true;
         minirefresh.options.down.isScrollTranslate = false;
         
-        let scroll = new Scroll(minirefresh);
+        const scroll = new Scroll(minirefresh);
         
         scroll.on('downLoading', () => {
             done();
-        }); 
+        });
     });
     
     it('创建自动下拉，带动画，hook合法', (done) => {
         minirefresh.options.down.isAuto = true;
         
-        let scroll = new Scroll(minirefresh);
+        const scroll = new Scroll(minirefresh);
         
-        scroll.hook('beforeDownLoading', () => {
-            return true;
-        }); 
+        scroll.hook('beforeDownLoading', () => true);
         
         scroll.on('downLoading', () => {
             done();
-        }); 
+        });
     });
     
     it('创建自动下拉，不带动画', (done) => {
         minirefresh.options.down.isAuto = true;
         minirefresh.options.down.isAllowAutoLoading = false;
         
-        let scroll = new Scroll(minirefresh);
+        const scroll = new Scroll(minirefresh);
         
         scroll.on('downLoading', () => {
             done();
-        }); 
+        });
     });
     
     it('创建自动上拉', (done) => {
         minirefresh.options.down.isAuto = false;
         minirefresh.options.up.isAuto = true;
         
-        let scroll = new Scroll(minirefresh);
+        const scroll = new Scroll(minirefresh);
         
         scroll.on('upLoading', () => {
             done();
-        }); 
-    }); 
+        });
+    });
 });
 
 describe('上拉逻辑', () => {
@@ -145,7 +141,7 @@ describe('上拉逻辑', () => {
         scroll = new Scroll(minirefresh);
     });
     
-    it('主动触发上拉', (done) => {       
+    it('主动触发上拉', (done) => {
         scroll.on('upLoading', () => {
             done();
         });
@@ -193,7 +189,7 @@ describe('上拉逻辑', () => {
                 scroll.options.up.loadFull.isEnable = false;
                 done();
             }
-        });        
+        });
         scroll.triggerUpLoading();
         scroll.scrollWrap.scrollTop = '10';
         

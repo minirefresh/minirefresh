@@ -1,0 +1,176 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-29
+        描述： 拓展主题的示例
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>theme expand</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .minirefresh-downwrap,
+            .minirefresh-upwrap {
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            自定义主题拓展
+        </nav>
+        <div class="content">
+            <div id="minirefresh" class="minirefresh-wrap">
+
+                <div class="minirefresh-scroll">
+
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            (function(innerUtil) {
+
+                /**
+                 * 仿照default主题的实现，拓展一个自定义主题
+                 * 这里继承于core，其实也可以跟其它主题一样直接继承default的
+                 * 这个自定义主题生成完后直接覆盖了default的
+                 */
+                var MiniRefreshTheme = innerUtil.core.extend({
+                    init: function(options) {
+                        // 简单示例中就不再使用自定义配置了，直接使用core的默认配置
+                        this._super(options);
+                    },
+                    _initHook: function(isLockDown, isLockUp) {
+                        var container = this.container,
+                            scrollWrap = this.scrollWrap;
+
+                        this._initDownWrap();
+                        this._initUpWrap();
+                    },
+                    _initDownWrap: function() {
+                        var container = this.container,
+                            scrollWrap = this.scrollWrap,
+                            options = this.options;
+
+                        // 下拉的区域
+                        var downWrap = document.createElement('div');
+
+                        downWrap.className = 'minirefresh-downwrap';
+                        downWrap.innerHTML = '<div class="downwrap-content"><p class="downwrap-tips">下拉刷新</p></div>';
+                        container.insertBefore(downWrap, scrollWrap);
+
+                        this.downWrap = downWrap;
+                        this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
+                    },
+
+                    _initUpWrap: function() {
+                        var scrollWrap = this.scrollWrap,
+                            options = this.options;
+
+                        // 上拉区域
+                        var upWrap = document.createElement('div');
+
+                        upWrap.className = 'minirefresh-upwrap';
+                        upWrap.innerHTML = '<p class="upwrap-tips">上拉显示更多</p>';
+                        upWrap.style.visibility = 'hidden';
+                        scrollWrap.appendChild(upWrap);
+
+                        this.upWrap = upWrap;
+                        this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
+                    },
+                    _pullHook: function(downHight, downOffset) {
+                        var options = this.options;
+
+                        if (downHight < downOffset) {
+                            this.downWrapTips.innerText = '下拉刷新';
+                        } else {
+                            this.downWrapTips.innerText = '释放刷新';
+                        }
+                    },
+                    _downLoaingHook: function() {
+                        this.downWrapTips.innerText = '刷新中...';
+                    },
+                    _downLoaingSuccessHook: function(isSuccess) {},
+                    _downLoaingEndHook: function(isSuccess) {
+                        this.downWrapTips.innerText = '下拉刷新';
+                    },
+                    _cancelLoaingHook: function() {},
+                    _upLoaingHook: function(isShowUpLoading) {
+                        if (isShowUpLoading) {
+                            this.upWrapTips.innerText = '加载中...';
+                            this.upWrap.style.visibility = 'visible';
+                        } else {
+                            this.upWrap.style.visibility = 'hidden';
+                        }
+                    },
+                    _upLoaingEndHook: function(isFinishUp) {
+                        if (!isFinishUp) {
+                            // 接下来还可以加载更多
+                            this.upWrap.style.visibility = 'hidden';
+                            this.upWrapTips.innerText = '上拉显示更多';
+                        } else {
+                            // 已经没有更多数据了
+                            this.upWrap.style.visibility = 'visible';
+                            this.upWrapTips.innerText = '没有更多数据了';
+                        }
+                    },
+                    _lockUpLoadingHook: function(isLock) {
+                        this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';
+                    },
+                    _lockDownLoadingHook: function(isLock) {
+                        this.downWrap.style.visibility = isLock ? 'hidden' : 'visible';
+                    }
+                });
+
+                // 挂载主题到命名空间，这样多个主题可以并存
+                innerUtil.namespace('theme.customtheme', MiniRefreshTheme);
+
+                // 覆盖全局对象，使的全局对象只会指向一个最新的主题
+                window.MiniRefresh = MiniRefreshTheme;
+            })(MiniRefreshTools);
+
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 10);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    }
+                }
+            });
+        </script>
+    </body>
+
+</html>

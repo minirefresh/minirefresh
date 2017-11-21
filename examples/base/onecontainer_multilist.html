@@ -1,0 +1,106 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-29
+        描述： 一个容器，多个列表
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>onecontainer multilist</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .minirefresh-wrap {
+                top: 90px;
+            }
+            
+            .navbar-header {
+                border: none;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            单个Minirefresh
+        </nav>
+        <div class="content">
+            <div class="nav-control">
+                <p class="active" list-type="0">列表0</p>
+                <p list-type="1">列表1</p>
+                <p list-type="2">列表2</p>
+            </div>
+            <div id="minirefresh" class="minirefresh-wrap">
+
+                <div class="minirefresh-scroll">
+
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            var appendTestData = Common.appendTestData,
+                bindEvent = Common.bindEvent,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600,
+                currIndex = 0;
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true, currIndex);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 10, false, currIndex);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    }
+                }
+            });
+
+            var resetScroll = function() {
+                appendTestData(listDom, 0, true, currIndex);
+                miniRefresh.triggerUpLoading();
+            };
+
+            var navControl = document.querySelector('.nav-control');
+
+            bindEvent('.nav-control p', function(e) {
+                var type = this.getAttribute('list-type');
+                
+                type = +type;
+                
+                if (type !== currIndex) {
+                    navControl.querySelector('.active').classList.remove('active');
+                    this.classList.add('active');
+                    currIndex = type;
+
+                    resetScroll();
+                }
+            }, 'click');
+        </script>
+    </body>
+
+</html>

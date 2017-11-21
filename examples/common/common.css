@@ -1,0 +1,144 @@
+/**
+ * showcase通用样式
+ */
+
+* {
+    -webkit-user-select: none;
+}
+
+
+/*
+ * 需要定制位置
+ */
+
+.minirefresh-wrap {
+    top: 45px;
+}
+
+.minirefresh-scroll {
+    background: #FFFFFF;
+}
+
+.data-list {
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+    list-style: none;
+    background-color: #fff;
+}
+
+.list-item {
+    position: relative;
+    overflow: hidden;
+    padding: 11px 15px;
+    -webkit-touch-callout: none;
+}
+
+.list-item:after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 15px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+
+.list-item:active {
+    background: #F5F5F5;
+}
+
+.msg-title {
+    display: block;
+    font-size: 15px;
+    margin: 5px;
+}
+
+.msg-fs14 {
+    font-size: 14px;
+    color: #999;
+}
+
+.msg-date {
+    float: right;
+    margin: 5px;
+}
+
+.list-item a,
+.navbar-header a {
+    text-decoration: none;
+    color: #18B4FE;
+}
+
+.nav-tips {
+    font-size: 14px;
+    padding: 12px;
+    border-bottom: 1px solid #c8c7cc;
+    color: red;
+}
+
+.navbar-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    border-bottom: 1px solid #c8c7cc;
+    background-color: #FFFFFF;
+    z-index: 999;
+}
+
+.nav-control {
+    position: fixed;
+    top: 45px;
+    left: 0;
+    width: 100%;
+    height: 44px;
+    line-height: 17px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.nav-control .active {
+    border-bottom: 1px solid #FF6990;
+    color: #FF6990;
+}
+
+.nav-control p {
+    display: inline-block;
+    width: 32%;
+    padding: 5px 0;
+}
+
+.nav-btn-left {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 12px;
+    line-height: 22px;
+}
+
+.content {
+/*    padding-top: 45px;*/
+}
+
+.notice {
+    padding: 5px;
+    text-align: center;
+}
+
+.btn-switch {
+    display: inline-block;
+    margin-top: 14px;
+    font-size: 14px;
+    padding: 3px 15px;
+    text-align: center;
+    border: 1px solid #FF6990;
+    border-radius: 20px;
+    color: #FF6990;
+}

@@ -1,0 +1,124 @@
+<!-- 
+        作者：dailc
+        时间：2017-09-07
+        描述： mui透明状态栏
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>muibar transparent</title>
+        <link rel="stylesheet" href="libs/mui/css/mui.min.css" />
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .navbar-header {
+                background-color: rgba(247, 247, 247, 0);
+                border-bottom: none;
+            }
+            
+            .minirefresh-wrap {
+                top: 0;
+            }
+            
+            .minirefresh-theme-default .minirefresh-downwrap {
+                top: 45px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header mui-bar mui-bar-transparent">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            嵌套mui的透明进度条
+        </nav>
+        <div class="content">
+            <div id="minirefresh" class="minirefresh-wrap">
+
+                <div class="minirefresh-scroll">
+
+                    <!-- 一个轮播示例，可以是其它的轮播  -->
+                    <div id="gallert-slider" class="mui-slider">
+                        <div class="mui-slider-group mui-slider-loop">
+                            <!-- 额外增加的一个节点(循环轮播：第一个节点是最后一张轮播) -->
+                            <div class="mui-slider-item mui-slider-item-duplicate">
+                                <a href="#">
+                                    <img src="../images/yuantiao.jpg">
+                                </a>
+                            </div>
+                            <!-- 第一张 -->
+                            <div class="mui-slider-item">
+                                <a href="#">
+                                    <img src="../images/shuijiao.jpg">
+                                </a>
+                            </div>
+                            <!-- 第二张 -->
+                            <div class="mui-slider-item">
+                                <a href="#">
+                                    <img src="../images/muwu.jpg">
+                                </a>
+                            </div>
+                            <!-- 额外增加的一个节点(循环轮播：最后一个节点是第一张轮播) -->
+                            <div class="mui-slider-item mui-slider-item-duplicate">
+                                <a href="#">
+                                    <img src="../images/shuijiao.jpg">
+                                </a>
+                            </div>
+                        </div>
+                        <div class="mui-slider-indicator">
+                            <div class="mui-indicator mui-active"></div>
+                            <div class="mui-indicator"></div>
+                            <div class="mui-indicator"></div>
+                            <div class="mui-indicator"></div>
+                        </div>
+                    </div>
+
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="libs/mui/js/mui.js"></script>
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            // 如果需要除body之外的dom对象也支持Mui的透明滑动
+            // 可以更改mui.js-3.7源码，8018行，y的位置变为scrollby.scrollTop而不是window.scrollY
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                // 开启使用body的scroll以用来适应mui的bar-transparent
+                isUseBodyScroll: true,
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 4);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    }
+                }
+            });
+        </script>
+    </body>
+
+</html>

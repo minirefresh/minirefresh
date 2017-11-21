@@ -1,0 +1,50 @@
+/**
+ * 微信小程序的主题
+ */
+
+@keyframes ball-beat
+    50% {
+        opacity: 1;
+        -webkit-transform: scale(0.75);
+        transform: scale(0.75);
+    }
+    100% {
+        opacity: 0.3;
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+
+.ball-beat > .dot
+    opacity: 0.3;
+    background-color: #444444;
+    width: 8px;
+    height: 8px;
+    border-radius: 100%;
+    margin: 2px;
+    display: inline-block;
+
+.loading-applet
+    .ball-beat
+        .dot
+            -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+            -webkit-animation: ball-beat 1s 0s infinite linear;
+            animation: ball-beat 1s 0s infinite linear;
+        > .dot:nth-child(2)
+            -webkit-animation-delay: 0.3s !important;
+            animation-delay: 0.3s !important;
+        > .dot:nth-child(3)
+            -webkit-animation-delay: 0.6s !important;
+            animation-delay: 0.6s !important;
+            
+.minirefresh-theme-applet
+    .minirefresh-downwrap
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 50px;
+        
+        .downwrap-content
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;   

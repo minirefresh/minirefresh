@@ -1,0 +1,92 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-19
+        描述：  仿淘宝的主题
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>MiniFresh theme taobao</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../../dist/debug/themes/taobao/minirefresh.theme.taobao.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            仿淘宝刷新
+        </nav>
+        <div class="content">
+
+            <div id="minirefresh" class="minirefresh-wrap">
+    
+                <div class="minirefresh-scroll">
+    
+                    <ul class="data-list" id="listdata">
+    
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../../dist/debug/themes/taobao/minirefresh.theme.taobao.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    },
+                    // 本主题独有的效果
+                    secretGarden: {
+                        // 是否开启秘密花园（即类似淘宝二楼效果）
+                        enable: true,
+                        // 下拉超过200后可以出现秘密花园效果，注意，必须大于down的offset
+                        offset: 200,
+                        // 过度动画
+                        duration: 1000,
+                        // 提示文字
+                        tips: '欢迎光临秘密花园',
+                        inSecretGarden: function() {
+                            // 可以像淘宝一样打开另一个页面，或者在本页面进行动画也行
+                            console.log('进入秘密花园');
+                            setTimeout(function() {
+                                miniRefresh.resetSecretGarden();
+                            }, 1000);
+                        }
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 10);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    }
+                }
+            });
+
+        </script>
+    </body>
+
+</html>

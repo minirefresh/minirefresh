@@ -21,13 +21,27 @@ module.exports = {
         "node": true
     },
     'globals': {
-        'Babel': true
+        'Babel': true,
+        "MiniRefreshTools": true,
+        "MiniRefresh": true,
     },
     // add your custom rules here
     'rules': {
         // 关闭react拓展
         'jsx-a11y/href-no-hash': 0,
         'react/require-extension': 0,
+        'import/no-extraneous-dependencies': 0,
+        "no-mixed-operators": [0, {
+            "groups": [
+                ["+", "-", "*", "/", "%", "**"],
+                ["%", "**"],
+                ["&", "|", "^", "~", "<<", ">>", ">>>"],
+                ["==", "!=", "===", "!==", ">", ">=", "<", "<="],
+                ["&&", "||"],
+                ["in", "instanceof"]
+            ],
+            "allowSamePrecedence": true,
+        }],
         // 只允许对ejs这个参数的属性二次赋值
         // 'no-param-reassign': [2, { 'props': true, 'ignorePropertyModificationsFor': ['ejs'] }],
         // 强制一行的最大长度
@@ -35,17 +49,19 @@ module.exports = {
         // 允许一个变量或多个变量的声明
         //'one-var': 0,
         // 允许++和--
-        //'no-plusplus': 0,        
+        'no-plusplus': 0,        
         // 文件末尾强制换行，目前暂时放弃，考虑到一些Idle的格式化问题
         'eol-last': 0,
         //强制使用一致的缩进，4个空格
         'indent': [2, 4, {
             'SwitchCase': 1
         }],
-        // 允许特殊的_开头属性
-        'no-underscore-dangle': [2, {
+        // 允许特殊的_开头属性，目前关闭，使用_命名规则代表不公开函
+        'no-underscore-dangle': [0, {
             "allow": ["_handleMessageFromNative"]
         }],
+        // 允许位操作
+        'no-bitwise': 0,
 
         // 以下是一些与airbnb无关的修改配置
         // recommend的修改

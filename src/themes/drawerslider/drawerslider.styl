@@ -1,0 +1,43 @@
+/**
+ * 滑动抽屉效果
+ * 样式和3D抽屉类似，但是为了遵循 一个主题实现一个效果的原则
+ * 单独独立成主题，而不是简单的将两个功能复用到一个主题
+ */
+
+
+.minirefresh-theme-drawerslider
+    .minirefresh-downwrap
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 200px;
+        background: #000000;
+        z-index: 999;
+        
+        .downwrap-content
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+    
+    .drawer
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background: #FFFFFF;
+        text-align: center;
+        background-clip: padding-box;
+        box-shadow: 0 1px 2px rgba(0,0,0,.3);
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.3);
+        
+        .drawer-mask
+           position: absolute;
+           left: 0;
+           top: 0;
+           width: 100%;
+           height: 100%;
+           background: #D3D3D3;
+           /*
+            * 最终的透明度是计算生成的
+            */
+           opacity: .4;

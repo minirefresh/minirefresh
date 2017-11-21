@@ -4,13 +4,12 @@ import {
 
 import {
     getClientHeightByDom,
-    getNow,
 } from '../util/lang';
 
 /**
  * 一些事件
  */
-const EVENT_INIT = 'init';
+const EVENT_INIT = 'initScroll';
 const EVENT_SCROLL = 'scroll';
 const EVENT_PULL = 'pull';
 const EVENT_UP_LOADING = 'upLoading';
@@ -27,26 +26,6 @@ const HOOK_BEFORE_DOWN_LOADING = 'beforeDownLoading';
 const PER_SECOND = 1000 / 60;
 
 /**
- * ios下需要进行一些特殊兼容处理
- */
-const os = {
-    ios: navigator.userAgent.match(/(iPhone\sOS)\s([\d_]+)/) ||
-        navigator.userAgent.match(/(iPad).*OS\s([\d_]+)/),
-};
-
-/**
- * 通过变量实现私有
- * 由于symbol默认不转换，所以换一种写法
- * 确保唯一就行，不要过长，影响读取
- */
-const nowStamp = `${getNow()} `.substr(0, 4);
-const init = `_init${nowStamp}`;
-const initPullDown = `_initPullDown${nowStamp}`;
-const initPullUp = `_initPullUp${nowStamp}`;
-const loadFull = `_loadFull${nowStamp}`;
-const scrollWrapAnimation = `_scrollWrapAnimation${nowStamp}`;
-
-/**
  * 滑动操作相关类
  * 把一些滑动滚动逻辑单独剥离出来
  * 确保Core中只有纯粹的API定义
@@ -61,6 +40,7 @@ class Scroll {
         this.contentWrap = minirefresh.contentWrap;
         this.scrollWrap = minirefresh.scrollWrap;
         this.options = minirefresh.options;
+        this.os = minirefresh.os;
         // 默认没有事件，需要主动绑定
         this.events = {};
         // 默认没有hook
@@ -74,12 +54,12 @@ class Scroll {
         // 默认up是没有finish的
         this.isFinishUp = false;
 
-        this[init]();
+        this._init();
     }
 
-    [init]() {
-        this[initPullDown]();
-        this[initPullUp]();
+    _init() {
+        this._initPullDown();
+        this._initPullUp();
 
         setTimeout(() => {
             if (this.options.down &&
@@ -115,15 +95,16 @@ class Scroll {
      * @param {Number} duration 过渡时间
      */
     translateContentWrap(y, duration) {
-        if (!this.options.down.isScrollTranslate) {
-            // 只有允许动画时才会scroll也translate,否则只会改变downHeight
-            return;
-        }
         const translateY = y || 0;
         const translateDuration = duration || 0;
 
         // 改变downHight， 这个参数关乎逻辑
         this.downHight = translateY;
+        
+        if (!this.options.down.isScrollCssTranslate) {
+            // 只有允许动画时才会scroll也translate,否则只会改变downHeight
+            return;
+        }
 
         // 改变wrap的位置（css动画）
         const wrap = this.contentWrap;
@@ -134,16 +115,17 @@ class Scroll {
         wrap.style.transform = `translate(0px, ${translateY}px) translateZ(0px)`;
     }
 
-    [scrollWrapAnimation]() {
+    _scrollWrapAnimation() {
         this.scrollWrap.webkitTransitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
         this.scrollWrap.transitionTimingFunction = 'cubic-bezier(0.1, 0.57, 0.1, 1)';
     }
 
-    [initPullDown]() {
+    _initPullDown() {
         // 考虑到options可以更新，所以不能被缓存，而是应该在回调中直接获取
         const scrollWrap = this.scrollWrap;
+        const docClientHeight = document.documentElement.clientHeight;
 
-        this[scrollWrapAnimation]();
+        this._scrollWrapAnimation();
 
         // 触摸开始
         const touchstartEvent = (e) => {
@@ -162,6 +144,39 @@ class Scroll {
 
         scrollWrap.addEventListener('touchstart', touchstartEvent);
         scrollWrap.addEventListener('mousedown', touchstartEvent);
+        
+        
+        // 触摸结束
+        const touchendEvent = () => {
+            const options = this.options;
+
+            // 需要重置状态
+            if (this.isMoveDown) {
+                // 如果下拉区域已经执行动画,则需重置回来
+                if (this.downHight >= options.down.offset) {
+                    // 符合触发刷新的条件
+                    this.triggerDownLoading();
+                } else {
+                    // 否则默认重置位置
+                    this.translateContentWrap(0, options.down.bounceTime);
+                    this.events[EVENT_CANCEL_LOADING] &&
+                        this.events[EVENT_CANCEL_LOADING]();
+                }
+
+                this.isMoveDown = false;
+            }
+
+            this.startY = 0;
+            this.startX = 0;
+            this.preY = 0;
+            this.startTop = undefined;
+            // 当前是否正处于回弹中，常用于iOS中判断，如果先上拉再下拉就处于回弹中（只要moveY为负）
+            this.isBounce = false;
+        };
+
+        scrollWrap.addEventListener('touchend', touchendEvent);
+        scrollWrap.addEventListener('mouseup', touchendEvent);
+        scrollWrap.addEventListener('mouseleave', touchendEvent);
 
         // 触摸中
         const touchmoveEvent = (e) => {
@@ -183,6 +198,13 @@ class Scroll {
                 // 当前第一个手指距离列表顶部的距离
                 const curY = e.touches ? e.touches[0].pageY : e.clientY;
                 const curX = e.touches ? e.touches[0].pageX : e.clientX;
+                
+                // 手指滑出屏幕触发刷新
+                if (curY > docClientHeight) {
+                    touchendEvent(e);
+                    
+                    return;
+                }
 
                 if (!this.preY) {
                     // 设置上次移动的距离，作用是用来计算滑动方向
@@ -205,7 +227,7 @@ class Scroll {
                     return;
                 }
 
-                if (this.isBounce && os.ios) {
+                if (this.isBounce && this.os.ios) {
                     // 暂时iOS中去回弹
                     // 下一个版本中，分开成两种情况，一种是absolute的固定动画，一种是在scrollWrap内部跟随滚动的动画
                     return;
@@ -260,41 +282,9 @@ class Scroll {
 
         scrollWrap.addEventListener('touchmove', touchmoveEvent);
         scrollWrap.addEventListener('mousemove', touchmoveEvent);
-
-        // 触摸结束
-        const touchendEvent = () => {
-            const options = this.options;
-
-            // 需要重置状态
-            if (this.isMoveDown) {
-                // 如果下拉区域已经执行动画,则需重置回来
-                if (this.downHight >= options.down.offset) {
-                    // 符合触发刷新的条件
-                    this.triggerDownLoading();
-                } else {
-                    // 否则默认重置位置
-                    this.translateContentWrap(0, options.down.bounceTime);
-                    this.events[EVENT_CANCEL_LOADING] &&
-                        this.events[EVENT_CANCEL_LOADING]();
-                }
-
-                this.isMoveDown = false;
-            }
-
-            this.startY = 0;
-            this.startX = 0;
-            this.preY = 0;
-            this.startTop = undefined;
-            // 当前是否正处于回弹中，常用于iOS中判断，如果先上拉再下拉就处于回弹中（只要moveY为负）
-            this.isBounce = false;
-        };
-
-        scrollWrap.addEventListener('touchend', touchendEvent);
-        scrollWrap.addEventListener('mouseup', touchendEvent);
-        scrollWrap.addEventListener('mouseleave', touchendEvent);
     }
 
-    [initPullUp]() {
+    _initPullUp() {
         const scrollWrap = this.scrollWrap;
 
         // 如果是Body上的滑动，需要监听window的scroll
@@ -307,8 +297,16 @@ class Scroll {
             const options = this.options;
 
             this.events[EVENT_SCROLL] && this.events[EVENT_SCROLL](scrollTop);
+            
+            let isAllowUploading = true;
+            
+            if (this.upLoading) {
+                isAllowUploading = false;
+            } else if (!options.down.isAways && this.downLoading) {
+                isAllowUploading = false;
+            }
 
-            if (!this.upLoading) {
+            if (isAllowUploading) {
                 if (!this.options.up.isLock &&
                     !this.isFinishUp &&
                     scrollHeight > 0) {
@@ -323,7 +321,7 @@ class Scroll {
         });
     }
 
-    [loadFull]() {
+    _loadFull() {
         const scrollWrap = this.scrollWrap;
         const options = this.options;
 
@@ -381,7 +379,7 @@ class Scroll {
             if (isFinishUp) {
                 this.isFinishUp = true;
             } else {
-                this[loadFull]();
+                this._loadFull();
             }
         }
     }
@@ -391,13 +389,9 @@ class Scroll {
             this.isFinishUp = false;
         }
 
-        // 触发一次HTML的scroll事件，以便检查当前位置是否需要加载更多
-        // 需要兼容webkit和firefox
-        const evt = document.createEvent('HTMLEvents');
-
-        // 这个事件没有必要冒泡，firefox内参数必须完整
-        evt.initEvent('scroll', false, true);
-        this.scrollWrap.dispatchEvent(evt);
+        // 检测是否需要加载满屏
+        this._loadFull();
+        
         this.events[EVENT_RESET_UP_LOADING] && this.events[EVENT_RESET_UP_LOADING]();
     }
 

@@ -3,7 +3,7 @@ const base = require('./karma.base.config.js');
 module.exports = function coverConfig(config) {
     config.set(Object.assign(base, {
 
-        // progress karma-htmlfile-reporter 
+        // progress karma-htmlfile-reporter
         // karma-html-detailed-reporter 如果作者修改了编码，可以考虑
         reporters: ['progress', 'html', 'coverage'],
 
@@ -14,7 +14,7 @@ module.exports = function coverConfig(config) {
         htmlReporter: {
             outputFile: '_report/units.html',
 
-            // Optional 
+            // Optional
             pageTitle: 'ejs Tests',
             subPageTitle: 'unit test',
             groupSuites: true,

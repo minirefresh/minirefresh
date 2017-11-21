@@ -1,26 +1,21 @@
-import {
-    requestAnimationFrame,
-} from './util/raf';
+import * as lang from './util/lang';
+import Core from './core/core';
 
-import {
-    noop,
-} from './util/lang';
+const MiniRefreshTools = {};
 
-class MiniRefresh {
-    /**
-     * 构造函数
-     * @param {Object} options 配置信息
-     * @constructor
-     */
-    constructor(options) {
-        this.options = options;
-    }
-}
+Object.keys(lang).forEach((name) => {
+    MiniRefreshTools[name] = lang[name];
+});
 
-/**
- * 静态属性es6没有，需要es7
- * 因此es6手动绑定
- */
-MiniRefresh.version = '3.0.1';
+// namespace的特殊把绑定
+MiniRefreshTools.namespace = (namespaceStr, target) => {
+    lang.namespace(MiniRefreshTools, namespaceStr, target);
+};
 
-export default MiniRefresh;
+MiniRefreshTools.Core = Core;
+MiniRefreshTools.version = '2.0.0';
+
+// 防止主题和核心一起，并且require模式中，无法全局变量的情况
+window.MiniRefreshTools = MiniRefreshTools;
+
+export default MiniRefreshTools;

@@ -1,7 +1,7 @@
 {
   "name": "minirefresh",
   "title": "minirefresh",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "description": "优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。",
   "homepage": "https://github.com/minirefresh/minirefresh",
   "main": "index.js",
@@ -24,9 +24,9 @@
   "license": "GPL-3.0",
   "scripts": {
     "test": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
-    "build": "node build/build.js",
-    "watch": "node build/watch.js",
-    "dev": "npm run watch",
+    "build": "node_modules/.bin/gulp default --gulpfile build/gulpfile.js",
+    "watch": "node_modules/.bin/gulp watch --gulpfile build/gulpfile.js",
+    "dev": "npm run build && npm run watch",
     "test:cover": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "test:unit": "node_modules/.bin/karma start test/unit/karma.unit.config.js",
     "test:eslint": "npm run eslint:report",
@@ -44,6 +44,7 @@
     "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
     "chai": "^4.1.2",
     "eslint": "^4.6.1",
     "eslint-config-airbnb": "^15.1.0",
@@ -58,6 +59,15 @@
     "karma-mocha": "^1.3.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-webpack": "^2.0.4",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "^3.9.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-eslint": "^4.0.0",
+    "gulp-header": "^1.8.9",
+    "gulp-rename": "^1.2.2",
+    "gulp-sequence": "^0.4.6",
+    "gulp-stylus": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
     "rollup": "^0.49.3",
     "rollup-plugin-babel": "^3.0.2",
     "rollup-plugin-eslint": "^4.0.0",
@@ -65,6 +75,6 @@
     "webpack": "^3.5.6"
   },
   "dependencies": {
-    "babel-preset-env": "^1.6.0"
+    "merge-stream": "^1.0.1"
   }
 }

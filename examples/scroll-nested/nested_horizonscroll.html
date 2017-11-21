@@ -1,0 +1,112 @@
+<!-- 
+        作者：dailc
+        时间：2017-09-05
+        描述： 横向滑动嵌套
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>horizontal scroll</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+             .native-scroll {
+                 padding: 15px;
+                 overflow: hidden;
+               border-bottom: 1px solid #c8c7cc;
+             }
+             .scroll__list {
+                 position: relative;
+                 -webkit-overflow-scrolling: touch;
+                 font-size: 0;
+                 white-space: nowrap;
+                overflow-x: auto;
+             }
+             .scroll__item {
+                 display: inline-flex;
+                 align-items: center;
+                 justify-content: center;
+                 width: 120px;
+                 height: 90px;
+                 margin: 0 7.5px;
+                 font-size: 15px;
+                 background-color: #ccc;
+             }
+         </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            横向滑动嵌套
+        </nav>
+        <div class="content">
+            <div id="minirefresh" class="minirefresh-wrap">
+                
+                
+
+                <div class="minirefresh-scroll">
+
+                    <div class="native-scroll">
+                         <div class="scroll__list">
+                             <div class="scroll__item">item_1</div>
+                             <div class="scroll__item">item_2</div>
+                             <div class="scroll__item">item_3</div>
+                             <div class="scroll__item">item_4</div>
+                             <div class="scroll__item">item_5</div>
+                             <div class="scroll__item">item_6</div>
+                             <div class="scroll__item">item_7</div>
+                             <div class="scroll__item">item_8</div>
+                             <div class="scroll__item">item_9</div>
+                         </div>
+                     </div>
+                     
+                     
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                // 设置为 false 原生滚动条可以滑动
+                isLockX: false,
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 4);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    }
+                }
+            });
+        </script>
+    </body>
+
+</html>

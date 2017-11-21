@@ -1,0 +1,207 @@
+<!-- 
+        作者：dailc
+        时间：2017-08-30
+        描述： 修改一个已有的主题，以default为例
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>theme modity</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .minirefresh-downwrap,
+            .minirefresh-upwrap {
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            修改现有主题
+        </nav>
+        <div class="content">
+            <div id="minirefresh" class="minirefresh-wrap">
+
+                <div class="minirefresh-scroll">
+
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            (function(innerUtil) {
+                
+                /**
+                 * 基于default主题修改
+                 * 这里只做简单的修改，就是去掉下拉中的progress进度条，并且去除成功动画
+                 * 所以上拉相关的都没有重写
+                 */
+
+                /**
+                 * 因为考虑到要修改downWrap，所以需要重新求出height的
+                 */
+                var DEFAULT_DOWN_HEIGHT = 75;
+
+                var defaultSetting = {
+                    down: {
+                        successAnim: {
+                            // successAnim
+                            isEnable: false
+                        },
+                        // 继承了default的downWrap部分代码，需要这个变量
+                        isWrapCssTranslate: true
+                    }
+                };
+
+                var MiniRefreshTheme = innerUtil.theme.defaults.extend({
+
+                    /**
+                     * 拓展自定义的配置
+                     * @param {Object} options 配置参数
+                     */
+                    init: function(options) {
+                        // 拓展自定义配置
+                        options = innerUtil.extend(true, {}, defaultSetting, options);
+                        this._super(options);
+                    },
+
+                    /**
+                     * 重写下拉刷新初始化，变为小程序自己的动画
+                     */
+                    _initDownWrap: function() {
+                        // 先复用default代码，然后重写
+                        this._super();
+
+                        var container = this.container,
+                            options = this.options,
+                            downWrap = this.downWrap;
+
+                        // 改写内容区域
+                        downWrap.innerHTML = '<div class="downwrap-content">' +
+                            '<p class="downwrap-tips">' +
+                            options.down.contentdown +
+                            ' </p></div>';
+
+                        this.downWrapTips = downWrap.querySelector('.downwrap-tips');
+                        // wrap有变动，重新计算
+                        this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
+                        // 是否能下拉的变量，控制pull时的状态转变
+                        this.isCanPullDown = false;
+                        // 由于downWrap被改变了，重新移动
+                        this._transformDownWrap(-this.downWrapHeight);
+                    },
+                    _transformDownWrap: function(offset, duration) {
+                        // 直接复用父类的
+                        this._super(offset, duration);
+                    },
+
+                    /**
+                     * 重写下拉过程动画
+                     * @param {Number} downHight 当前下拉的高度
+                     * @param {Number} downOffset 下拉的阈值
+                     */
+                    _pullHook: function(downHight, downOffset) {
+                        // 由于结构被改变，所以重写
+                        var options = this.options;
+
+                        if (downHight < downOffset) {
+                            if (this.isCanPullDown) {
+                                this.downWrapTips.innerText = options.down.contentdown;
+                                this.isCanPullDown = false;
+                            }
+                        } else {
+                            if (!this.isCanPullDown) {
+                                this.downWrapTips.innerText = options.down.contentover;
+                                this.isCanPullDown = true;
+                            }
+                        }
+
+                        this._transformDownWrap(-this.downWrapHeight + downHight);
+                    },
+
+                    /**
+                     * 重写下拉动画
+                     */
+                    _downLoaingHook: function() {
+                        // 由于结构被改变，所以重写
+                        this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
+                        this.downWrapTips.innerText = this.options.down.contentrefresh;
+                    },
+
+                    /**
+                     * 重写success 但是什么都不做
+                     */
+                    _downLoaingSuccessHook: function() {},
+
+                    /**
+                     * 重写下拉end
+                     * @param {Boolean} isSuccess 是否成功
+                     */
+                    _downLoaingEndHook: function(isSuccess) {
+                        // 由于结构被改变，所以重写
+                        this.downWrapTips.innerText = this.options.down.contentdown;
+                        // 需要重置回来
+                        this.isCanPullDown = false;
+                        this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
+                    },
+
+                    /**
+                     * 取消loading的回调
+                     */
+                    _cancelLoaingHook: function() {
+                        // 复用，因为只有复位操作
+                        this._super();
+                    }
+                });
+
+                // 挂载主题，这样多个主题可以并存
+                innerUtil.namespace('theme.customtheme', MiniRefreshTheme);
+
+                // 覆盖全局对象，使的全局对象只会指向一个最新的主题
+                window.MiniRefresh = MiniRefreshTheme;
+            })(MiniRefreshTools);
+
+            var appendTestData = Common.appendTestData,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDom = document.querySelector('#listdata'),
+                requestDelayTime = 600;
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                down: {
+                    callback: function() {
+                        setTimeout(function() {
+                            // 每次下拉刷新后，上拉的状态会被自动重置
+                            appendTestData(listDom, 10, true);
+                            miniRefresh.endDownLoading(true);
+                        }, requestDelayTime);
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        setTimeout(function() {
+                            appendTestData(listDom, 10);
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, requestDelayTime);
+                    }
+                }
+            });
+        </script>
+    </body>
+
+</html>
