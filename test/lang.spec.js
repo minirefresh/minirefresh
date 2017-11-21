@@ -54,8 +54,8 @@ describe('extend方法', () => {
         expect(result).to.have.deep.property('name', obj3.name);
     });
     
-    it('拓展多个（递归拓展）', function() {
-        let result = extend(true, {}, obj1, obj2, obj3);
+    it('拓展多个（递归拓展）', () => {
+        const result = extend(true, {}, obj1, obj2, obj3);
 
         expect(result).to.have.deep.property('company', obj2.company);
         expect(result).to.have.deep.nested.property('product.ejs', obj1.product.ejs);

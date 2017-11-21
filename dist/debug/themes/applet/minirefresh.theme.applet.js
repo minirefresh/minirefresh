@@ -1,5 +1,5 @@
 /*!
- * minirefresh v1.0.8
+ * minirefresh v2.0.0
  * (c) 2017-2017 dailc
  * Released under the GPL-3.0 License.
  * https://github.com/minirefresh/minirefresh
