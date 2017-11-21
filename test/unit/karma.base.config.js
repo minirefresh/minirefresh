@@ -9,24 +9,24 @@ module.exports = {
 
     // list of files / patterns to load in the browser
     files: [
-        'test/**/*.spec.js'
+        'test/**/*.spec.js',
     ],
 
     // list of files to exclude
     exclude: [
-        '/node_modules/'
+        '/node_modules/',
     ],
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
         // 'coverage'
-        'test/**/*.spec.js': ['webpack']
+        'test/**/*.spec.js': ['webpack'],
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter    
+    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress'],
 
 
@@ -37,7 +37,8 @@ module.exports = {
     colors: true,
 
     // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+    // possible values: config.LOG_DISABLE || config.LOG_ERROR
+    // || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     // logLevel: config.LOG_INFO,
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: true,
@@ -59,9 +60,17 @@ module.exports = {
         module: {
             loaders: [{
                 test: /\.js$/,
-                exclude: [/node_modules/, __dirname + 'xxx/xxx/lib'],
-                loader: 'babel-loader'
-            }]
-        }
-    }
+                exclude: [/node_modules/, `${__dirname}xxx/xxx/lib`],
+                loader: 'babel-loader',
+                query: {
+                    // 为什么这个plugin放在代码中而不是配置文件中？
+                    // 因为配置文件是给rollup使用的，如果加入这个放污染原本的打包文件
+                    // 而这个webpack仅做单测用
+                    plugins: [
+                        'istanbul',
+                    ],
+                },
+            }],
+        },
+    },
 };

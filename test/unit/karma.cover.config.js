@@ -1,10 +1,9 @@
-var base = require('./karma.base.config.js');
+const base = require('./karma.base.config.js');
 
-module.exports = function(config) {
-
+module.exports = function coverConfig(config) {
     config.set(Object.assign(base, {
 
-        //  progress karma-htmlfile-reporter 
+        // progress karma-htmlfile-reporter
         // karma-html-detailed-reporter 如果作者修改了编码，可以考虑
         reporters: ['progress', 'html', 'coverage'],
 
@@ -15,12 +14,12 @@ module.exports = function(config) {
         htmlReporter: {
             outputFile: '_report/units.html',
 
-            // Optional 
-            pageTitle: 'MiniRefresh Tests',
+            // Optional
+            pageTitle: 'ejs Tests',
             subPageTitle: 'unit test',
             groupSuites: true,
             useCompactStyle: true,
-            useLegacyStyle: true
+            useLegacyStyle: true,
         },
 
         coverageReporter: {
@@ -29,20 +28,20 @@ module.exports = function(config) {
                 {
                     type: 'lcovonly',
                     subdir: '.',
-                    dir: '_coverage/'
+                    dir: '_coverage/',
                 },
                 {
                     type: 'json',
                     subdir: '.',
-                    dir: '_coverage/'
+                    dir: '_coverage/',
                 },
                 // generates ./coverage/coverage-final.json
                 {
                     type: 'html',
                     subdir: '.',
-                    dir: '_coverage/'
-                }
-            ]
-        }
+                    dir: '_coverage/',
+                },
+            ],
+        },
     }));
 };
