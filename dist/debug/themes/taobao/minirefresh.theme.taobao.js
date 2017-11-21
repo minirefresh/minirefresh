@@ -306,11 +306,12 @@ var MiniRefreshTheme = function (_BaseTheme) {
         value: function _inSecretGarden() {
             var downBounceTime = this.options.down.bounceTime;
             var inSecretGardenCb = this.options.down.secretGarden.inSecretGarden;
+            var docClientHeight = document.documentElement.clientHeight;
 
             this.downWrapTips.classList.add(CLASS_HIDDEN);
             // 动画
-            this.scroller.translateContentWrap(this.contentWrap.clientHeight, downBounceTime);
-            this._transformDownWrap(this.contentWrap.clientHeight - this.downWrapHeight, downBounceTime);
+            this.scroller.translateContentWrap(docClientHeight, downBounceTime);
+            this._transformDownWrap(docClientHeight - this.downWrapHeight, downBounceTime);
             this._secretGardenAnimation(true);
             inSecretGardenCb && inSecretGardenCb();
         }

@@ -760,7 +760,7 @@ var defaultSetting = {
         // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
         isAways: false,
         // 是否scroll在下拉时会进行移动(css3)，通过关闭它可以实现自定义动画
-        isScrollTranslate: true,
+        isScrollCssTranslate: true,
         // 是否每次下拉完毕后默认重置上拉
         isAutoResetUpLoading: true,
         // 下拉要大于多少长度后再下拉刷新

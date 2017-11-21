@@ -266,12 +266,13 @@ class MiniRefreshTheme extends BaseTheme {
     _inSecretGarden() {
         const downBounceTime = this.options.down.bounceTime;
         const inSecretGardenCb = this.options.down.secretGarden.inSecretGarden;
+        const docClientHeight = document.documentElement.clientHeight;
 
         this.downWrapTips.classList.add(CLASS_HIDDEN);
         // 动画
-        this.scroller.translateContentWrap(this.contentWrap.clientHeight, downBounceTime);
+        this.scroller.translateContentWrap(docClientHeight, downBounceTime);
         this._transformDownWrap(
-            this.contentWrap.clientHeight - this.downWrapHeight,
+            docClientHeight - this.downWrapHeight,
             downBounceTime);
         this._secretGardenAnimation(true);
         inSecretGardenCb && inSecretGardenCb();
