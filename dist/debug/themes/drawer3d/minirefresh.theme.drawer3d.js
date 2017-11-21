@@ -134,15 +134,6 @@ var MiniRefreshTheme = function (_BaseTheme) {
          * @param {Number} downHight 当前下拉的高度
          * @param {Number} downOffset 下拉的阈值
          */
-<<<<<<< HEAD
-        _pullHook: function(downHight, downOffset) {
-            // 复用default的同名函数代码
-            this._super(downHight, downOffset);
-            
-            var rate = downHight / downOffset,
-                degree = DRAWER_FULL_DEGREE * (1 - Math.min(rate, 1));
-            
-=======
 
     }, {
         key: '_pullHook',
@@ -153,7 +144,6 @@ var MiniRefreshTheme = function (_BaseTheme) {
             var rate = downHight / downOffset;
             var degree = DRAWER_FULL_DEGREE * (1 - Math.min(rate, 1));
 
->>>>>>> 2.x
             this._transformDrawer(degree);
         }
 

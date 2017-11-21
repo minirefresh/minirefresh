@@ -224,24 +224,6 @@
 }
 .minirefresh-theme-default .minirefresh-downwrap .downwrap-tips,
 .minirefresh-theme-default .minirefresh-upwrap .upwrap-tips {
-<<<<<<< HEAD
-    display: inline-block;
-    font-size: 12px;
-    color: gray;
-    vertical-align: middle;
-}
-
-/**
- * 没有更多数据时，要设置为block，否则和mui会有样式冲突
- */
-.minirefresh-theme-default .status-nomore .upwrap-tips {
-    /*
-     * vertical-align: middle;会导致显示不全，display:block也不起作用
-     * 因此设置一个padding
-     */
-    padding: 15px 0;
-}
-=======
   display: inline-block;
   font-size: 12px;
   color: #808080;
@@ -254,4 +236,3 @@
              */
   padding: 15px 0;
 }
->>>>>>> 2.x

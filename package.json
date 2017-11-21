@@ -1,13 +1,8 @@
 {
   "name": "minirefresh",
   "title": "minirefresh",
-<<<<<<< HEAD
-  "version": "1.0.8",
-  "description": "优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。 ",
-=======
   "version": "2.0.0",
   "description": "优雅的H5下拉刷新。零依赖，高性能，多主题，易拓展。",
->>>>>>> 2.x
   "homepage": "https://github.com/minirefresh/minirefresh",
   "main": "index.js",
   "repository": {
@@ -80,11 +75,5 @@
     "uglify-js": "^3.1.0",
     "webpack": "^3.5.6"
   },
-<<<<<<< HEAD
   "dependencies": {}
-=======
-  "dependencies": {
-    "merge-stream": "^1.0.1"
-  }
->>>>>>> 2.x
 }

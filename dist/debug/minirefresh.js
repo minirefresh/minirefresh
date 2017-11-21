@@ -1,15 +1,8 @@
-<<<<<<< HEAD
-/**
- * 构建 MiniRefresh
- * MiniRefreshTools 是内部使用的
- * 外部主题会用 MiniRefresh变量
-=======
 /*!
  * minirefresh v2.0.0
  * (c) 2017-2017 dailc
  * Released under the GPL-3.0 License.
  * https://github.com/minirefresh/minirefresh
->>>>>>> 2.x
  */
 
 (function (global, factory) {
@@ -29,15 +22,8 @@ function isArray(object) {
         return Array.isArray(object);
     }
 
-<<<<<<< HEAD
-    // 单独引入时暴露的是这个tools
-    globalContext.MiniRefreshTools = moduleExports;
-})(typeof window !== 'undefined' ? window : global, function(globalContext, exports) {
-    'use strict';
-=======
     return object instanceof Array;
 }
->>>>>>> 2.x
 
 function isObject(object) {
     var classType = Object.prototype.toString.call(object).match(/^\[object\s(.*)\]$/)[1];
@@ -361,112 +347,23 @@ var Scroll = function () {
          * @param {Number} duration 过渡时间
          */
 
-<<<<<<< HEAD
-    MiniScroll.prototype._initPullDown = function() {
-        var self = this,
-            clientHeight = document.documentElement.clientHeight,
-            // 考虑到options可以更新，所以缓存时请注意一定能最新
-            scrollWrap = this.scrollWrap;
-=======
     }, {
         key: 'translateContentWrap',
         value: function translateContentWrap(y, duration) {
             var translateY = y || 0;
             var translateDuration = duration || 0;
->>>>>>> 2.x
 
             // 改变downHight， 这个参数关乎逻辑
             this.downHight = translateY;
 
-<<<<<<< HEAD
-        var touchstartEvent = function(e) {
-            if (self.isScrollTo) {
-                // 如果执行滑动事件,则阻止touch事件,优先执行scrollTo方法
-                e.preventDefault();
-            }
-            // 记录startTop, 并且只有startTop存在值时才允许move
-            self.startTop = scrollWrap.scrollTop;
-
-            // startY用来计算距离
-            self.startY = e.touches ? e.touches[0].pageY : e.clientY;
-            // X的作用是用来计算方向，如果是横向，则不进行动画处理，避免误操作
-            self.startX = e.touches ? e.touches[0].pageX : e.clientX;
-        };
-
-        // 兼容手指滑动与鼠标
-        scrollWrap.addEventListener('touchstart', touchstartEvent);
-        scrollWrap.addEventListener('mousedown', touchstartEvent);
-        
-        var touchendEvent = function(e) {
-            var options = self.options;
-
-            // 需要重置状态
-            if (self.isMoveDown) {
-                // 如果下拉区域已经执行动画,则需重置回来
-                if (self.downHight >= options.down.offset) {
-                    // 符合触发刷新的条件
-                    self.triggerDownLoading();
-                } else {
-                    // 否则默认重置位置
-                    self._translate(0, options.down.bounceTime);
-                    self.downHight = 0;
-                    self.events[EVENT_CANCEL_LOADING] && self.events[EVENT_CANCEL_LOADING]();
-                }
-
-                self.isMoveDown = false;
-            }
-
-            self.startY = 0;
-            self.startX = 0;
-            self.preY = 0;
-            self.startTop = undefined;
-            // 当前是否正处于回弹中，常用于iOS中判断，如果先上拉再下拉就处于回弹中（只要moveY为负）
-            self.isBounce = false;
-        };
-
-        scrollWrap.addEventListener('touchend', touchendEvent);
-        scrollWrap.addEventListener('touchcancel', touchendEvent);
-        scrollWrap.addEventListener('mouseup', touchendEvent);
-        scrollWrap.addEventListener('mouseleave', touchendEvent);
-
-        var touchmoveEvent = function(e) {
-            var options = self.options,
-                isAllowDownloading = true;
-
-            if (self.downLoading) {
-                isAllowDownloading = false;
-            } else if (!options.down.isAways && self.upLoading) {
-                isAllowDownloading = false;
-=======
             if (!this.options.down.isScrollCssTranslate) {
                 // 只有允许动画时才会scroll也translate,否则只会改变downHeight
                 return;
->>>>>>> 2.x
             }
 
             // 改变wrap的位置（css动画）
             var wrap = this.contentWrap;
 
-<<<<<<< HEAD
-                // 当前第一个手指距离列表顶部的距离
-                var curY = e.touches ? e.touches[0].pageY : e.clientY;
-                var curX = e.touches ? e.touches[0].pageX : e.clientX;
-
-                // 手指滑出屏幕触发刷新
-                if (curY > clientHeight) {
-                    touchendEvent(e);
-                    
-                    return;
-                }
-
-                if (!self.preY) {
-                    // 设置上次移动的距离，作用是用来计算滑动方向
-                    self.preY = curY;
-                }
-
-                // 和上次比,移动的距离 (大于0向下,小于0向上)
-                var diff = curY - self.preY;
-=======
             wrap.style.webkitTransitionDuration = translateDuration + 'ms';
             wrap.style.transitionDuration = translateDuration + 'ms';
             wrap.style.webkitTransform = 'translate(0px, ' + translateY + 'px) translateZ(0px)';
@@ -482,7 +379,6 @@ var Scroll = function () {
         key: '_initPullDown',
         value: function _initPullDown() {
             var _this2 = this;
->>>>>>> 2.x
 
             // 考虑到options可以更新，所以不能被缓存，而是应该在回调中直接获取
             var scrollWrap = this.scrollWrap;
@@ -574,9 +470,6 @@ var Scroll = function () {
 
                     _this2.preY = curY;
 
-<<<<<<< HEAD
-    };
-=======
                     // 和起点比,移动的距离,大于0向下拉
                     var moveY = curY - _this2.startY;
                     var moveX = curX - _this2.startX;
@@ -600,7 +493,6 @@ var Scroll = function () {
 
                         // 阻止浏览器的默认滚动事件，因为这时候只需要执行动画即可
                         e.preventDefault();
->>>>>>> 2.x
 
                         if (!_this2.downHight) {
                             // 下拉区域的高度，用translate动画
@@ -618,21 +510,6 @@ var Scroll = function () {
                             dampRate = options.down.dampRate;
                         }
 
-<<<<<<< HEAD
-            self.events[EVENT_SCROLL] && self.events[EVENT_SCROLL](scrollTop);
-            
-            var isAllowUploading = true;
-            
-            if (self.upLoading) {
-                isAllowUploading = false;
-            } else if (!options.down.isAways && self.downLoading) {
-                isAllowUploading = false;
-            }
-            
-            if (isAllowUploading) {
-                if (!self.isLockUp && !self.isFinishUp) {
-                    var toBottom = scrollHeight - clientHeight - scrollTop;
-=======
                         if (diff > 0) {
                             // 需要加上阻尼系数
                             _this2.downHight += diff * dampRate;
@@ -642,7 +519,6 @@ var Scroll = function () {
                         }
 
                         _this2.events[EVENT_PULL] && _this2.events[EVENT_PULL](_this2.downHight, downOffset);
->>>>>>> 2.x
 
                         // 执行动画
                         _this2.translateContentWrap(_this2.downHight);
@@ -805,18 +681,6 @@ var Scroll = function () {
             if (diff === 0 || translateDuration === 0) {
                 scrollWrap.scrollTop = translateY;
 
-<<<<<<< HEAD
-    MiniScroll.prototype.resetUpLoading = function() {
-        if (this.isFinishUp) {
-            this.isFinishUp = false;
-        }
-        
-        // 检测是否需要加载满屏
-        this._loadFull();
-        
-        this.events[EVENT_RESET_UP_LOADING] && this.events[EVENT_RESET_UP_LOADING]();
-    };
-=======
                 return;
             }
 
@@ -840,7 +704,6 @@ var Scroll = function () {
                     _this5.isScrollTo = false;
                 }
             };
->>>>>>> 2.x
 
             // 锁定状态
             this.isScrollTo = true;
@@ -862,65 +725,6 @@ var Scroll = function () {
             }
         }
 
-<<<<<<< HEAD
-    innerUtil.Scroll = MiniScroll;
-})(MiniRefreshTools);
-/**
- * MiniRerefresh 的核心代码，代码中约定对外的API
- * 可以通过继承  MiniRefreshCore， 得到一个主题类，然后在主题类中实现UI hook函数可以达到不同的动画效果
- * 核心类内部没有任何UI实现，所有的UI都依赖于主题类
- * 以下是主题类可以实现的Hook（为undefined的话相当于忽略）
- * _initHook(isLockDown, isLockUp)              初始化时的回调
- * _refreshHook(isLockDown, isLockUp)           刷新options时的回调
- * _pullHook(downHight, downOffset)             下拉过程中持续回调
- * _scrollHook(scrollTop)                       滚动过程中持续回调
- * _downLoaingHook()                            下拉触发的那一刻回调
- * _downLoaingSuccessHook(isSuccess)            下拉刷新的成功动画，处理成功或失败提示
- * _downLoaingEndHook(isSuccess)                下拉刷新动画结束后的回调
- * _cancelLoaingHook()                          取消loading的回调
- * _upLoaingHook()                              上拉触发的那一刻回调
- * _upLoaingEndHook(isFinishUp)                 上拉加载动画结束后的回调
- * _resetUpLoadingHook()                         重置上拉状态，变为又可继续上拉
- * __lockUpLoadingHook(isLock)                  锁定上拉时的回调
- * __lockDownLoadingHook(isLock)                锁定下拉时的回调
- * _beforeDownLoadingHook(downHight, downOffset)一个特殊的hook，返回false时代表不会走入下拉刷新loading，完全自定义实现动画，默认为返回true
- */
-(function(innerUtil) {
-
-    var defaultSetting = {
-        // 下拉有关
-        down: {
-            // 默认没有锁定，可以通过API动态设置
-            isLock: false,
-            // 是否自动下拉刷新
-            isAuto: false,
-            // 设置isAuto=true时生效，是否在初始化的下拉刷新触发事件中显示动画，如果是false，初始化的加载只会触发回调，不会触发动画
-            isAllowAutoLoading: true,
-            // 是否不管任何情况下都能触发下拉刷新，为false的话当上拉时不会触发下拉
-            isAways: false,
-            // 是否scroll在下拉时会进行css移动，通过关闭它可以实现自定义动画
-            isScrollCssTranslate: true,
-            // 是否每次下拉完毕后默认重置上拉
-            isAutoResetUpLoading: true,
-            // 下拉要大于多少长度后再下拉刷新
-            offset: 75,
-            // 阻尼系数，下拉小于offset时的阻尼系数，值越接近0,高度变化越小,表现为越往下越难拉
-            dampRateBegin: 1,
-            // 阻尼系数，下拉的距离大于offset时,改变下拉区域高度比例;值越接近0,高度变化越小,表现为越往下越难拉
-            dampRate: 0.3,
-            // 回弹动画时间
-            bounceTime: 300,
-            successAnim: {
-                // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
-                isEnable: false,
-                duration: 300
-            },
-            // 下拉时会提供回调，默认为null不会执行
-            onPull: null,
-            // 取消时回调
-            onCalcel: null,
-            callback: innerUtil.noop
-=======
         /**
          * 注册钩子函数，主要是一些自定义刷新动画时用到，如进入秘密花园
          * @param {String} hook 名称，范围如下
@@ -971,7 +775,6 @@ var defaultSetting = {
             // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
             isEnable: false,
             duration: 300
->>>>>>> 2.x
         },
         // 下拉时会提供回调，默认为null不会执行
         onPull: null,
@@ -1177,17 +980,10 @@ var Core = function () {
             this._endDownLoading(isSuccess, successTips);
             // 同时恢复上拉加载的状态，注意，此时没有传isShowUpLoading，所以这个值不会生效
             if (this.options.down.isAutoResetUpLoading) {
-<<<<<<< HEAD
-                this._resetUpLoading();
-            }
-        },
-        
-=======
                 this.resetUpLoading();
             }
         }
 
->>>>>>> 2.x
         /**
          * 重置上拉加载状态,如果是没有更多数据后重置，会变为可以继续上拉加载
          */
@@ -1299,20 +1095,9 @@ var extend = MiniRefreshTools.extend;
 var namespace = MiniRefreshTools.namespace;
 
 /**
-<<<<<<< HEAD
- * minirefresh的默认主题
- * 默认主题会打包到核心代码中
- * 主题类继承自基类，所以可以调用基类的属性（但是不建议滥用）
- * 拓展其它主题有两种方案：
- * 1. 直接继承自default，会默认拥有default的属性，只需要覆盖自定义功能即可（注意必须覆盖，否则会调用dwfault的默认操作）
- * 2. 和default一样，继承自 innerUtil.core，这样会与default无关，所以的一切UI都必须自己实现（可以参考default去实现）
- * 一般，在进行一些小修改时，建议继承自default（这样toTop，上拉加载大部分代码都可复用）
- * 在进行大修改时，建议继承自innerUtil.core，这样可以干干净净的重写主题
-=======
  * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
  * THEME 字段会根据不同的主题有不同值
  * 在使用body的scroll时，需要加上样式 CLASS_BODY_SCROLL_WRAP
->>>>>>> 2.x
  */
 var CLASS_THEME = 'minirefresh-theme-default';
 var CLASS_DOWN_WRAP = 'minirefresh-downwrap';
@@ -1381,25 +1166,9 @@ var MiniRefreshTheme = function (_Core) {
     _inherits(MiniRefreshTheme, _Core);
 
     /**
-<<<<<<< HEAD
-     * 本主题的特色样式
-     */
-    var CLASS_DOWN_SUCCESS = 'downwrap-success';
-    var CLASS_DOWN_ERROR = 'downwrap-error';
-    var CLASS_STATUS_DEFAULT = 'status-default';
-    var CLASS_STATUS_PULL = 'status-pull';
-    var CLASS_STATUS_LOADING = 'status-loading';
-    var CLASS_STATUS_SUCCESS = 'status-success';
-    var CLASS_STATUS_ERROR = 'status-error';
-    var CLASS_STATUS_NOMORE = 'status-nomore';
-    
-    /**
-     * 一些常量
-=======
      * 构造，使用新的默认参数
      * @param {Object} options 配置信息
      * @constructor
->>>>>>> 2.x
      */
     function MiniRefreshTheme(options) {
         _classCallCheck(this, MiniRefreshTheme);
@@ -1449,22 +1218,6 @@ var MiniRefreshTheme = function (_Core) {
                 this.toTopBtn && this.toTopBtn.classList.add(CLASS_HIDDEN);
                 this.isShowToTopBtn = false;
             }
-<<<<<<< HEAD
-        },
-        _changeWrapStatusClass: function(wrap, statusClass) {
-            wrap.classList.remove(CLASS_STATUS_NOMORE);
-            wrap.classList.remove(CLASS_STATUS_DEFAULT);
-            wrap.classList.remove(CLASS_STATUS_PULL);
-            wrap.classList.remove(CLASS_STATUS_LOADING);
-            wrap.classList.remove(CLASS_STATUS_SUCCESS);
-            wrap.classList.remove(CLASS_STATUS_ERROR);
-            wrap.classList.add(statusClass);
-        },
-        _initDownWrap: function() {
-            var container = this.container,
-                contentWrap = this.contentWrap,
-                options = this.options;
-=======
         }
     }, {
         key: '_initDownWrap',
@@ -1472,7 +1225,6 @@ var MiniRefreshTheme = function (_Core) {
             var container = this.container;
             var contentWrap = this.contentWrap;
             var options = this.options;
->>>>>>> 2.x
 
             // 下拉的区域
             var downWrap = document.createElement('div');
@@ -1486,11 +1238,6 @@ var MiniRefreshTheme = function (_Core) {
             this.downWrapTips = this.downWrap.querySelector('.downwrap-tips');
             // 是否能下拉的变量，控制pull时的状态转变
             this.isCanPullDown = false;
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
-            
-=======
->>>>>>> 2.x
             this.downWrapHeight = downWrap.offsetHeight || DEFAULT_DOWN_HEIGHT;
             this._transformDownWrap(-this.downWrapHeight);
             MiniRefreshTheme._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
@@ -1535,15 +1282,9 @@ var MiniRefreshTheme = function (_Core) {
             this.upWrap = upWrap;
             this.upWrapProgress = this.upWrap.querySelector('.upwrap-progress');
             this.upWrapTips = this.upWrap.querySelector('.upwrap-tips');
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
-        },
-        
-=======
             MiniRefreshTheme._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
         }
 
->>>>>>> 2.x
         /**
          * 自定义实现一个toTop，由于这个是属于额外的事件所以没有添加的核心中，而是由各自的主题决定是否实现或者实现成什么样子
          * 不过框架中仍然提供了一个默认的minirefresh-totop样式，可以方便使用
@@ -1583,16 +1324,6 @@ var MiniRefreshTheme = function (_Core) {
             if (downHight < downOffset) {
                 if (this.isCanPullDown) {
                     this.isCanPullDown = false;
-<<<<<<< HEAD
-                    this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
-                }
-            } else {
-                if (!this.isCanPullDown) {
-                    this.downWrapTips.innerText = options.down.contentover;
-                    this.isCanPullDown = true;
-                    this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_PULL);
-                }
-=======
                     MiniRefreshTheme._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
                     this.downWrapTips.innerText = options.down.contentdown;
                 }
@@ -1600,7 +1331,6 @@ var MiniRefreshTheme = function (_Core) {
                 this.downWrapTips.innerText = options.down.contentover;
                 this.isCanPullDown = true;
                 MiniRefreshTheme._changeWrapStatusClass(this.downWrap, CLASS_STATUS_PULL);
->>>>>>> 2.x
             }
 
             if (this.downWrapProgress) {
@@ -1644,34 +1374,22 @@ var MiniRefreshTheme = function (_Core) {
             this._transformDownWrap(-this.downWrapHeight + this.options.down.offset, this.options.down.bounceTime);
             this.downWrapTips.innerText = this.options.down.contentrefresh;
             this.downWrapProgress.classList.add(CLASS_ROTATE);
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_LOADING);
-        },
-        _downLoaingSuccessHook: function(isSuccess, successTips) {
-=======
             MiniRefreshTheme._changeWrapStatusClass(this.downWrap, CLASS_STATUS_LOADING);
         }
     }, {
         key: '_downLoaingSuccessHook',
         value: function _downLoaingSuccessHook(isSuccess, successTips) {
->>>>>>> 2.x
             this.options.down.contentsuccess = successTips || this.options.down.contentsuccess;
             this.downWrapTips.innerText = isSuccess ? this.options.down.contentsuccess : this.options.down.contenterror;
             this.downWrapProgress.classList.remove(CLASS_ROTATE);
             this.downWrapProgress.classList.add(CLASS_FADE_OUT);
             this.downWrapProgress.classList.add(isSuccess ? CLASS_DOWN_SUCCESS : CLASS_DOWN_ERROR);
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.downWrap, isSuccess ? CLASS_STATUS_SUCCESS : CLASS_STATUS_ERROR);
-        },
-        _downLoaingEndHook: function(isSuccess) {
-=======
 
             MiniRefreshTheme._changeWrapStatusClass(this.downWrap, isSuccess ? CLASS_STATUS_SUCCESS : CLASS_STATUS_ERROR);
         }
     }, {
         key: '_downLoaingEndHook',
         value: function _downLoaingEndHook(isSuccess) {
->>>>>>> 2.x
             this.downWrapTips.innerText = this.options.down.contentdown;
             this.downWrapProgress.classList.remove(CLASS_ROTATE);
             this.downWrapProgress.classList.remove(CLASS_FADE_OUT);
@@ -1680,17 +1398,11 @@ var MiniRefreshTheme = function (_Core) {
             // 需要重置回来
             this.isCanPullDown = false;
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
-        },
-        _cancelLoaingHook: function() {
-=======
             MiniRefreshTheme._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
         }
     }, {
         key: '_cancelLoaingHook',
         value: function _cancelLoaingHook() {
->>>>>>> 2.x
             this._transformDownWrap(-this.downWrapHeight, this.options.down.bounceTime);
             MiniRefreshTheme._changeWrapStatusClass(this.downWrap, CLASS_STATUS_DEFAULT);
         }
@@ -1705,39 +1417,20 @@ var MiniRefreshTheme = function (_Core) {
             } else {
                 this.upWrap.style.visibility = 'hidden';
             }
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_LOADING);
-        },
-        _upLoaingEndHook: function(isFinishUp) {
-=======
             MiniRefreshTheme._changeWrapStatusClass(this.upWrap, CLASS_STATUS_LOADING);
         }
     }, {
         key: '_upLoaingEndHook',
         value: function _upLoaingEndHook(isFinishUp) {
->>>>>>> 2.x
             if (!isFinishUp) {
                 // 接下来还可以加载更多
                 // this.upWrap.style.visibility = 'hidden';
                 this.upWrapTips.innerText = this.options.up.contentdown;
-<<<<<<< HEAD
-                this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
-=======
                 MiniRefreshTheme._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
->>>>>>> 2.x
             } else {
                 // 已经没有更多数据了
                 // this.upWrap.style.visibility = 'visible';
                 this.upWrapTips.innerText = this.options.up.contentnomore;
-<<<<<<< HEAD
-                this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_NOMORE);
-            }
-            this.upWrapProgress.classList.remove(CLASS_ROTATE);
-            this.upWrapProgress.classList.add(CLASS_HIDDEN);
-            
-        },
-        _resetUpLoadingHook: function() {
-=======
                 MiniRefreshTheme._changeWrapStatusClass(this.upWrap, CLASS_STATUS_NOMORE);
             }
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
@@ -1746,22 +1439,15 @@ var MiniRefreshTheme = function (_Core) {
     }, {
         key: '_resetUpLoadingHook',
         value: function _resetUpLoadingHook() {
->>>>>>> 2.x
             // this.upWrap.style.visibility = 'hidden';
             this.upWrapTips.innerText = this.options.up.contentdown;
             this.upWrapProgress.classList.remove(CLASS_ROTATE);
             this.upWrapProgress.classList.add(CLASS_HIDDEN);
-<<<<<<< HEAD
-            this._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
-        },
-        _lockUpLoadingHook: function(isLock) {
-=======
             MiniRefreshTheme._changeWrapStatusClass(this.upWrap, CLASS_STATUS_DEFAULT);
         }
     }, {
         key: '_lockUpLoadingHook',
         value: function _lockUpLoadingHook(isLock) {
->>>>>>> 2.x
             this.upWrap.style.visibility = isLock ? 'hidden' : 'visible';
         }
     }, {

@@ -126,12 +126,6 @@ var MiniRefreshTheme = function (_BaseTheme) {
          * @param {Number} downHight 当前下拉的高度
          * @param {Number} downOffset 下拉的阈值
          */
-<<<<<<< HEAD
-        _pullHook: function(downHight, downOffset) {
-            // 复用default的同名函数代码
-            this._super(downHight, downOffset);
-        },
-=======
 
     }, {
         key: '_pullHook',
@@ -139,7 +133,6 @@ var MiniRefreshTheme = function (_BaseTheme) {
             // 复用default的同名函数代码
             _get(MiniRefreshTheme.prototype.__proto__ || Object.getPrototypeOf(MiniRefreshTheme.prototype), '_pullHook', this).call(this, downHight, downOffset);
         }
->>>>>>> 2.x
 
         /**
          * 重写下拉动画
