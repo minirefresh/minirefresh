@@ -68,10 +68,10 @@ describe('创建Scroll', () => {
         minirefresh.options = defaultSetting;
     });
     
-    it('监听init', (done) => {
+    it('监听initScroll', (done) => {
         const scroll = new Scroll(minirefresh);
         
-        scroll.on('init', () => {
+        scroll.on('initScroll', () => {
             done();
         });
     });

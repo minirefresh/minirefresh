@@ -53,6 +53,15 @@ describe('extend方法', () => {
         expect(result).to.have.deep.property('product', obj3.product);
         expect(result).to.have.deep.property('name', obj3.name);
     });
+    
+    it('拓展多个（递归拓展）', function() {
+        let result = extend(true, {}, obj1, obj2, obj3);
+
+        expect(result).to.have.deep.property('company', obj2.company);
+        expect(result).to.have.deep.nested.property('product.ejs', obj1.product.ejs);
+        expect(result).to.have.deep.nested.property('product.m7', obj3.product.m7);
+        expect(result).to.have.deep.nested.property('product.group', obj3.product.group);
+    });
 });
 
 describe('noop', () => {
