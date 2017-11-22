@@ -21,7 +21,7 @@
     "refresh"
   ],
   "author": "dailc",
-  "license": "GPL-3.0",
+  "license": "MIT",
   "scripts": {
     "test": "node_modules/.bin/karma start test/unit/karma.cover.config.js",
     "build": "node_modules/.bin/gulp default --gulpfile build/gulpfile.js",
