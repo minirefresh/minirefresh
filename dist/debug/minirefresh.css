@@ -35,11 +35,14 @@
 .minirefresh-hidden {
   display: none !important;
 }
-.mescroll-bar::-webkit-scrollbar-track {
+.minirefresh-wrap::-webkit-scrollbar-track {
   background-color: transparent;
 }
-.mescroll-bar::-webkit-scrollbar {
+.minirefresh-wrap::-webkit-scrollbar {
   width: 6px;
+}
+.minirefresh-hide-scrollbar::-webkit-scrollbar {
+  width: 0;
 }
 .minirefresh-wrap::-webkit-scrollbar-thumb {
   border-radius: 6px;

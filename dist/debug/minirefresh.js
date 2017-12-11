@@ -1,7 +1,7 @@
 /*!
- * minirefresh v2.0.0
+ * minirefresh v2.0.1
  * (c) 2017-2017 dailc
- * Released under the GPL-3.0 License.
+ * Released under the MIT License.
  * https://github.com/minirefresh/minirefresh
  */
 
@@ -805,10 +805,14 @@ var defaultSetting = {
     container: '#minirefresh',
     // 是否锁定横向滑动，如果锁定则原生滚动条无法滑动
     isLockX: true,
+    // 是否显示滚动条
+    isScrollBar: true,
     // 是否使用body对象的scroll而不是minirefresh-scroll对象的scroll
     // 开启后一个页面只能有一个下拉刷新，否则会有冲突
     isUseBodyScroll: false
 };
+
+var CLASS_HIDDEN_SCROLLBAR = 'minirefresh-hide-scrollbar';
 
 var Core = function () {
     /**
@@ -830,6 +834,10 @@ var Core = function () {
         // 如果是使用body的情况，scrollWrap恒为body
         // 注意，滑动不是指下拉时的translate（这时候时contentWrap），而是只默认的原生滑动
         this.scrollWrap = this.options.isUseBodyScroll ? document.body : this.container;
+
+        if (!this.options.isScrollBar) {
+            this.container.classList.add(CLASS_HIDDEN_SCROLLBAR);
+        }
 
         // 初始化的hook
         this._initHook && this._initHook(this.options.down.isLock, this.options.up.isLock);
@@ -1069,9 +1077,9 @@ return MiniRefreshTools;
 })));
 
 /*!
- * minirefresh v2.0.0
+ * minirefresh v2.0.1
  * (c) 2017-2017 dailc
- * Released under the GPL-3.0 License.
+ * Released under the MIT License.
  * https://github.com/minirefresh/minirefresh
  */
 
