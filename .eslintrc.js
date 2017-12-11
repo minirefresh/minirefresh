@@ -24,6 +24,8 @@ module.exports = {
         'Babel': true,
         "MiniRefreshTools": true,
         "MiniRefresh": true,
+        "dd": true,
+        "ejs": true,
     },
     // add your custom rules here
     'rules': {
@@ -31,6 +33,8 @@ module.exports = {
         'jsx-a11y/href-no-hash': 0,
         'react/require-extension': 0,
         'import/no-extraneous-dependencies': 0,
+        // 允许不使用this
+        'class-methods-use-this': 0,
         "no-mixed-operators": [0, {
             "groups": [
                 ["+", "-", "*", "/", "%", "**"],
