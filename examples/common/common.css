@@ -102,6 +102,10 @@
     line-height: 17px;
     border-bottom: 1px solid #ddd;
     text-align: center;
+    /**
+     * 防止点击时闪动
+     */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .nav-control .active {
