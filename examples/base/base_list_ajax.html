@@ -1,0 +1,129 @@
+<!-- 
+        作者：dailc
+        时间：2017-12-27
+        描述： 基本的列表页面-ajax
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>base list ajax</title>
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            最基础的新闻列表-ajax
+        </nav>
+        <div class="content">
+            <div id="minirefresh" class="minirefresh-wrap">
+
+                <div class="minirefresh-scroll">
+
+                    <ul class="data-list" id="listdata">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <!--
+        之所以引入mui，仅仅是想用它的ajax功能，换位其它库均可
+        -->
+        <script type="text/javascript" src="../scroll-nested/libs/mui/js/mui.js"></script>
+        <script>
+            // 记录一个演示最大值
+            var maxDataSize = 30;
+            var listDom = document.querySelector('#listdata');
+            // 延迟只是为了看出效果而已，完全可以去掉
+            var requestDelayTime = 600;
+
+            function ajaxData(success, error) {
+                setTimeout(function() {
+                    mui.ajax({
+                        type: 'GET',
+                        url: './listdata.json',
+                        success: success,
+                        error: error,
+                    });
+                }, requestDelayTime);
+            }
+
+            function generateHtmlByData(response) {
+                if (!response || !response.code || !Array.isArray(response.data)) {
+                    return '';
+                }
+                
+                var template = '<li class="list-item"><h3 class="msg-title">{{title}}</h3><span class="msg-fs14 msg-date">{{date}}</span></li>';
+                var html = '';
+                var data = response.data;
+                var len = data.length;
+                
+                for (var i = 0; i < len; i++) {
+                    // 字符串的拼接效率问题一般现代浏览器都会有优化
+                    html += template.replace(/{{([^{}]*)}}/g, function($0, $1) {
+                        return ($1 && data[i][$1]) || '';
+                    });
+                }
+                
+                return html;
+            }
+
+            function parseHtml(strHtml) {
+                if (!strHtml || typeof(strHtml) !== 'string') {
+                    return null;
+                }
+                // 创一个灵活的div
+                var i,
+                    a = document.createElement('div');
+                var b = document.createDocumentFragment();
+
+                a.innerHTML = strHtml;
+                while ((i = a.firstChild)) {
+                    b.appendChild(i);
+                }
+
+                return b;
+            }
+
+            var miniRefresh = new MiniRefresh({
+                container: '#minirefresh',
+                down: {
+                    callback: function() {
+                        // 每次下拉刷新后，默认情况上拉的状态会被自动重置
+                        ajaxData(function(response) {
+                            // 简单的修改dom，仅示例
+                            listDom.innerHTML = generateHtmlByData(response);
+                            miniRefresh.endDownLoading(true);
+                        }, function(error) {
+                            miniRefresh.endDownLoading(true);
+                        });
+                    }
+                },
+                up: {
+                    isAuto: true,
+                    callback: function() {
+                        // endUpLoading，true之后代表无法继续上啦
+                        ajaxData(function(response) {
+                            var html = generateHtmlByData(response);
+                            
+                            html && listDom.appendChild(parseHtml(html));
+                            miniRefresh.endUpLoading(listDom.children.length >= maxDataSize ? true : false);
+                        }, function(error) {
+                            // 失败中一定要关闭上拉，防止无限加载
+                            miniRefresh.endUpLoading(true);
+                        });
+                    }
+                }
+            });
+        </script>
+    </body>
+
+</html>
