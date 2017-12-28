@@ -107,6 +107,16 @@ GitHub：https://github.com/wuyumin
             .list-item:active {
                 background: #F5F5F5;
             }
+            
+            .msg-fs14 {
+                font-size: 14px;
+                color: #999;
+            }
+            
+            .msg-date {
+                float: right;
+                margin: 5px;
+            }
         </style>
 
     </head>
@@ -160,10 +170,11 @@ GitHub：https://github.com/wuyumin
 
                                 if (arrLen > 0) {
                                     var html = '';
-                                    
+
                                     $.each(response.data, function(key, value) {
                                         html += '<li class="list-item">' +
                                             '<a href="javascript:;" class="news-title">' + value.title + '</a>' +
+                                            '<span class="msg-fs14 msg-date">' + (new Date()).toLocaleString() + '</span>' +
                                             '</li>';
                                     });
                                     setTimeout(function() {
@@ -178,7 +189,7 @@ GitHub：https://github.com/wuyumin
                                     $('#listdata').html('');
                                     miniRefresh.endDownLoading(true);
                                 }
-                                
+
                             },
                             error: function() {
                                 // 初始化内容
@@ -213,12 +224,13 @@ GitHub：https://github.com/wuyumin
                                     $.each(response.data, function(key, value) {
                                         html += '<li class="list-item">' +
                                             '<a href="javascript:;" class="news-title">' + value.title + '</a>' +
+                                            '<span class="msg-fs14 msg-date">' + (new Date()).toLocaleString() + '</span>' +
                                             '</li>';
                                     });
                                     setTimeout(function() {
                                         // DOM 插入数据(使用setTimeout函数是方便演示的)
                                         $('#listdata').append(html);
-                                        
+
                                         // 是否已取完数据页
                                         if (response.last_page == page) {
                                             miniRefresh.endUpLoading(true);
