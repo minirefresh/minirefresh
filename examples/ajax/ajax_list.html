@@ -1,255 +1,210 @@
 <!--
 作者：吴育民
-时间：2017-12-27
+更新时间：2017-12-29
 GitHub：https://github.com/wuyumin
 -->
 <!doctype html>
 <html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>miniRefresh ajax 分页示例</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <style>
+        html, body {
+            margin: 0 auto;
+        }
 
-    <head>
-        <meta charset="utf-8">
-        <title>miniRefresh ajax 分页示例</title>
-        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
-        <!-- 引入 miniRefresh CSS -->
-        <link rel="stylesheet" href="https://minirefresh.github.io/minirefresh/dist/minirefresh.min.css">
-        <style>
-            html,
-            body {
-                margin: 0 auto;
-            }
-            
-            ul {
-                list-style: none;
-            }
-            
-            ul,
-            li {
-                margin: 0 auto;
-                padding: 0;
-            }
-            
-            a {
-                text-decoration: none;
-                color: #18b4fe;
-            }
-            
-            .header {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 44px;
-                line-height: 44px;
-                text-align: center;
-                border-bottom: 1px solid #c8c7cc;
-                background-color: #fff;
-                z-index: 999;
-            }
-            
-            .header .navi {
-                display: block;
-                position: absolute;
-                top: 0;
-                left: 0;
-                padding: 12px;
-                line-height: 22px;
-            }
-            
-            .content {}
-            
-            .content .minirefresh-wrap {
-                margin-top: 45px;
-            }
-            
-            .content .minirefresh-scroll {
-                background: #fff;
-            }
-            
-            .content .list-item .news-title {
-                display: block;
-                padding: 5px 0;
-                width: 100%;
-                height: 100%;
-                font-weight: bold;
-                font-size: 15px;
-                color: #000;
-                text-decoration: none;
-            }
-            
-            .data-list {
-                position: relative;
-                margin-top: 0;
-                margin-bottom: 0;
-                padding-left: 0;
-                list-style: none;
-                background-color: #fff;
-            }
-            
-            .list-item {
-                position: relative;
-                overflow: hidden;
-                padding: 11px 15px;
-                -webkit-touch-callout: none;
-            }
-            
-            .list-item:after {
-                position: absolute;
-                right: 0;
-                bottom: 0;
-                left: 15px;
-                height: 1px;
-                content: '';
-                -webkit-transform: scaleY(.5);
-                transform: scaleY(.5);
-                background-color: #c8c7cc;
-            }
-            
-            .list-item:active {
-                background: #F5F5F5;
-            }
-            
-            .msg-fs14 {
-                font-size: 14px;
-                color: #999;
-            }
-            
-            .msg-date {
-                float: right;
-                margin: 5px;
-            }
-        </style>
+        ul {
+            list-style: none;
+        }
 
-    </head>
+        ul, li {
+            margin: 0 auto;
+            padding: 0;
+        }
 
-    <body>
+        a {
+            text-decoration: none;
+            color: #18b4fe;
+        }
 
-        <div class="header">
-            <a href="../index.html" class="navi">dashboard</a>
-            ajax 分页示例
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 44px;
+            line-height: 44px;
+            text-align: center;
+            border-bottom: 1px solid #c8c7cc;
+            background-color: #fff;
+            z-index: 999;
+        }
+
+        .header .navi {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 12px;
+            line-height: 22px;
+        }
+
+        .content {
+        }
+
+        .content .minirefresh-wrap {
+            margin-top: 45px;
+        }
+
+        .content .minirefresh-scroll {
+            background-color: #fff;
+        }
+
+        .content .list-item {
+            margin: 11px 15px;
+        }
+
+        .content .list-item .news-link {
+            display: block;
+            position: relative;
+            padding: 5px 0;
+            width: 100%;
+            height: 100%;
+            border-bottom: 1px solid #c8c7cc;
+        }
+
+        .content .list-item .news-link .news-title {
+            display: block;
+            height: 35px;
+            overflow: hidden;
+            font-weight: bold;
+            font-size: 15px;
+            color: #000;
+        }
+
+        .content .list-item .news-link .news-date {
+            position: absolute;
+            right: 5px;
+            bottom: 5px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+    <!-- 引入 miniRefresh CSS -->
+    <link rel="stylesheet" href="https://minirefresh.github.io/minirefresh/dist/minirefresh.min.css">
+</head>
+<body>
+
+<div class="header">
+    <a href="../index.html" class="navi">dashboard</a>
+    ajax 分页示例
+</div>
+
+<div class="content">
+
+    <div id="minirefresh" class="minirefresh-wrap">
+        <div class="minirefresh-scroll">
+            <ul class="data-list" id="listdata">
+            </ul>
         </div>
+    </div>
 
-        <div class="content">
+</div>
 
-            <div id="minirefresh" class="minirefresh-wrap">
-                <div class="minirefresh-scroll">
-                    <ul class="data-list" id="listdata">
-                    </ul>
-                </div>
-            </div>
+<!-- 引入 jQuery 或 Zepto -->
+<script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
+<!-- 引入 miniRefresh JS -->
+<script src="https://minirefresh.github.io/minirefresh/dist/minirefresh.min.js"></script>
 
-        </div>
+<script>
+    $(function () {
 
-        <script src="https://cdn.bootcss.com/jquery/2.2.3/jquery.min.js"></script>
-        <!-- 引入 miniRefresh JS -->
-        <script src="https://minirefresh.github.io/minirefresh/dist/minirefresh.min.js"></script>
+        // 初始化页码
+        var page = 0;
 
-        <script>
-            // 初始化页码
-            var page = 0;
-            // miniRefresh 对象
-            var miniRefresh = new MiniRefresh({
-                container: '#minirefresh',
-                down: {
-                    callback: function() {
-                        // 初始化页码
-                        page = 1;
+        // miniRefresh 对象
+        var miniRefresh = new MiniRefresh({
+            container: '#minirefresh',
+            down: {
+                //isLock: true,//是否禁用下拉刷新
+                callback: function () {
+                    doAjax('down');
+                }
+            },
+            up: {
+                isAuto: true,
+                callback: function () {
+                    doAjax('up');
+                }
+            }
+        });
 
-                        $.ajax({
-                            // 请求网址
-                            url: 'data/listdata' + page + '.json',
-                            type: 'GET',
-                            // 请求参数，一般会带上页码
-                            data: {
-                                'page': page,
-                                // 防止GET请求缓存
-                                't': new Date().getTime(),
-                            },
-                            success: function(response) {
-                                // 下面这段请根据自己的数据结构来处理
-                                var arrLen = response.data.length;
+        // 组装 ajax 分页函数。参数 downOrUp 判断是下拉刷新还是上拉加载。
+        // 特别提示：若你仅使用下拉刷新或上拉加载的其中一项，可不用组装 ajax 分页函数了，直接将 ajax 分页放在下拉刷新或上拉加载的回调 callback 里。
+        var doAjax = function (downOrUp) {
+            if (downOrUp == 'down') {
+                page = 1;// 下拉刷新页码设置
+            } else {
+                page++;// 上拉加载递增页码
+            }
 
-                                if (arrLen > 0) {
-                                    var html = '';
+            $.ajax({
+                url: 'data/listdata' + page + '.json',// 请求网址
+                type: 'GET',
+                data: {// 请求参数，一般会带上页码
+                    'page': page,
+                    't': new Date().getTime()// 防止GET请求缓存
+                },
+                success: function (response) {
+                    // 下面这段请根据自己的数据结构来处理
+                    var arrLen = response.data.length;
 
-                                    $.each(response.data, function(key, value) {
-                                        html += '<li class="list-item">' +
-                                            '<a href="javascript:;" class="news-title">' + value.title + '</a>' +
-                                            '<span class="msg-fs14 msg-date">' + (new Date()).toLocaleString() + '</span>' +
-                                            '</li>';
-                                    });
-                                    setTimeout(function() {
-                                        // 初始化内容
-                                        $('#listdata').html('');
-                                        // DOM 插入数据(使用setTimeout函数是方便演示的)
-                                        $('#listdata').append(html);
-                                        miniRefresh.endDownLoading(true);
-                                    }, 600);
-                                } else {
-                                    // 初始化内容
-                                    $('#listdata').html('');
-                                    miniRefresh.endDownLoading(true);
-                                }
-
-                            },
-                            error: function() {
-                                // 初始化内容
-                                $('#listdata').html('');
-                                miniRefresh.endDownLoading(false);
-                            }
+                    if (arrLen > 0) {
+                        var html = '';
+                        $.each(response.data, function (key, value) {
+                            html += '<li class="list-item">' +
+                                '<a href="javascript:;" class="news-link">' +
+                                '<span class="news-title">' + value.title + '</span>' +
+                                '<span class="news-date">' + (new Date()).toLocaleString() + '</span>' +
+                                '</a>' +
+                                '</li>';
                         });
-
+                        setTimeout(function () { // 使用 setTimeout 函数是方便演示的，你可以不用 setTimeout 函数
+                            if (downOrUp == 'down') {
+                                $('#listdata').html('');
+                                $('#listdata').append(html);// DOM 插入数据
+                                miniRefresh.endDownLoading(true);// 结束下拉刷新
+                            } else {
+                                $('#listdata').append(html);
+                                if (response.last_page == page) {// 是否已取完数据页
+                                    miniRefresh.endUpLoading(true);// 结束上拉加载
+                                } else {
+                                    miniRefresh.endUpLoading(false);
+                                }
+                            }
+                        }, 600);
+                    } else {
+                        if (downOrUp == 'down') {
+                            $('#listdata').html('');
+                            miniRefresh.endDownLoading(true);
+                        } else {
+                            miniRefresh.endUpLoading(true);
+                        }
                     }
                 },
-                up: {
-                    isAuto: true,
-                    callback: function() {
-                        // 递增页码
-                        page++;
-                        $.ajax({
-                            // 请求网址
-                            url: 'data/listdata' + page + '.json',
-                            type: 'GET',
-                            // 请求参数，一般会带上页码
-                            data: {
-                                'page': page,
-                                // 防止GET请求缓存
-                                't': new Date().getTime(),
-                            },
-                            success: function(response) {
-                                // 下面这段请根据自己的数据结构来处理
-                                var arrLen = response.data.length;
-
-                                if (arrLen > 0) {
-                                    var html = '';
-                                    $.each(response.data, function(key, value) {
-                                        html += '<li class="list-item">' +
-                                            '<a href="javascript:;" class="news-title">' + value.title + '</a>' +
-                                            '<span class="msg-fs14 msg-date">' + (new Date()).toLocaleString() + '</span>' +
-                                            '</li>';
-                                    });
-                                    setTimeout(function() {
-                                        // DOM 插入数据(使用setTimeout函数是方便演示的)
-                                        $('#listdata').append(html);
-
-                                        // 是否已取完数据页
-                                        if (response.last_page == page) {
-                                            miniRefresh.endUpLoading(true);
-                                        } else {
-                                            miniRefresh.endUpLoading(false);
-                                        }
-                                    }, 600);
-                                } else {
-                                    miniRefresh.endUpLoading(true);
-                                }
-                            },
-                            error: function() {
-                                miniRefresh.endUpLoading(true);
-                            }
-                        });
+                error: function () {
+                    if (downOrUp == 'down') {
+                        $('#listdata').html('');
+                        miniRefresh.endDownLoading(true);
+                    } else {
+                        miniRefresh.endUpLoading(true);
                     }
                 }
             });
-        </script>
-    </body>
+        };
 
+    });
+</script>
+</body>
 </html>
