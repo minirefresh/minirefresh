@@ -1,3 +1,7 @@
+Thumbs.db
+.DS_Store
+*.swp
+
 # Logs
 logs
 *.log
