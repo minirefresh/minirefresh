@@ -23,6 +23,10 @@
 }
 .minirefresh-scroll {
   position: relative;
+/*
+     * 默认背景色改成白色，直接避免下拉和正文重叠现象，可以覆盖
+     */
+  background: #fff;
 }
 .body-scroll-wrap {
   position: relative;
@@ -187,9 +191,8 @@
     -moz-transform: rotate(360deg);
   }
 }
-
-/**
- * default 主题的样式
+/*
+ * 引入默认的主题
  */
 .minirefresh-theme-default .minirefresh-downwrap {
   position: absolute;

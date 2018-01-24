@@ -35,7 +35,10 @@
 
 .minirefresh-scroll 
     position: relative;
-
+    /*
+     * 默认背景色改成白色，直接避免下拉和正文重叠现象，可以覆盖
+     */
+    background: #fff;
 
 /**
  * 如果开启了body监听scroll，需要将position都设置为releative

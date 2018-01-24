@@ -1,0 +1,128 @@
+<!-- 
+        作者：dailc
+        时间：2018-01-24
+        描述： 左右布局示例
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <title>左右布局示例</title>
+        <link rel="stylesheet" href="libs/mui/css/mui.min.css" />
+        <link rel="stylesheet" href="../../dist/debug/minirefresh.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <style>
+            .mui-row.mui-fullscreen>[class*="mui-col-"] {
+                height: 100%;
+            }
+            .mui-col-xs-3,
+            .mui-control-content {
+                overflow-y: auto;
+                height: 100%;
+            }
+            .mui-segmented-control {
+                margin-top: 45px;
+            }
+            .mui-segmented-control .mui-control-item {
+                line-height: 50px;
+                width: 100%;
+            }
+            .mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+                background-color: #fff;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar-header">
+            <a class="nav-btn-left" href="../index.html">dashboard</a>
+            左右布局示例
+        </nav>
+        <div class="content mui-content mui-row mui-fullscreen">
+            <div class="mui-col-xs-3">
+                <div id="segmentedControls" class="mui-segmented-control mui-segmented-control-inverted mui-segmented-control-vertical">
+                    <a class="mui-control-item" href="#content1">选项1</a>
+                    <a class="mui-control-item" href="#content2">选项2</a>
+                    <a class="mui-control-item" href="#content3">选项3</a>
+                </div>
+            </div>
+            <div id="segmentedControlContents" class="mui-col-xs-9" style="border-left: 1px solid #c8c7cc;">
+                <div id="content1" class="mui-control-content mui-active">
+                    <div id="minirefresh1" class="minirefresh-wrap">
+                        <div class="minirefresh-scroll">
+                            <ul class="data-list" id="listdata1">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="content2" class="mui-control-content">
+                    <div id="minirefresh2" class="minirefresh-wrap">
+                        <div class="minirefresh-scroll">
+                            <ul class="data-list" id="listdata2">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="content3" class="mui-control-content">
+                    <div id="minirefresh3" class="minirefresh-wrap">
+                        <div class="minirefresh-scroll">
+                            <ul class="data-list" id="listdata3">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="libs/mui/js/mui.min.js"></script>
+        <script type="text/javascript" src="../../dist/debug/minirefresh.js"></script>
+        <script type="text/javascript" src="../common/common.js"></script>
+        <script>
+            var appendTestData = Common.appendTestData,
+                bindEvent = Common.bindEvent,
+                // 记录一个最新
+                maxDataSize = 30,
+                listDomArr = [],
+                requestDelayTime = 600,
+                currIndex = 0,                
+                miniRefreshArr = [];
+
+            var initMiniRefreshs = function(index) {
+                
+                listDomArr[index] = document.querySelector('#listdata' + index);
+                
+                miniRefreshArr[index] = new MiniRefresh({
+                    container: '#minirefresh' + index,
+                    down: {
+                        callback: function() {
+                            setTimeout(function() {
+                                // 每次下拉刷新后，上拉的状态会被自动重置
+                                appendTestData(listDomArr[index], 10, true, index);
+                                miniRefreshArr[index].endDownLoading(true);
+                            }, requestDelayTime);
+                        }
+                    },
+                    up: {
+                        isAuto: true,
+                        callback: function() {
+                            setTimeout(function() {
+                                appendTestData(listDomArr[index], 10, false, index);
+                                miniRefreshArr[index].endUpLoading(listDomArr[index].children.length >= maxDataSize ? true : false);
+                            }, requestDelayTime);
+                        }
+                    }
+                });
+            };
+
+            // 初始化
+            initMiniRefreshs(1);
+            initMiniRefreshs(2);
+            initMiniRefreshs(3);
+        </script>
+    </body>
+
+</html>

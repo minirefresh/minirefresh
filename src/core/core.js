@@ -125,11 +125,11 @@ class Core {
         });
         this.scroller.on('pull', (downHight, downOffset) => {
             this._pullHook && this._pullHook(downHight, downOffset);
-            options.down.onPull && options.down.onPull();
+            options.down.onPull && options.down.onPull(downHight, downOffset);
         });
         this.scroller.on('upLoading', () => {
             this._upLoaingHook && this._upLoaingHook(this.options.up.isShowUpLoading);
-            options.up.callback && options.up.callback();
+            options.up.callback && options.up.callback(this.options.up.isShowUpLoading);
         });
         this.scroller.on('resetUpLoading', () => {
             this._resetUpLoadingHook && this._resetUpLoadingHook();

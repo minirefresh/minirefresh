@@ -194,13 +194,16 @@ gulp.task('concat_minirefresh_theme_css', () => gulp.src([
     .pipe(gulpConcat('minirefresh.css'))
     .pipe(gulp.dest(resolvePath(RELEASE_DEBUG_PATH))));
 
+/*
+ * 合并主题方式暂时放弃，改为代码内部自动选择引入对应主题
+ */
 gulp.task('concat_theme', [
     'concat_minirefresh_theme_js',
     'concat_minirefresh_theme_css',
 ]);
 
 gulp.task('default', (callback) => {
-    gulpSequence('build', 'concat_theme', 'dist')(callback);
+    gulpSequence('build', 'dist')(callback);
 });
 
 gulp.task('watch', () => {

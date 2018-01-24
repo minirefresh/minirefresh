@@ -1,6 +1,6 @@
 /*!
- * minirefresh v2.0.1
- * (c) 2017-2017 dailc
+ * minirefresh v2.0.2
+ * (c) 2017-2018 dailc
  * Released under the MIT License.
  * https://github.com/minirefresh/minirefresh
  */
@@ -873,11 +873,11 @@ var Core = function () {
             });
             this.scroller.on('pull', function (downHight, downOffset) {
                 _this._pullHook && _this._pullHook(downHight, downOffset);
-                options.down.onPull && options.down.onPull();
+                options.down.onPull && options.down.onPull(downHight, downOffset);
             });
             this.scroller.on('upLoading', function () {
                 _this._upLoaingHook && _this._upLoaingHook(_this.options.up.isShowUpLoading);
-                options.up.callback && options.up.callback();
+                options.up.callback && options.up.callback(_this.options.up.isShowUpLoading);
             });
             this.scroller.on('resetUpLoading', function () {
                 _this._resetUpLoadingHook && _this._resetUpLoadingHook();
@@ -1055,52 +1055,35 @@ var Core = function () {
     return Core;
 }();
 
-var MiniRefreshTools = {};
+var MiniRefreshTools$2 = {};
 
 Object.keys(lang).forEach(function (name) {
-    MiniRefreshTools[name] = lang[name];
+    MiniRefreshTools$2[name] = lang[name];
 });
 
 // namespace的特殊把绑定
-MiniRefreshTools.namespace = function (namespaceStr, target) {
-    namespace(MiniRefreshTools, namespaceStr, target);
+MiniRefreshTools$2.namespace = function (namespaceStr, target) {
+    namespace(MiniRefreshTools$2, namespaceStr, target);
 };
 
-MiniRefreshTools.Core = Core;
-MiniRefreshTools.version = '2.0.0';
+MiniRefreshTools$2.Core = Core;
+MiniRefreshTools$2.version = '2.0.0';
 
 // 防止主题和核心一起，并且require模式中，无法全局变量的情况
-window.MiniRefreshTools = MiniRefreshTools;
+window.MiniRefreshTools = MiniRefreshTools$2;
 
-return MiniRefreshTools;
+var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-})));
-
-/*!
- * minirefresh v2.0.1
- * (c) 2017-2017 dailc
- * Released under the MIT License.
- * https://github.com/minirefresh/minirefresh
- */
-
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.MiniRefresh = factory());
-}(this, (function () { 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Core = MiniRefreshTools.Core;
+var Core$2 = MiniRefreshTools.Core;
 var version = MiniRefreshTools.version;
-var extend = MiniRefreshTools.extend;
-var namespace = MiniRefreshTools.namespace;
+var extend$1 = MiniRefreshTools.extend;
+var namespace$1 = MiniRefreshTools.namespace;
 
 /**
  * 一些默认提供的CSS类，一般来说不会变动（由框架提供的）
@@ -1135,7 +1118,7 @@ var CLASS_STATUS_NOMORE = 'status-nomore';
  */
 var DEFAULT_DOWN_HEIGHT = 75;
 
-var defaultSetting = {
+var defaultSetting$1 = {
     down: {
         successAnim: {
             // 下拉刷新结束后是否有成功动画，默认为false，如果想要有成功刷新xxx条数据这种操作，请设为true，并实现对应hook函数
@@ -1179,14 +1162,14 @@ var MiniRefreshTheme = function (_Core) {
      * @constructor
      */
     function MiniRefreshTheme(options) {
-        _classCallCheck(this, MiniRefreshTheme);
+        _classCallCheck$2(this, MiniRefreshTheme);
 
-        var newOptions = extend(true, {}, defaultSetting, options);
+        var newOptions = extend$1(true, {}, defaultSetting$1, options);
 
         return _possibleConstructorReturn(this, (MiniRefreshTheme.__proto__ || Object.getPrototypeOf(MiniRefreshTheme)).call(this, newOptions));
     }
 
-    _createClass(MiniRefreshTheme, [{
+    _createClass$2(MiniRefreshTheme, [{
         key: '_initHook',
         value: function _initHook() {
             var container = this.container;
@@ -1477,15 +1460,19 @@ var MiniRefreshTheme = function (_Core) {
     }]);
 
     return MiniRefreshTheme;
-}(Core);
+}(Core$2);
 
 MiniRefreshTheme.sign = 'default';
 MiniRefreshTheme.version = version;
-namespace('theme.defaults', MiniRefreshTheme);
+namespace$1('theme.defaults', MiniRefreshTheme);
 
 // 覆盖全局变量
 window.MiniRefresh = MiniRefreshTheme;
 
-return MiniRefreshTheme;
+/**
+ * 默认暴露的是MiniRefreshTools变量，各大主题都是挂在到上面的
+ */
+
+return MiniRefreshTools$2;
 
 })));
